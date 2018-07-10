@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Заказы</title>
+
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="/css/materialize.min.css">
+	<link rel="stylesheet" href="/css/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+</head>
+<body>
+{% if salon == 1 %}
+	<div align="center">
+		<img src="/img/logo.png" alt="logo">
+	</div>
+{% endif %}
+{% if salon == 2 %}
+	<div align="center">
+		<img src="/img/city-logo.jpg" alt="logo-city-1">
+	</div>
+{% endif %}
+{% if salon == 3 %}
+	<div align="center">
+		<img src="/img/city-logo.jpg" alt="logo-city-2">
+	</div>
+{% endif %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col s6 left-align">
+			<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
+									class="material-icons">arrow_back</i></a>
+		</div>
+		<div class="col s6 right-align">
+			<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+						class="material-icons">exit_to_app</i></a>
+		</div>
+	</div>
+</div>
+
+<div class="container is-margin-top-50">
+	<ul class="collapsible">
+		<li>
+			<div class="collapsible-header"><i class="material-icons">add_circle</i>Данные мастера</div>
+			<div class="collapsible-body">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col s12">
+							<form action="{{ route('update-master') }}" method="get">
+								<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+								<div class="input-field">
+									<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+								</div>
+								<div class="col s8">
+									<label for="plan">Мастер</label>
+								</div>
+								<div class="col s2">
+									<label for="plan">План</label>
+								</div>
+								<div class="col s2">
+									<label for="range">Разряд</label>
+								</div>
+								<div class="input-field col s8">
+									<input placeholder="Введите имя и фамилию мастера" id="last_name" name="name" type="text"
+									       class="validate" value="{{ name }}"
+									       required>
+								</div>
+								<div class="input-field col s2">
+									<input placeholder="План" id="plan" name="plan" type="number" min="1"
+									       class="validate" value="{{ plan }}"
+									       required>
+								</div>
+								<div class="input-field col s2">
+									<select name="range" required>
+										<option value="{{ range }}">Разряд {{ range }}</option>
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+									</select>
+								</div>
+								<div class="input-field col s12 text-center">
+									<button type="submit" class="waves-effect waves-light btn" href="#">Изменить</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</li>
+	</ul>
+</div>
+
+<div class="container is-margin-top-50">
+	<div class="row">
+		<div class="col s3">
+			<a href="{{ route('main') }}" class="waves-effect waves-light btn-large">Общая таблица</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			<form action="{{ route('add-sale') }}" method="get">
+				<div class="input-field">
+					<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+				</div>
+				<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+				<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+				<div class="input-field col s2">
+					<select name="date" id="date" required>
+						<option value="" disabled selected>Дата</option>
+						{% set i = 0 %}
+						{% for shift in shifts %}
+							<option type="radio" id="{{ i }}" value="{{ shift.id }}" onClick="show();">{{ shift.date|date("d-m-Y") }}</option>
+							{% set i=i+1 %}
+						{% endfor %}
+						<input id="refresher" type="button" value="{{ i }}" hidden>
+					</select>
+					{#	<input placeholder="Дата" id="id" name="date" type="date" required>
+					#}
+				</div>
+				{% set j=1000 %}
+				<section id="dt">
+					<div class="input-field col s2">
+						<select name="time">
+							<option value="" disabled selected>Время</option>
+						</select>
+					</div>
+				</section>
+				{% for time in times %}
+					<section id="{{ j }}" hidden>
+						<div class="input-field col s2">
+							<select name="time">
+								<option value="" disabled selected>Время</option>
+								{% set sr = p.value %}
+								{% set ars = times[sr] %}
+								{% for ar in time %}
+									<option value="{{ ar }}">{{ ar }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</section>
+					{% set j = j + 1 %}
+				{% endfor %}
+
+
+				{#
+			<div class="input-field col s2" required>
+
+
+				<input placeholder="Время" type="time" name="time" required>
+			</div>
+				#}
+				<div class="input-field col s4">
+					<select name="product" required>
+						<option value="" disabled selected>Услуга</option>
+						{% for product in products %}
+							<option value="{{ product.id }}">{{ product.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="input-field col s2">
+					{#
+					<input placeholder="Длительность" id="duration" name="duration" type="time" required>
+					#}
+					<select name="duration" required>
+						<option value="" disabled selected>Длительность</option>
+						{% for dur in durs %}
+							<option value="{{ dur }}">{{ dur }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="input-field col s2">
+					<input placeholder="Цена" id="cost" name="cost" type="number" min="0" step="0.01" required>
+				</div>
+				<div class="input-field col s12 text-center">
+					<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col s3 center-align">
+			<h5>{{ name }}</h5>
+		</div>
+		<div class="col s7 center-align">
+			<h5>Запланированный доход за месяц: <b class="materialize-red-text">{{ totalmoney }}p</b></h5>
+		</div>
+		{#<div class="col s3 center-align">
+			 <h5>Заработок мастера: <b class="materialize-red-text tooltipped" data-position="bottom"
+									   data-tooltip="Зароботок мастера зависит от количество товара которое он продал - чем больше единиц товара вы продали тем больше Ваш процент от продаж!">{{ feedback }}
+					 p</b></h5>
+		 </div>#}
+	</div>
+
+	<div class="row">
+		<div class="col s12">
+			<table class="highlight centered">
+				<thead>
+				<tr>
+					<th>Дата</th>
+					<th>Время</th>
+					<th>Услуга</th>
+					<th>Длительность</th>
+					<th>Стоимость</th>
+					<th></th>
+				</tr>
+				</thead>
+
+				<tbody>
+				{% for sale in sales %}
+					<tr>
+						<td>{{ sale.date| date("d/m/Y") }}</td>
+						<td>{{ sale.time|date('H:i') }}</td>
+						<td>{{ sale.name }}</td>
+						<td>{{ sale.duration|date('H:i') }}</td>
+						<td>{{ sale.cost }}</td>
+						<td>
+							<form action="{{ route('delete-sale') }}">
+								<input name="sale_id" value="{{ sale.id }}" hidden>
+								<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+								<button class="btn waves-effect waves-light red">Удалить</button>
+							</form>
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="container-fluid is-margin-top-50">
+	<div class="row">
+		<div class="col s12">
+			<table class="highlight centered">
+				<thead>
+				<tr>
+					<th>Услуга</th>
+					<th>Количество</th>
+				</tr>
+				</thead>
+				{% for service in services %}
+					<tbody>
+					{#<td>{{ service.name }}</td>#}
+					<td>{{ service.name }}</td>
+					<td>{{ service.total }}</td>
+					</tbody>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+<input id="exception1" value="{{ exception1 }}" hidden>
+<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/js/materialize.min.js"></script>
+<script>
+
+	if(document.getElementById("exception1").value!='') {
+		alert(document.getElementById("exception1").value);
+	}
+
+	$(document).ready(function() {
+		$('select').formSelect();
+	});
+	$(document).ready(function() {
+		$('.datepicker').datepicker();
+	});
+	$(document).ready(function() {
+		$('.collapsible').collapsible();
+	});
+
+	element = document.getElementById('date');
+	elem = document.getElementById('dt');
+
+	element.addEventListener('change', function(e) {
+		var ch = (e.target.options[e.target.selectedIndex].getAttribute('id'));
+		parseInt(ch, 10);
+		var count = document.getElementById('refresher').getAttribute('value');
+		vanish(count);
+		show(ch);
+	});
+
+	function vanish(count) {
+		last = new Number(parseInt(count, 10));
+		last = last + 999;
+		cur = new Number(1000);
+		//	document.getElementsByName("time").setAttribute("required","false");
+		while(cur <= last) {
+
+			document.getElementById(cur.toString() + '').required = false;
+			document.getElementById(cur.toString() + '').style.display = 'none';
+			cur = cur + 1;
+		}
+
+	}
+
+	function show(ch) {
+		num = new Number(parseInt(ch, 10));
+		//	document.getElementById(num.toString() + '').required = true;
+		num = num + 1000;
+
+		document.getElementById('dt').style.display = 'none';
+		document.getElementById(num.toString() + '').style.display = 'block';
+		document.getElementById(num.toString() + '').required = true;
+
+	}
+</script>
+
+
+</body>
+</html>

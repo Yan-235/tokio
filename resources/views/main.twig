@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Главная</title>
+
+	<link rel="stylesheet" href="/css/materialize.min.css">
+	<link rel="stylesheet" href="/css/style.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<script type="text/javascript" src="/js/materialize.min.js"></script>
+	<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+	<meta name="csrf-token" content="{{ csrf_token() }}" />
+</head>
+<body>
+{% if salon == 1 %}
+	<div align="center">
+		<img src="img/logo.png" alt="logo">
+	</div>
+{% endif %}
+{% if salon == 2 %}
+	<div align="center">
+		<img src="img/city-logo.jpg" alt="logo-city-1">
+	</div>
+{% endif %}
+{% if salon == 3 %}
+	<div align="center">
+		<img src="img/city-logo.jpg" alt="logo-city-2">
+	</div>
+{% endif %}
+{% if admin == 1 %}
+	<div class="container-fluid is-margin-top-50">
+		<div class="row">
+			<div class="col s11 left-align">
+				<form action="{{ route('change-salon') }}" method="get">
+					<div class="col s2">
+						<select name="new_salon" required>
+							<option value="" disabled selected>Салон</option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+						</select>
+					</div>
+					<button type="submit" class="btn waves-effect waves-light green"><i
+								class="material-icons">swap_horiz</i></button>
+				</form>
+			</div>
+			<div class="col s1 right-align">
+				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+							class="material-icons">exit_to_app</i></a>
+			</div>
+		</div>
+	</div>
+{% else %}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col s12 right-align">
+				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+							class="material-icons">exit_to_app</i></a>
+			</div>
+		</div>
+	</div>
+{% endif %}
+<div class="container is-margin-top-50">
+	<ul class="collapsible">
+		<li>
+			<div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить мастера или услугу</div>
+			<div class="collapsible-body">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col s12">
+							<form action="{{ route('add-master') }}" method="get">
+								<div class="input-field">
+									<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+								</div>
+								<div class="input-field col s8">
+									<input placeholder="Введите имя и фамилию мастера" id="last_name" name="name" type="text"
+									       class="validate"
+									       required>
+								</div>
+								<div class="input-field col s2">
+									<input placeholder="План" id="plan" name="plan" type="number" min="1"
+									       class="validate"
+									       required>
+								</div>
+								<div class="input-field col s2">
+									<select name="range" required>
+										<option value="" disabled selected>Разряд</option>
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+									</select>
+									{#
+										<input placeholder="Введите разряд мастера" id="range" name="range" type="number" min="1"
+											   class="validate" required>
+									#}
+								</div>
+								<div class="input-field col s12 text-center">
+									<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s12">
+							<form action="{{ route('add-service') }}" method="get">
+								<div class="input-field col">
+									<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+								</div>
+								<div class="input-field col s12 text-center">
+									<input placeholder="Название услуги" id="last_name" name="name" type="text" required>
+								</div>
+								<div class="input-field col s12 text-center">
+									<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</li>
+		<li>
+
+
+			<div class="col s12">
+				<form action="{{ route('show-add-shift') }}">
+					<button type="submit" class="collapsible-header" style="width: 100%;"><i class="material-icons is-simple">add</i><i class="material-icons">assignment</i>Добавить
+						смену мастеру
+					</button>
+				</form>
+			</div>
+		</li>
+		{#	<li> мне нужно что бы на странице добавления смены была табдлица записи на прием какая записи таблица нп прием?покажи ее
+				<div class="collapsible-header"><i class="material-icons is-simple">add</i><i class="material-icons">assignment</i>Добавить
+					заказ
+				</div>
+				<div class="collapsible-body">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col s12">
+								<form action="{{ route('add-sale') }}" method="get">
+									<div class="input-field ">
+										<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+									</div>
+									<div class="input-field col s2">
+										<select name="id">
+											<option value="" disabled selected>Мастер</option>
+											{% for master in masters %}
+												<option value="{{ master.id }}">{{ master.name }}</option>
+											{% endfor %}
+										</select>
+									</div>
+									<div class="input-field col s2.5">
+										<input placeholder="Дата" type="date" name="date" required>
+									</div>
+									<div class="input-field col s2">
+										<input placeholder="Время" type="time" name="time" required>
+									</div>
+									<div class="input-field col s2" required>
+										<select name="product">
+											<option value="" disabled selected>Услуга</option>
+											{% for product in products %}
+												<option value="{{ product.id }}">{{ product.name }}</option>
+											{% endfor %}
+										</select>
+									</div>
+									<div class="input-field col s1.5">
+										<input placeholder="Длительность" name="duration" type="time" required>
+									</div>
+									<div class="input-field col s2">
+										<input placeholder="Цена" id="cost" name="cost" type="number" min="0" step="0.01" required>
+									</div>
+									<div class="input-field col s12 text-center">
+										<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</li>#}
+	</ul>
+</div>
+<div class="container-fluid is-margin-top-50">
+	<div class="row">
+		<div class="col s12 text-center">
+			<form action="{{ route('date-filter') }}" method="get">
+				{% if new_filter_date1 == null %}
+					<div class="input-field col offset-s3 col s2">
+						<input value="{{ theme.getDateEnd|date("Y-m-d") }}" type="date" name="filter_date1">
+					</div>
+				{% else %}
+					<div class="input-field col offset-s3 col s2">
+						<input value="{{ new_filter_date1 }}" type="date" name="filter_date1">
+					</div>
+				{% endif %}
+				{% if new_filter_date2 == null %}
+					<div class="input-field  col s2">
+						<input value="{{ theme.getDateEnd|date("Y-m-d") }}" type="date" name="filter_date2">
+					</div>
+				{% else %}
+					<div class="input-field col s2">
+						<input value="{{ new_filter_date2 }}" type="date" name="filter_date2">
+					</div>
+				{% endif %}
+				<div class="col s2">
+					<button type="submit" class="waves-effect waves-light btn" href="#">Изменить</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12 text-center">
+			<table class="highlight centered">
+				<thead>
+				<tr>
+					<th>Мастер</th>
+					<th>Кол-во смен</th>
+					<th>Факт/План</th>
+					<th>3/П</th>
+					<th>ср. чел</th>
+					<th>загруженность</th>
+				</tr>
+				</thead>
+
+				<tbody>
+				{% for master in masters %}
+					<tr class="border-0">
+						<td class="border-0"><a href="{{ route('master-sale',[master.id]) }}" class="waves-effect waves-teal btn-flat
+						full-width text-center is-capitalize">{{ master.name }}</a></td>
+						{#<td class="border-0">{{ master.shifts_today }}</td>#}
+						<td class="border-0">{{ master.shifts }}</td>
+						<td class="border-0">{{ master.cur_hours|number_format(1) }}/{{ master.cur_plan }}</td>
+						<td class="border-0">{{ master.current_money }}</td>
+						{% if cur_days!=0 %}
+							<td class="border-0">{{ (master.sales / cur_days)|number_format(2) }}</td>
+						{% else %}
+							<td class="border-0">0</td>
+						{% endif %}
+						{% if master.cur_plan!=0 %}
+							<td class="border-0">{{ (master.cur_hours / master.cur_plan *100)|number_format(2) }}%</td>
+						{% else %}
+							<td class="border-0">0%</td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="container-fluid is-margin-top-50">
+	<div class="row">
+		<div class="col s12">
+			<table class="highlight centered">
+				<thead>
+				<tr>
+					<th>Мастер</th>
+					<th>Кол-во смен</th>
+					<th>Доход</th>
+					<th></th>
+					<th></th>
+				</tr>
+				</thead>
+
+				<tbody>
+				{% for master in masters %}
+					<tr class="border-0">
+						<td class="border-0"><a href="{{ route('master-sale',[master.id]) }}" class="waves-effect waves-teal btn-flat
+						full-width text-center is-capitalize">{{ master.name }}</a></td>
+						<td class="border-0">{{ master.shifts_month }}</td>
+						<td class="border-0">{{ master.money }}</td>
+						{#	<td class="border-0">{{ master.feedback }}</td>#}
+						<td class="border-0"><a href="{{ route('delete-user',[master.id]) }}" class="btn waves-effect waves-light red"><i
+										class="material-icons"></i>Удалить</a></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{#<div class="container-fluid is-margin-top-50">
+	<div class="row">
+		<div class="col s12 text-center">
+			<form action="{{ route('shift-date-filter') }}" method="get">
+				{% if new_filter_date == null %}
+					<div class="input-field col offset-s4 col s2">
+						<input value="{{ theme.getDateEnd|date("Y-m-d") }}" type="date" name="filter_date">
+					</div>
+				{% else %}
+					<div class="input-field col offset-s4 col s2">
+						<input value="{{ new_filter_date }}" type="date" name="filter_date">
+					</div>
+				{% endif %}
+				<div class="col s3">
+					<button type="submit" class="waves-effect waves-light btn" href="#">Перейти</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col offset-s4 col s4">
+			<table class="highlight centered">
+				<thead>
+				<tr>
+					<th>Мастер</th>
+					<th>Смена</th>
+				</tr>
+				</thead>
+
+				<tbody>
+				{% for master in masters %}
+					<tr class="border-0">
+						<td class="border-0">{{ master.name }}</td>
+						<td class="border-0">
+							<form method="get" action="{{ route('add-shift') }}">
+								{{ csrf_field() }}
+								<input name="master_id" value="{{ master.id }}" hidden>
+								<input name="new_filter_date" value="{{ new_filter_date }}" hidden>
+								{% if new_filter_date == null %}
+									<select name="shift_type" disabled>
+										<option value="" disabled selected>{{ master.shifts_today }}</option>
+										<option value=0>нету смен</option>
+										<option value=1>1-ая смена</option>
+										<option value=2>2-ая смена</option>
+										<option value=3>целый день</option>
+									</select>
+								{% else %}
+									<select name="shift_type">
+										<option value="" disabled selected>{{ master.shifts_today }}</option>
+										<option value=0>нету смен</option>
+										<option value=1>1-ая смена</option>
+										<option value=2>2-ая смена</option>
+										<option value=3>целый день</option>
+									</select>
+								{% endif %}
+								<button type="submit" class="waves-effect waves-light btn" href="#">Сохранить</button>
+							</form>
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>#}
+
+<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/js/materialize.min.js"></script>
+
+<script>
+	$(document).ready(function() {
+		$('select').formSelect();
+	});
+	$(document).ready(function() {
+		$('.datepicker').datepicker();
+	});
+	$(document).ready(function() {
+		$('.collapsible').collapsible();
+	});
+
+</script>
+
+</body>
+</html>
