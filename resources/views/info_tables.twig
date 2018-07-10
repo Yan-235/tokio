@@ -30,133 +30,34 @@
 		<img src="img/city-logo.jpg" alt="logo-city-2">
 	</div>
 {% endif %}
-{% if admin == 1 %}
-	<div class="container-fluid is-margin-top-50">
-		<div class="row">
-			<div class="col s10 left-align">
-				<form action="{{ route('change-salon') }}" method="get">
-					<div class="col s2">
-						<select name="new_salon" required>
-							<option value="" disabled selected>Салон</option>
-							<option value="1">1</option>
-							<option value="2">2</option>
-							<option value="3">3</option>
-						</select>
-					</div>
-					<button type="submit" class="btn waves-effect waves-light green"><i
-								class="material-icons">swap_horiz</i></button>
-				</form>
-			</div>
-			<div class="col s1 left-align">
-				<form action="{{ route('info-tables') }}" method="get">
-					<button type="submit" class="btn waves-effect waves-light blue"><i
-								class="material-icons">list</i></button>
-				</form>
-			</div>
-			<div class="col s1 right-align">
-				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
-							class="material-icons">exit_to_app</i></a>
-			</div>
-		</div>
-	</div>
-{% else %}
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col s12 right-align">
-				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
-							class="material-icons">exit_to_app</i></a>
-			</div>
-		</div>
-	</div>
-{% endif %}
-<div class="container-fluid">
+<div class="container-fluid is-margin-top-50">
 	<div class="row">
-		<div class=" col s12">
-			<table class="highlight centered">
-				<thead>
-				<tr>
-					<th >Мастер</th>
-					<th> 1</th>
-					<th> 2</th>
-					<th> 3</th>
-					<th> 4</th>
-					<th> 5</th>
-					<th> 6</th>
-					<th> 7</th>
-					<th> 8</th>
-					<th> 9</th>
-					<th>10</th>
-					<th>11</th>
-					<th>12</th>
-					<th>13</th>
-					<th>14</th>
-					<th>15</th>
-					<th>16</th>
-					<th>17</th>
-					<th>18</th>
-					<th>19</th>
-					<th>20</th>
-					<th>21</th>
-					<th>22</th>
-					<th>23</th>
-					<th>24</th>
-					<th>25</th>
-					<th>26</th>
-					<th>27</th>
-					<th>28</th>
-					{% if  days_in_month > 28 %}
-						<th>29</th>
-						{% if days_in_month > 29 %}
-							<th>30</th>
-							{% if days_in_month > 30 %}
-								<th>31</th>
-							{% endif %}
-						{% endif %}
-					{% endif %}
-				</tr>
-				</thead>
+		<div class="col s1 left-align">
+			<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
+						class="material-icons">arrow_back</i></a>
+		</div>
+		<div class="col s10 left-align">
+			<form action="{{ route('change-salon') }}" method="get">
+				<div class="col s2">
+					<select name="new_salon" required>
+						<option value="" disabled selected>Салон</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+					</select>
+				</div>
+				<button type="submit" class="btn waves-effect waves-light green"><i
+							class="material-icons">swap_horiz</i></button>
+			</form>
+		</div>
 
-				<tbody>
-				{% for master in masters %}
-					<tr class="border-0">
-						<td class="border-0"><a href="{{ route('master-sale',[master.id]) }}" class="waves-effect waves-teal btn-flat
-												full-width text-center is-capitalize">{{ master.name }}</a></td>
-
-						{% for type in master.array %}
-							{% if  type == 1 %}
-								<td class="black_border"><i
-											class="material-icons green_">looks_one</i></td>
-							{% elseif type ==2 %}
-								<td class="black_border"><i
-											class="material-icons green_">looks_two</i></td>
-							{% elseif type ==3 %}
-								<td class="black_border"><i
-											class="material-icons green_">looks_3</i></td>
-							{% elseif type ==0 %}
-								<td class="black_border"><i
-											class="material-icons red_">remove_circle_outline</i></td>
-							{% elseif  type == 11 %}
-								<td class="black_border chosen"><i
-											class="material-icons green_">looks_one</i></td>
-							{% elseif type == 12 %}
-								<td class="black_border chosen"><i
-											class="material-icons green_">looks_two</i></td>
-							{% elseif type == 13 %}
-								<td class="black_border chosen"><i
-											class="material-icons green_">looks_3</i></td>
-							{% elseif type == 10 %}
-								<td class="black_border  chosen"><i
-											class="material-icons red_">remove_circle_outline</i></td>
-							{% endif %}
-						{% endfor %}
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
+		<div class="col s1 right-align">
+			<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+						class="material-icons">exit_to_app</i></a>
 		</div>
 	</div>
 </div>
-{#<div class="container is-margin-top-50">
+<div class="container is-margin-top-50">
 	<ul class="collapsible">
 		<li>
 			<div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить мастера или услугу</div>
@@ -185,6 +86,10 @@
 										<option value="2">2</option>
 										<option value="3">3</option>
 									</select>
+									{#
+										<input placeholder="Введите разряд мастера" id="range" name="range" type="number" min="1"
+											   class="validate" required>
+									#}
 								</div>
 								<div class="input-field col s12 text-center">
 									<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
@@ -221,9 +126,58 @@
 				</form>
 			</div>
 		</li>
+		{#	<li> мне нужно что бы на странице добавления смены была табдлица записи на прием какая записи таблица нп прием?покажи ее
+				<div class="collapsible-header"><i class="material-icons is-simple">add</i><i class="material-icons">assignment</i>Добавить
+					заказ
+				</div>
+				<div class="collapsible-body">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col s12">
+								<form action="{{ route('add-sale') }}" method="get">
+									<div class="input-field ">
+										<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+									</div>
+									<div class="input-field col s2">
+										<select name="id">
+											<option value="" disabled selected>Мастер</option>
+											{% for master in masters %}
+												<option value="{{ master.id }}">{{ master.name }}</option>
+											{% endfor %}
+										</select>
+									</div>
+									<div class="input-field col s2.5">
+										<input placeholder="Дата" type="date" name="date" required>
+									</div>
+									<div class="input-field col s2">
+										<input placeholder="Время" type="time" name="time" required>
+									</div>
+									<div class="input-field col s2" required>
+										<select name="product">
+											<option value="" disabled selected>Услуга</option>
+											{% for product in products %}
+												<option value="{{ product.id }}">{{ product.name }}</option>
+											{% endfor %}
+										</select>
+									</div>
+									<div class="input-field col s1.5">
+										<input placeholder="Длительность" name="duration" type="time" required>
+									</div>
+									<div class="input-field col s2">
+										<input placeholder="Цена" id="cost" name="cost" type="number" min="0" step="0.01" required>
+									</div>
+									<div class="input-field col s12 text-center">
+										<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</li>#}
 	</ul>
-</div>#}
-{#<div class="container-fluid is-margin-top-50">
+</div>
+<div class="container-fluid is-margin-top-50">
 	<div class="row">
 		<div class="col s12 text-center">
 			<form action="{{ route('date-filter') }}" method="get">
@@ -270,6 +224,7 @@
 					<tr class="border-0">
 						<td class="border-0"><a href="{{ route('master-sale',[master.id]) }}" class="waves-effect waves-teal btn-flat
 						full-width text-center is-capitalize">{{ master.name }}</a></td>
+						{#<td class="border-0">{{ master.shifts_today }}</td>#}
 						<td class="border-0">{{ master.shifts }}</td>
 						<td class="border-0">{{ master.cur_hours|number_format(1) }}/{{ master.cur_plan }}</td>
 						<td class="border-0">{{ master.current_money }}</td>
@@ -289,8 +244,8 @@
 			</table>
 		</div>
 	</div>
-</div>#}
-{#<div class="container-fluid is-margin-top-50">
+</div>
+<div class="container-fluid is-margin-top-50">
 	<div class="row">
 		<div class="col s12">
 			<table class="highlight centered">
@@ -311,6 +266,7 @@
 						full-width text-center is-capitalize">{{ master.name }}</a></td>
 						<td class="border-0">{{ master.shifts_month }}</td>
 						<td class="border-0">{{ master.money }}</td>
+						{#	<td class="border-0">{{ master.feedback }}</td>#}
 						<td class="border-0"><a href="{{ route('delete-user',[master.id]) }}" class="btn waves-effect waves-light red"><i
 										class="material-icons"></i>Удалить</a></td>
 					</tr>
@@ -319,7 +275,7 @@
 			</table>
 		</div>
 	</div>
-</div>#}
+</div>
 {#<div class="container-fluid is-margin-top-50">
 	<div class="row">
 		<div class="col s12 text-center">

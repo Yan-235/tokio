@@ -29,10 +29,17 @@
 {% endif %}
 <div class="container-fluid">
 	<div class="row">
-		<div class="col s6 left-align">
-			<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
-									class="material-icons">arrow_back</i></a>
-		</div>
+		{% if admin ==1 %}
+			<div class="col s6 left-align">
+				<a href="{{ route('info-tables') }}" class="waves-effect waves-light btn"><i
+							class="material-icons">arrow_back</i></a>
+			</div>
+		{% else %}
+			<div class="col s6 left-align">
+				<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
+							class="material-icons">arrow_back</i></a>
+			</div>
+		{% endif %}
 		<div class="col s6 right-align">
 			<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
 						class="material-icons">exit_to_app</i></a>
@@ -94,11 +101,6 @@
 
 <div class="container is-margin-top-50">
 	<div class="row">
-		<div class="col s3">
-			<a href="{{ route('main') }}" class="waves-effect waves-light btn-large">Общая таблица</a>
-		</div>
-	</div>
-	<div class="row">
 		<div class="col s12">
 			<form action="{{ route('add-sale') }}" method="get">
 				<div class="input-field">
@@ -142,15 +144,6 @@
 					</section>
 					{% set j = j + 1 %}
 				{% endfor %}
-
-
-				{#
-			<div class="input-field col s2" required>
-
-
-				<input placeholder="Время" type="time" name="time" required>
-			</div>
-				#}
 				<div class="input-field col s4">
 					<select name="product" required>
 						<option value="" disabled selected>Услуга</option>
@@ -160,9 +153,6 @@
 					</select>
 				</div>
 				<div class="input-field col s2">
-					{#
-					<input placeholder="Длительность" id="duration" name="duration" type="time" required>
-					#}
 					<select name="duration" required>
 						<option value="" disabled selected>Длительность</option>
 						{% for dur in durs %}
@@ -188,11 +178,6 @@
 		<div class="col s7 center-align">
 			<h5>Запланированный доход за месяц: <b class="materialize-red-text">{{ totalmoney }}p</b></h5>
 		</div>
-		{#<div class="col s3 center-align">
-			 <h5>Заработок мастера: <b class="materialize-red-text tooltipped" data-position="bottom"
-									   data-tooltip="Зароботок мастера зависит от количество товара которое он продал - чем больше единиц товара вы продали тем больше Ваш процент от продаж!">{{ feedback }}
-					 p</b></h5>
-		 </div>#}
 	</div>
 
 	<div class="row">
@@ -258,7 +243,7 @@
 <script type="text/javascript" src="/js/materialize.min.js"></script>
 <script>
 
-	if(document.getElementById("exception1").value!='') {
+	if(document.getElementById("exception1").value != '') {
 		alert(document.getElementById("exception1").value);
 	}
 

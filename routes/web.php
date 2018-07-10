@@ -14,6 +14,7 @@
 Route::group(['middleware'=>['auth']], function () {
         // Uses first & second Middleware
     Route::get('/', 'TokioController@index')->name('main');
+    Route::get('/info-tables', 'TokioController@showInfoTables')->name('info-tables');
     Route::get('/master/{id}', 'TokioController@masterSale')->name('master-sale');
     Route::get('/delete/{id}', 'TokioController@deleteUser')->name('delete-user');
     Route::get('/add-master', 'TokioController@addMaster')->name('add-master');

@@ -14,7 +14,7 @@ use App\Products;
 
 class TokioController extends Controller {
 
-	public function index() {
+	public function showInfoTables() {
 		$new_filter_date = new DateTime('today');
 		$new_filter_date = $new_filter_date->format('Y-m-d');
 		$new_filter_date1 = new DateTime('first day of this month');
@@ -30,7 +30,7 @@ class TokioController extends Controller {
 			$new_filter_date1 = request('first day of this month');
 			$new_filter_date2 = request('last day of this month');
 			$new_filter_date = request('first day of this month');
-			return view('main', [
+			return view('info_tables', [
 				'masters' => $masters,
 				'products' => $products,
 				'salon' => $auth_user['salon'],
@@ -45,7 +45,7 @@ class TokioController extends Controller {
 			$new_filter_date1 = request('first day of this month');
 			$new_filter_date2 = request('last day of this month');
 			$new_filter_date = request('first day of this month');
-			return view('main', [
+			return view('info_tables', [
 				'masters' => $masters,
 				'products' => $products,
 				'salon' => $auth_user['salon'],
@@ -135,7 +135,7 @@ class TokioController extends Controller {
 			//	$master->feedback = $this->masterFeedback($master->count, $master->money);
 		}
 
-		return view('main', [
+		return view('info_tables', [
 			'masters' => $masters,
 			'products' => $products,
 			'salon' => $auth_user['salon'],
@@ -147,11 +147,108 @@ class TokioController extends Controller {
 		]);
 	}
 
-	public function changeSalon(){
+	public function index() {
+		$auth_user = Auth::user();
+		$products = Products::orderBy('id')->get();
+		$masters = Master::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
+		$new_filter_date = new DateTime('today');
+		$new_filter_date = $new_filter_date->format('Y-m-d');
+		$days_in_month = date("t");
+		$last_day_of_month = new DateTime('last day of this month');
+		$last_day_of_month = $last_day_of_month->format('Y-m-d');
+		$first_day_of_month = new DateTime('first day of this month');
+		$first_day_of_month = $first_day_of_month->format('Y-m-d');
+		$month_types = [];
+		foreach($masters as $master) {
+
+			$shifts_today = 0;
+			$shifts_ts = DB::table('shifts')->select('shift_type')->where('date', '=', $new_filter_date)->where('master_id', '=', $master->id)->get();
+			foreach($shifts_ts as $shifts_t) {
+				$shifts_today = $shifts_t;
+			}
+			if($shifts_today != null) {
+				if($shifts_today->shift_type == 1) {
+					$master->shifts_today = "1-ая смена";
+				}
+				elseif($shifts_today->shift_type == 2) {
+					$master->shifts_today = "2-ая смена";
+				}
+				elseif($shifts_today->shift_type == 3) {
+					$master->shifts_today = "целый день";
+				}
+			}
+			else {
+				$master->shifts_today = "нету смен";
+			}
+
+			$master->sales = count(DB::table('sales')
+				->where('users_user_id', '=', $master->id)
+				->where('date', '>=', $first_day_of_month)
+				->where('date', '<=', $last_day_of_month)
+				->get());
+
+			$shifts_today = 0;
+			$shifts_ts = DB::table('shifts')->select('shift_type')->where('date', '=', $new_filter_date)->where('master_id', '=', $master->id)->get();
+			foreach($shifts_ts as $shifts_t) {
+				$shifts_today = $shifts_t;
+			}
+			if($shifts_today != null) {
+				if($shifts_today->shift_type == 1) {
+					$master->shifts_today = "1-ая смена";
+				}
+				elseif($shifts_today->shift_type == 2) {
+					$master->shifts_today = "2-ая смена";
+				}
+				elseif($shifts_today->shift_type == 3) {
+					$master->shifts_today = "целый день";
+				}
+			}
+			else {
+				$master->shifts_today = "нету смен";
+			}
+			$shifts_of_month = DB::table('shifts')->select('shift_type', 'date')->where('date', '>=', $first_day_of_month)->where('date', '<=', $last_day_of_month)->where('master_id', '=', $master->id)->get();
+			$tmp_day = new DateTime($first_day_of_month);
+			//$tmp_day = $tmp_day->format('Y-m-d');
+			for($i = 0; $i <= $days_in_month - 1; $i++) {
+				//dd($tmp_day);
+				$checker = 0;
+				foreach($shifts_of_month as $shift_of_month) {
+					//dd($shift_of_month->date);
+					//	dd($tmp_day->format('Y-m-d'));
+					if(strtotime($shift_of_month->date) == strtotime($tmp_day->format('Y-m-d'))) {
+						$month_types[$i] = $shift_of_month->shift_type;
+						$checker = 1;
+					}
+				}
+				if($checker == 0) {
+					$month_types[$i] = 0;
+				}
+				if(strtotime($tmp_day->format('Y-m-d')) == strtotime($new_filter_date)) {
+					$month_types[$i] = $month_types[$i] + 10;
+				}
+				$tmp_day->modify('+1 day');
+				//	$tmp_day = $tmp_day->format('Y-m-d');
+				//dd($tmp_day);
+			}
+			$master->array = $month_types;
+			//	dd($master->array);
+		}
+		return view('main', [
+			'masters' => $masters,
+			'salon' => $auth_user['salon'],
+			'products' => $products,
+			'new_filter_date' => $new_filter_date,
+			'days_in_month' => $days_in_month,
+			'admin' => $auth_user['admin'],
+			//	'month_types' => $month_types
+		]);
+	}
+
+	public function changeSalon() {
 		$new_salon = request('new_salon');
 		$auth_user = Auth::user();
-		User::where('id','=', $auth_user->id)->update(['salon' => $new_salon]);
-		return redirect('/');
+		User::where('id', '=', $auth_user->id)->update(['salon' => $new_salon]);
+		return redirect('/info-tables');
 	}
 
 	public function dateFilter() {
@@ -170,7 +267,7 @@ class TokioController extends Controller {
 			$new_filter_date1 = request('first day of this month');
 			$new_filter_date2 = request('last day of this month');
 			$new_filter_date = request('first day of this month');
-			return view('main', [
+			return view('info_tables', [
 				'masters' => $masters,
 				'products' => $products,
 				'salon' => $auth_user['salon'],
@@ -186,7 +283,7 @@ class TokioController extends Controller {
 			$new_filter_date1 = request('first day of this month');
 			$new_filter_date2 = request('last day of this month');
 			$new_filter_date = request('first day of this month');
-			return view('main', [
+			return view('info_tables', [
 				'masters' => $masters,
 				'products' => $products,
 				'salon' => $auth_user['salon'],
@@ -265,7 +362,7 @@ class TokioController extends Controller {
 			$master->money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
 		}
 
-		return view('main', [
+		return view('info_tables', [
 			'masters' => $masters,
 			'products' => $products,
 			'salon' => $auth_user['salon'],
@@ -525,7 +622,8 @@ class TokioController extends Controller {
 			'times' => $times,
 			'range' => $user[0]['range'],
 			'plan' => $user[0]['plan'],
-			'durs' => $durs
+			'durs' => $durs,
+			'admin' => $auth_user['admin']
 		]);
 	}
 
@@ -639,7 +737,7 @@ class TokioController extends Controller {
 		$masters = Master::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 		$products = Products::orderBy('id')->get();
 		if($shift_type == null) {
-			return redirect('/');
+			return redirect('/info-tables');
 		}
 		$sale = DB::table('sales')->where('users_user_id', '=', $master_id)->where('date', '=', $new_filter_date)->first();
 		$check = DB::table('shifts')->where('master_id', '=', $master_id)->where('date', '=', $new_filter_date)->first();
@@ -828,7 +926,7 @@ class TokioController extends Controller {
 		$plan = request('plan');
 		Master::insert(['name' => $name, 'salon' => $user['salon'], 'range' => $range, 'plan' => $plan]);
 
-		return redirect('/');
+		return redirect('/info-tables');
 	}
 
 	public
@@ -841,7 +939,7 @@ class TokioController extends Controller {
 		//dd($id);
 		//Master::update(['name' => $name, 'salon' => $user['salon'], 'range' => $range, 'plan' => $plan]);
 		DB::table('masters')->where('id', '=', $id)->update(['name' => $name, 'range' => $range, 'plan' => $plan]);
-		return redirect('/');
+		return redirect('/info-tables');
 	}
 
 	public
@@ -849,7 +947,7 @@ class TokioController extends Controller {
 		$name = request('name');
 		Products::insert(['name' => $name]);
 
-		return redirect('/');
+		return redirect('/info-tables');
 	}
 
 	public
@@ -1206,7 +1304,7 @@ class TokioController extends Controller {
 		$id = request('id');
 		Master::where('id', '=', $id)->delete();
 		Sales::where('users_user_id', '=', $id)->delete();
-		return redirect('/');
+		return redirect('/info-tables');
 	}
 
 	public
