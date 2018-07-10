@@ -17,10 +17,17 @@
 <body>
 <div class="container-fluid is-margin-top-50">
 	<div class="row">
-		<div class="col s6 left-align">
-			<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
-						class="material-icons">arrow_back</i></a>
-		</div>
+		{% if admin == 1 %}
+			<div class="col s6 left-align">
+				<a href="{{ route('info-tables') }}" class="waves-effect waves-light btn"><i
+							class="material-icons">arrow_back</i></a>
+			</div>
+		{% else %}
+			<div class="col s6 left-align">
+				<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
+							class="material-icons">arrow_back</i></a>
+			</div>
+		{% endif %}
 		<div class="col s6 right-align">
 			<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
 						class="material-icons">exit_to_app</i></a>
@@ -53,7 +60,7 @@
 			<table class="highlight centered">
 				<thead>
 				<tr>
-					<th >Мастер</th>
+					<th>Мастер</th>
 					<th>Смена</th>
 					<th> 1</th>
 					<th> 2</th>

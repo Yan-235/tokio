@@ -719,6 +719,7 @@ class TokioController extends Controller {
 			'products' => $products,
 			'new_filter_date' => $new_filter_date,
 			'days_in_month' => $days_in_month,
+			'admin' => $auth_user['admin']
 			//	'month_types' => $month_types
 		]);
 	}
@@ -926,7 +927,7 @@ class TokioController extends Controller {
 		$plan = request('plan');
 		Master::insert(['name' => $name, 'salon' => $user['salon'], 'range' => $range, 'plan' => $plan]);
 
-		return redirect('/info-tables');
+		return redirect('/');
 	}
 
 	public
@@ -947,7 +948,7 @@ class TokioController extends Controller {
 		$name = request('name');
 		Products::insert(['name' => $name]);
 
-		return redirect('/info-tables');
+		return redirect('/');
 	}
 
 	public

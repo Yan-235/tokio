@@ -57,7 +57,7 @@
 		</div>
 	</div>
 </div>
-<div class="container is-margin-top-50">
+{#<div class="container is-margin-top-50">
 	<ul class="collapsible">
 		<li>
 			<div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить мастера или услугу</div>
@@ -86,10 +86,7 @@
 										<option value="2">2</option>
 										<option value="3">3</option>
 									</select>
-									{#
-										<input placeholder="Введите разряд мастера" id="range" name="range" type="number" min="1"
-											   class="validate" required>
-									#}
+
 								</div>
 								<div class="input-field col s12 text-center">
 									<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
@@ -126,57 +123,8 @@
 				</form>
 			</div>
 		</li>
-		{#	<li> мне нужно что бы на странице добавления смены была табдлица записи на прием какая записи таблица нп прием?покажи ее
-				<div class="collapsible-header"><i class="material-icons is-simple">add</i><i class="material-icons">assignment</i>Добавить
-					заказ
-				</div>
-				<div class="collapsible-body">
-					<div class="container-fluid">
-						<div class="row">
-							<div class="col s12">
-								<form action="{{ route('add-sale') }}" method="get">
-									<div class="input-field ">
-										<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-									</div>
-									<div class="input-field col s2">
-										<select name="id">
-											<option value="" disabled selected>Мастер</option>
-											{% for master in masters %}
-												<option value="{{ master.id }}">{{ master.name }}</option>
-											{% endfor %}
-										</select>
-									</div>
-									<div class="input-field col s2.5">
-										<input placeholder="Дата" type="date" name="date" required>
-									</div>
-									<div class="input-field col s2">
-										<input placeholder="Время" type="time" name="time" required>
-									</div>
-									<div class="input-field col s2" required>
-										<select name="product">
-											<option value="" disabled selected>Услуга</option>
-											{% for product in products %}
-												<option value="{{ product.id }}">{{ product.name }}</option>
-											{% endfor %}
-										</select>
-									</div>
-									<div class="input-field col s1.5">
-										<input placeholder="Длительность" name="duration" type="time" required>
-									</div>
-									<div class="input-field col s2">
-										<input placeholder="Цена" id="cost" name="cost" type="number" min="0" step="0.01" required>
-									</div>
-									<div class="input-field col s12 text-center">
-										<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</li>#}
 	</ul>
-</div>
+</div>#}
 <div class="container-fluid is-margin-top-50">
 	<div class="row">
 		<div class="col s12 text-center">
