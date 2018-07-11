@@ -28,6 +28,7 @@ Route::group(['middleware'=>['auth']], function () {
     Route::get('/shift-date-filter', 'TokioController@shiftDateFilter')->name('shift-date-filter');
     Route::get('/shifts', 'TokioController@showAddShift')->name('show-add-shift');
     Route::get('/add-shift', 'TokioController@addShift')->name('add-shift');
+    Route::get('/add-cost', 'TokioController@addCost')->name('add-cost');
 });
 
 

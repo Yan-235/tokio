@@ -142,7 +142,7 @@
 			<table class="highlight centered">
 				<thead>
 				<tr>
-					<th >Мастер</th>
+					<th>Мастер</th>
 					<th> 1</th>
 					<th> 2</th>
 					<th> 3</th>
@@ -189,32 +189,47 @@
 						<td class="border-0"><a href="{{ route('master-sale',[master.id]) }}" class="waves-effect waves-teal btn-flat
 												full-width text-center is-capitalize">{{ master.name }}</a></td>
 
+						{% set count = 0 %}
 						{% for type in master.array %}
 							{% if  type == 1 %}
-								<td class="black_border"><i
-											class="material-icons green_">looks_one</i></td>
+								{#
+												<td class="black_border"><i
+															class="material-icons green_">looks_one</i></td>
+											#}
+								<td class="black_border font_size_10px"><span>{{ master.starts[count]|date('H:i') }}<br>{{ master.ends[count]|date('H:i') }}</span></td>
+								{#
 							{% elseif type ==2 %}
-								<td class="black_border"><i
-											class="material-icons green_">looks_two</i></td>
+												<td class="black_border"><i
+															class="material-icons green_">looks_two</i></td>
+								<td class="black_border"><span>16<br>20</span></td>
+											#}
+
 							{% elseif type ==3 %}
 								<td class="black_border"><i
-											class="material-icons green_">looks_3</i></td>
+											class="material-icons green_">add_circle</i></td>
 							{% elseif type ==0 %}
 								<td class="black_border"><i
 											class="material-icons red_">remove_circle_outline</i></td>
 							{% elseif  type == 11 %}
-								<td class="black_border chosen"><i
-											class="material-icons green_">looks_one</i></td>
+								{#
+												<td class="black_border chosen"><i
+															class="material-icons green_">looks_one</i></td>
+											#}
+								<td class="black_border chosen font_size_10px"><span>{{ master.starts[count]|date('H:i') }}<br>{{ master.ends[count]|date('H:i') }}</span></td>
+								{#
 							{% elseif type == 12 %}
-								<td class="black_border chosen"><i
-											class="material-icons green_">looks_two</i></td>
+											<td class="black_border chosen"><i
+														class="material-icons green_">looks_two</i></td>
+								<td class="black_border chosen"><span>16<br>20</span></td>
+											#}
 							{% elseif type == 13 %}
 								<td class="black_border chosen"><i
-											class="material-icons green_">looks_3</i></td>
+											class="material-icons green_">add_circle</i></td>
 							{% elseif type == 10 %}
 								<td class="black_border  chosen"><i
 											class="material-icons red_">remove_circle_outline</i></td>
 							{% endif %}
+							{% set count = count + 1 %}
 						{% endfor %}
 					</tr>
 				{% endfor %}
@@ -386,11 +401,16 @@
 		</div>
 	</div>
 </div>#}
+<input id="exception1" value="{{ exception1 }}" hidden>
 
 <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="/js/materialize.min.js"></script>
 
 <script>
+	if(document.getElementById("exception1").value != '') {
+		alert(document.getElementById("exception1").value);
+	}
+
 	$(document).ready(function() {
 		$('select').formSelect();
 	});

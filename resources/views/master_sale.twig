@@ -108,7 +108,7 @@
 				</div>
 				<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
 				<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-				<div class="input-field col s2">
+				<div class="input-field col s3">
 					<select name="date" id="date" required>
 						<option value="" disabled selected>Дата</option>
 						{% set i = 0 %}
@@ -122,8 +122,11 @@
 					#}
 				</div>
 				{% set j=1000 %}
+				{#
+					{% set k=10000 %}
+				#}
 				<section id="dt">
-					<div class="input-field col s2">
+					<div class="input-field col s3">
 						<select name="time">
 							<option value="" disabled selected>Время</option>
 						</select>
@@ -131,7 +134,10 @@
 				</section>
 				{% for time in times %}
 					<section id="{{ j }}" hidden>
-						<div class="input-field col s2">
+						<div class="input-field col s3">
+							{#
+							<select id="{{ k }}" name="time">
+							#}
 							<select name="time">
 								<option value="" disabled selected>Время</option>
 								{% set sr = p.value %}
@@ -143,6 +149,9 @@
 						</div>
 					</section>
 					{% set j = j + 1 %}
+					{#
+						{% set k = k + 1 %}
+					#}
 				{% endfor %}
 				<div class="input-field col s4">
 					<select name="product" required>
@@ -160,9 +169,7 @@
 						{% endfor %}
 					</select>
 				</div>
-				<div class="input-field col s2">
-					<input placeholder="Цена" id="cost" name="cost" type="number" min="0" step="0.01" required>
-				</div>
+
 				<div class="input-field col s12 text-center">
 					<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
 				</div>
@@ -190,6 +197,7 @@
 					<th>Услуга</th>
 					<th>Длительность</th>
 					<th>Стоимость</th>
+					<th>Цена</th>
 					<th></th>
 				</tr>
 				</thead>
@@ -202,6 +210,19 @@
 						<td>{{ sale.name }}</td>
 						<td>{{ sale.duration|date('H:i') }}</td>
 						<td>{{ sale.cost }}</td>
+						{% if sale.cost == null %}
+							<td>
+								<form action="{{ route('add-cost') }}">
+									<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+									<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+									<input name="sale_id" value="{{ sale.id }}" hidden>
+									<input placeholder="Цена" value="{{ sale.cost }}" id="cost" name="cost" type="number" min="0" step="0.01" required>
+									<button class="btn waves-effect waves-light green">Добавить</button>
+								</form>
+							</td>
+						{% else %}
+							<td>{{ sale.cost }}</td>
+						{% endif %}
 						<td>
 							<form action="{{ route('delete-sale') }}">
 								<input name="sale_id" value="{{ sale.id }}" hidden>
@@ -272,12 +293,14 @@
 		last = new Number(parseInt(count, 10));
 		last = last + 999;
 		cur = new Number(1000);
+		//	curreq = new Number(10000);
 		//	document.getElementsByName("time").setAttribute("required","false");
 		while(cur <= last) {
 
-			document.getElementById(cur.toString() + '').required = false;
+			//document.getElementById(curreq.toString() + '').removeAttribute('required');
 			document.getElementById(cur.toString() + '').style.display = 'none';
 			cur = cur + 1;
+			//	curreq = curreq + 1;
 		}
 
 	}
@@ -286,10 +309,10 @@
 		num = new Number(parseInt(ch, 10));
 		//	document.getElementById(num.toString() + '').required = true;
 		num = num + 1000;
-
+		//	numreq = num + 10000;
 		document.getElementById('dt').style.display = 'none';
 		document.getElementById(num.toString() + '').style.display = 'block';
-		document.getElementById(num.toString() + '').required = true;
+		//document.getElementById(numreq.toString() + '').setAttribute('required', '');
 
 	}
 </script>

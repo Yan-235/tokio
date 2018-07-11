@@ -48,15 +48,24 @@
 	background-color: silver;
 }
 
-.green_{
+.green_ {
 	color: green;
 }
 
-.red_{
+.red_ {
 	color: red;
 }
 
-.black_border{
+.black_border {
 	border-left: 1px solid black;
 	border-right: 1px solid black;
+}
+
+.padding_left_right_50px {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+
+.font_size_10px{
+	font-size: 10px;
 }

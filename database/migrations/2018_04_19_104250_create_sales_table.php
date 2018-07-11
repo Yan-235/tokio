@@ -17,7 +17,7 @@ class CreateSalesTable extends Migration
             $table->increments('id');
 	        $table->string('users_user_id');
 	        $table->date('date');
-	        $table->string('cost');
+	        $table->string('cost')->nullable();
 	        $table->string('product');
 	        $table->time('time');
 	        $table->time('duration');

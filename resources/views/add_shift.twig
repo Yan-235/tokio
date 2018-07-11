@@ -61,7 +61,7 @@
 				<thead>
 				<tr>
 					<th>Мастер</th>
-					<th>Смена</th>
+					<th class="padding_left_right_50px"> Смена </th>
 					<th> 1</th>
 					<th> 2</th>
 					<th> 3</th>
@@ -105,7 +105,8 @@
 				<tbody>
 				{% for master in masters %}
 					<tr class="border-0">
-						<td class="border-0">{{ master.name }}</td>
+						<td class="border-0"><a href="{{ route('master-sale',[master.id]) }}" class="waves-effect waves-teal btn-flat
+												full-width text-center is-capitalize">{{ master.name }}</a></td>
 						<td class="border-0">
 							<form method="get" action="{{ route('add-shift') }}">
 								{{ csrf_field() }}
@@ -115,48 +116,73 @@
 									<select name="shift_type" disabled>
 										<option value="" disabled selected>{{ master.shifts_today }}</option>
 										<option value=0>нету смен</option>
-										<option value=1>1-ая смена</option>
-										<option value=2>2-ая смена</option>
+										<option value=1>1 смена</option>
 										<option value=3>целый день</option>
 									</select>
 								{% else %}
 									<select name="shift_type">
 										<option value="" disabled selected>{{ master.shifts_today }}</option>
 										<option value=0>нету смен</option>
-										<option value=1>1-ая смена</option>
-										<option value=2>2-ая смена</option>
+										<option value=1>1 смена</option>
 										<option value=3>целый день</option>
 									</select>
+										<select name="start_shift">
+											<option value="" disabled selected>Начало смены</option>
+											{% for start_time in start_times %}
+												<option value="{{ start_time }}">{{ start_time }}</option>
+											{% endfor %}
+										</select>
+										<select name="end_shift">
+											<option value="" disabled selected>Конец смены</option>
+											{% for end_time in end_times %}
+												<option value="{{ end_time }}">{{ end_time }}</option>
+											{% endfor %}
+										</select>
 								{% endif %}
 								<button type="submit" class="waves-effect waves-light btn" href="#">Сохранить</button>
 							</form>
 						</td>
+							{% set count = 0 %}
 						{% for type in master.array %}
 							{% if  type == 1 %}
-								<td class="black_border"><i
-											class="material-icons green_">looks_one</i></td>
+								{#
+												<td class="black_border"><i
+															class="material-icons green_">looks_one</i></td>
+											#}
+								<td class="black_border font_size_10px"><span>{{ master.starts[count]|date('H:i') }}<br>{{ master.ends[count]|date('H:i') }}</span></td>
+								{#
 							{% elseif type ==2 %}
-								<td class="black_border"><i
-											class="material-icons green_">looks_two</i></td>
+												<td class="black_border"><i
+															class="material-icons green_">looks_two</i></td>
+								<td class="black_border"><span>16<br>20</span></td>
+											#}
+
 							{% elseif type ==3 %}
 								<td class="black_border"><i
-											class="material-icons green_">looks_3</i></td>
+											class="material-icons green_">add_circle</i></td>
 							{% elseif type ==0 %}
 								<td class="black_border"><i
 											class="material-icons red_">remove_circle_outline</i></td>
 							{% elseif  type == 11 %}
-								<td class="black_border chosen"><i
-											class="material-icons green_">looks_one</i></td>
+								{#
+												<td class="black_border chosen"><i
+															class="material-icons green_">looks_one</i></td>
+											#}
+								<td class="black_border chosen font_size_10px"><span>{{ master.starts[count]|date('H:i') }}<br>{{ master.ends[count]|date('H:i') }}</span></td>
+								{#
 							{% elseif type == 12 %}
-								<td class="black_border chosen"><i
-											class="material-icons green_">looks_two</i></td>
+											<td class="black_border chosen"><i
+														class="material-icons green_">looks_two</i></td>
+								<td class="black_border chosen"><span>16<br>20</span></td>
+											#}
 							{% elseif type == 13 %}
 								<td class="black_border chosen"><i
-											class="material-icons green_">looks_3</i></td>
+											class="material-icons green_">add_circle</i></td>
 							{% elseif type == 10 %}
 								<td class="black_border  chosen"><i
 											class="material-icons red_">remove_circle_outline</i></td>
 							{% endif %}
+							{% set count = count + 1 %}
 						{% endfor %}
 					</tr>
 				{% endfor %}
