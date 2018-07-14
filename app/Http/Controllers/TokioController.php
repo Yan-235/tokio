@@ -527,7 +527,7 @@ class TokioController extends Controller {
 		$last_day_of_this_month = new DateTime('last day of this month');
 		$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
 		$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
-			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'desc')->get();
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
 		$products = Products::orderBy('id')->get();
 		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 	//	dd($shifts);
@@ -1832,7 +1832,7 @@ class TokioController extends Controller {
 			$last_day_of_this_month = new DateTime('last day of this month');
 			$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
 			$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
-				->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'asc')->orderBy('time', 'asc')->get();
+				->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
 			$products = Products::orderBy('id')->get();
 			$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 			$orders = Shift::where('shifts.date', '>=', $this_day)
@@ -1850,19 +1850,19 @@ class TokioController extends Controller {
 			//$times[0] = $shift_type1;
 			//dd($times[0]);
 			$i = 0;
-			//	$tmp_array = [];
+			$tmp_array = [];
 			foreach($shifts as $shift) {
 				$check = 0;
-				foreach($orders as $order) {
-					if($shift->id == $order->id) {
+			//	foreach($orders as $order) {
+				//	if($shift->id == $order->id) {
 						$check = 1;
-						if($order->shift_type == 1) {
+						if($shift->shift_type == 1) {
 							$tmp_array = $shift_type3;
 							foreach($tmp_array as $tmp_ar) {
-								if(strtotime($order->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+								if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
 									unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 								}
-								if(strtotime($order->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+								if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
 									unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 								}
 							}
@@ -1870,14 +1870,14 @@ class TokioController extends Controller {
 						//					elseif($order->shift_type == 2) {
 						//						$tmp_array = $shift_type2;
 						//					}
-						elseif($order->shift_type == 3) {
+						elseif($shift->shift_type == 3) {
 							$tmp_array = $shift_type3;
 						}
 
 						$times[$i] = $tmp_array;
 						$i = $i + 1;
-					}
-				}
+				//	}
+				//}
 				if($check == 0) {
 					if($shift->shift_type == 1) {
 						$tmp_array = $shift_type3;
@@ -2025,7 +2025,7 @@ class TokioController extends Controller {
 			$last_day_of_this_month = new DateTime('last day of this month');
 			$total_money = $this->currentTotalMoney($master_id, $last_day_of_this_month, $first_day_of_this_month);
 			$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
-				->where('users_user_id', '=', $master_id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'asc')->orderBy('time', 'asc')->get();
+				->where('users_user_id', '=', $master_id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
 			$products = Products::orderBy('id')->get();
 			$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 			$orders = Shift::where('shifts.date', '>=', $this_day)
@@ -2047,17 +2047,17 @@ class TokioController extends Controller {
 			$tmp_array = [];
 			foreach($shifts as $shift) {
 				$check = 0;
-				foreach($orders as $order) {
-					if($shift->id == $order->id) {
+			//	foreach($orders as $order) {
+			//		if($shift->id == $order->id) {
 						//	dd($order);
 						$check = 1;
-						if($order->shift_type == 1) {
+						if($shift->shift_type == 1) {
 							$tmp_array = $shift_type3;
 							foreach($tmp_array as $tmp_ar) {
-								if(strtotime($order->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+								if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
 									unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 								}
-								if(strtotime($order->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+								if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
 									unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 								}
 								//	dd($tmp_array);
@@ -2066,14 +2066,14 @@ class TokioController extends Controller {
 						//					elseif($order->shift_type == 2) {
 						//						$tmp_array = $shift_type2;
 						//					}
-						elseif($order->shift_type == 3) {
+						elseif($shift->shift_type == 3) {
 							$tmp_array = $shift_type3;
 						}
 
 						$times[$i] = $tmp_array;
 						$i = $i + 1;
-					}
-				}
+				//	}
+				//}
 				if($check == 0) {
 					if($shift->shift_type == 1) {
 						$tmp_array = $shift_type3;
