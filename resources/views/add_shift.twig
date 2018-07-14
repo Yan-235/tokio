@@ -56,12 +56,12 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col col s12">
+		<div class=" col s12">
 			<table class="highlight centered">
 				<thead>
 				<tr>
-					<th>Мастер</th>
-					<th class="padding_left_right_50px"> Смена </th>
+					<th class="padding_left_right_50px">Мастер</th>
+					<th class="padding_left_right_50px"> Смена</th>
 					<th> 1</th>
 					<th> 2</th>
 					<th> 3</th>
@@ -105,7 +105,7 @@
 				<tbody>
 				{% for master in masters %}
 					<tr class="border-0">
-						<td class="border-0"><a href="{{ route('master-sale',[master.id]) }}" class="waves-effect waves-teal btn-flat
+						<td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
 												full-width text-center is-capitalize">{{ master.name }}</a></td>
 						<td class="border-0">
 							<form method="get" action="{{ route('add-shift') }}">
@@ -126,23 +126,23 @@
 										<option value=1>1 смена</option>
 										<option value=3>целый день</option>
 									</select>
-										<select name="start_shift">
-											<option value="" disabled selected>Начало смены</option>
-											{% for start_time in start_times %}
-												<option value="{{ start_time }}">{{ start_time }}</option>
-											{% endfor %}
-										</select>
-										<select name="end_shift">
-											<option value="" disabled selected>Конец смены</option>
-											{% for end_time in end_times %}
-												<option value="{{ end_time }}">{{ end_time }}</option>
-											{% endfor %}
-										</select>
+									<select name="start_shift">
+										<option value="" disabled selected>Начало смены</option>
+										{% for start_time in start_times %}
+											<option value="{{ start_time }}">{{ start_time }}</option>
+										{% endfor %}
+									</select>
+									<select name="end_shift">
+										<option value="" disabled selected>Конец смены</option>
+										{% for end_time in end_times %}
+											<option value="{{ end_time }}">{{ end_time }}</option>
+										{% endfor %}
+									</select>
 								{% endif %}
 								<button type="submit" class="waves-effect waves-light btn" href="#">Сохранить</button>
 							</form>
 						</td>
-							{% set count = 0 %}
+						{% set count = 0 %}
 						{% for type in master.array %}
 							{% if  type == 1 %}
 								{#
@@ -159,10 +159,10 @@
 
 							{% elseif type ==3 %}
 								<td class="black_border"><i
-											class="material-icons green_">add_circle</i></td>
+											class="material-icons green_" style="font-size: 20px;">add_circle</i></td>
 							{% elseif type ==0 %}
 								<td class="black_border"><i
-											class="material-icons red_">remove_circle_outline</i></td>
+											class="material-icons red_" style="font-size: 20px;">remove_circle_outline</i></td>
 							{% elseif  type == 11 %}
 								{#
 												<td class="black_border chosen"><i
@@ -177,10 +177,10 @@
 											#}
 							{% elseif type == 13 %}
 								<td class="black_border chosen"><i
-											class="material-icons green_">add_circle</i></td>
+											class="material-icons green_" style="font-size: 20px;">add_circle</i></td>
 							{% elseif type == 10 %}
 								<td class="black_border  chosen"><i
-											class="material-icons red_">remove_circle_outline</i></td>
+											class="material-icons red_" style="font-size: 20px;">remove_circle_outline</i></td>
 							{% endif %}
 							{% set count = count + 1 %}
 						{% endfor %}

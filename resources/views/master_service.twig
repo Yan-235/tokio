@@ -102,11 +102,11 @@
 <div class="container is-margin-top-50">
 	<div class="row">
 		<div class="col s12">
-			<form action="{{ route('add-sale') }}" method="get">
+			<form action="{{ route('add-service') }}" method="get">
 				<div class="input-field">
 					<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 				</div>
-				<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+				<input value="{{ id }}" placeholder="ID" id="master_id" name="master_id" hidden>
 				<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
 				<div class="input-field col s3">
 					<select name="date" id="date" required>
@@ -177,7 +177,7 @@
 		</div>
 	</div>
 </div>
-<div class="container">
+<div class="container-fluid">
 	<div class="row">
 		<div class="col s3 center-align">
 			<h5>{{ name }}</h5>
@@ -196,36 +196,54 @@
 					<th>Время</th>
 					<th>Услуга</th>
 					<th>Длительность</th>
-					<th>Стоимость</th>
 					<th>Цена</th>
+					<th>Скидка %</th>
+					<th>Примечание</th>
 					<th></th>
 				</tr>
 				</thead>
 
 				<tbody>
-				{% for sale in sales %}
+				{% for service in services %}
 					<tr>
-						<td>{{ sale.date| date("d/m/Y") }}</td>
-						<td>{{ sale.time|date('H:i') }}</td>
-						<td>{{ sale.name }}</td>
-						<td>{{ sale.duration|date('H:i') }}</td>
-						<td>{{ sale.cost }}</td>
-						{% if sale.cost == null %}
+						<td>{{ service.date| date("d/m/Y") }}</td>
+						<td>{{ service.time|date('H:i') }}</td>
+						<td>{{ service.name }}</td>
+						<td>{{ service.duration|date('H:i') }}</td>
+						{% if service.cost == null %}
 							<td>
 								<form action="{{ route('add-cost') }}">
 									<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
 									<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-									<input name="sale_id" value="{{ sale.id }}" hidden>
-									<input placeholder="Цена" value="{{ sale.cost }}" id="cost" name="cost" type="number" min="0" step="0.01" required>
+									<input name="service_id" value="{{ service.id }}" hidden>
+									<input placeholder="Цена" value="{{ service.cost }}" id="cost" name="cost" type="number" min="0" step="0.01" required>
 									<button class="btn waves-effect waves-light green">Добавить</button>
 								</form>
 							</td>
 						{% else %}
-							<td>{{ sale.cost }}</td>
+								<td>{{ service.cost|number_format(2) }}</td>
 						{% endif %}
 						<td>
-							<form action="{{ route('delete-sale') }}">
-								<input name="sale_id" value="{{ sale.id }}" hidden>
+							<form action="{{ route('add-discount') }}">
+								<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+								<input name="service_id" value="{{ service.id }}" hidden>
+								<input placeholder="Скидка" value="{{ service.discount }}" name="discount" type="number" min="0" max="99" step="1">
+								<button class="btn waves-effect waves-light green">Добавить</button>
+							</form>
+						</td>
+						<td>
+							<form action="{{ route('add-text') }}">
+								<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+								<input name="service_id" value="{{ service.id }}" hidden>
+								<input value="{{ service.text }}" name="text" type="text" maxlength="255">
+								<button class="btn waves-effect waves-light green">Добавить</button>
+							</form>
+						</td>
+						<td>
+							<form action="{{ route('delete-service') }}">
+								<input name="service_id" value="{{ service.id }}" hidden>
 								<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
 								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
 								<button class="btn waves-effect waves-light red">Удалить</button>
@@ -248,11 +266,11 @@
 					<th>Количество</th>
 				</tr>
 				</thead>
-				{% for service in services %}
+				{% for service1 in services1 %}
 					<tbody>
-					{#<td>{{ service.name }}</td>#}
-					<td>{{ service.name }}</td>
-					<td>{{ service.total }}</td>
+					{#<td>{{ service1.name }}</td>#}
+					<td>{{ service1.name }}</td>
+					<td>{{ service1.total }}</td>
 					</tbody>
 				{% endfor %}
 			</table>

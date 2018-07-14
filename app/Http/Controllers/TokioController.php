@@ -6,11 +6,12 @@ use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Auth;
 use DateTime;
-use App\Sales;
+use App\Services;
 use App\User;
 use App\Shift;
 use App\Master;
 use App\Products;
+use App\Client;
 
 class TokioController extends Controller {
 
@@ -81,12 +82,11 @@ class TokioController extends Controller {
 			else {
 				$master->shifts_today = "нету смен";
 			}
-			$master->sales = count(DB::table('sales')
+			$master->services = count(DB::table('services')
 				->where('users_user_id', '=', $master->id)
 				->where('date', '>=', $first_day_of_month)
 				->where('date', '<=', $last_day_of_month)
 				->get());
-			//dd($master->sales);
 			$days_with_shifts_of_master = DB::table('shifts')->where('date', '<=', $new_filter_date2)->where('date', '>=', $new_filter_date1)->where('master_id', '=', $master->id)->get();
 			$master->shifts = 0;
 			foreach($days_with_shifts_of_master as $day_with_shifts_of_master) {
@@ -112,7 +112,7 @@ class TokioController extends Controller {
 			//dd($master->shifts_today);
 			$master->cur_plan = $master->plan * $master->shifts;
 
-			$master->cur_hours = Sales::where('users_user_id', '=', $master->id)
+			$master->cur_hours = Services::where('users_user_id', '=', $master->id)
 					->where('date', '>=', $new_filter_date1)
 					->where('date', '<=', $new_filter_date2)
 					->sum('duration') / 6000;
@@ -183,7 +183,7 @@ class TokioController extends Controller {
 				$master->shifts_today = "нету смен";
 			}
 
-			$master->sales = count(DB::table('sales')
+			$master->services = count(DB::table('services')
 				->where('users_user_id', '=', $master->id)
 				->where('date', '>=', $first_day_of_month)
 				->where('date', '<=', $last_day_of_month)
@@ -328,7 +328,7 @@ class TokioController extends Controller {
 				$master->shifts_today = "нету смен";
 			}
 
-			$master->sales = count(DB::table('sales')
+			$master->services = count(DB::table('services')
 				->where('users_user_id', '=', $master->id)
 				->where('date', '>=', $new_filter_date1)
 				->where('date', '<=', $new_filter_date2)
@@ -358,7 +358,7 @@ class TokioController extends Controller {
 
 			$master->cur_plan = $master->plan * $master->shifts;
 
-			$master->cur_hours = Sales::where('users_user_id', '=', $master->id)
+			$master->cur_hours = Services::where('users_user_id', '=', $master->id)
 					->where('date', '>=', $new_filter_date1)
 					->where('date', '<=', $new_filter_date2)
 					->sum('duration') / 6000;
@@ -427,7 +427,7 @@ class TokioController extends Controller {
 				$master->shifts_today = "нету смен";
 			}
 
-			$master->sales = count(DB::table('sales')
+			$master->services = count(DB::table('services')
 				->where('users_user_id', '=', $master->id)
 				->where('date', '>=', $first_day_of_month)
 				->where('date', '<=', $last_day_of_month)
@@ -515,7 +515,7 @@ class TokioController extends Controller {
 		]);
 	}
 
-	public function masterSale() {
+	public function masterService() {
 
 		$auth_user = Auth::user();
 		$id = request('id');
@@ -526,15 +526,15 @@ class TokioController extends Controller {
 		//	dd($first_day_of_this_month);
 		$last_day_of_this_month = new DateTime('last day of this month');
 		$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
-		$sales = DB::table('sales')->join('products', 'products.id', '=', 'sales.product')
-			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'products.name')->orderBy('date', 'asc')->orderBy('time', 'asc')->get();
+		$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'desc')->get();
 		$products = Products::orderBy('id')->get();
 		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 		$orders = Shift::where('shifts.date', '>=', $this_day)
 			->where('shifts.master_id', '=', $id)
-			->leftJoin('sales', 'sales.date', '=', 'shifts.date')
-			->where('sales.users_user_id', '=', $id)
-			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'sales.time', 'sales.duration', 'shifts.start_shift', 'shifts.end_shift')
+			->leftJoin('services', 'services.date', '=', 'shifts.date')
+			->where('services.users_user_id', '=', $id)
+			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
 			->get();
 		//$orders = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->get();
 		//dd($shifts);
@@ -625,32 +625,32 @@ class TokioController extends Controller {
 			$i = $i + 1;
 			//dd($times);
 		}
-		$services = DB::table('sales')
+		$services1 = DB::table('services')
 			->where('users_user_id', '=', $id)
 			->where('date', '>=', $first_day_of_this_month)
 			->where('date', '<=', $last_day_of_this_month)
-			->join('products', 'products.id', '=', 'sales.product')
-			->select('sales.product', DB::raw('count(*) as total'))
-			->groupBy('sales.product')
+			->join('products', 'products.id', '=', 'services.product')
+			->select('services.product', DB::raw('count(*) as total'))
+			->groupBy('services.product')
 			->get();
-		foreach($services as $service) {
+		foreach($services1 as $service1) {
 			foreach($products as $product) {
-				if($service->product == $product->id) {
-					$service->name = $product->name;
+				if($service1->product == $product->id) {
+					$service1->name = $product->name;
 				}
 			}
 		}
 		//dd($times[2]);
 		//	dd($services);
 		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
-		return view('master_sale', [
+		return view('master_service', [
 			'id' => $id,
 			'name' => $user[0]['name'],
 			'totalmoney' => $total_money,
-			'sales' => $sales,
+			'services' => $services,
 			'products' => $products,
 			'salon' => $auth_user['salon'],
-			'services' => $services,
+			'services1' => $services1,
 			'shifts' => $shifts,
 			'times' => $times,
 			'range' => $user[0]['range'],
@@ -698,7 +698,7 @@ class TokioController extends Controller {
 				$master->shifts_today = "нету смен";
 			}
 
-			$master->sales = count(DB::table('sales')
+			$master->services = count(DB::table('services')
 				->where('users_user_id', '=', $master->id)
 				->where('date', '>=', $first_day_of_month)
 				->where('date', '<=', $last_day_of_month)
@@ -826,7 +826,7 @@ class TokioController extends Controller {
 					$master->shifts_today = "нету смен";
 				}
 
-				$master->sales = count(DB::table('sales')
+				$master->services = count(DB::table('services')
 					->where('users_user_id', '=', $master->id)
 					->where('date', '>=', $first_day_of_month)
 					->where('date', '<=', $last_day_of_month)
@@ -928,7 +928,7 @@ class TokioController extends Controller {
 					$master->shifts_today = "нету смен";
 				}
 
-				$master->sales = count(DB::table('sales')
+				$master->services = count(DB::table('services')
 					->where('users_user_id', '=', $master->id)
 					->where('date', '>=', $first_day_of_month)
 					->where('date', '<=', $last_day_of_month)
@@ -1030,7 +1030,7 @@ class TokioController extends Controller {
 					$master->shifts_today = "нету смен";
 				}
 
-				$master->sales = count(DB::table('sales')
+				$master->services = count(DB::table('services')
 					->where('users_user_id', '=', $master->id)
 					->where('date', '>=', $first_day_of_month)
 					->where('date', '<=', $last_day_of_month)
@@ -1132,7 +1132,7 @@ class TokioController extends Controller {
 					$master->shifts_today = "нету смен";
 				}
 
-				$master->sales = count(DB::table('sales')
+				$master->services = count(DB::table('services')
 					->where('users_user_id', '=', $master->id)
 					->where('date', '>=', $first_day_of_month)
 					->where('date', '<=', $last_day_of_month)
@@ -1195,13 +1195,13 @@ class TokioController extends Controller {
 				'new_filter_date' => $new_filter_date,
 				'days_in_month' => $days_in_month,
 				'admin' => $auth_user['admin'],
-				'exception1' => 'Некорректный ввод врменных рамок смены.'
+				'exception1' => 'Некорректный ввод временных рамок смены.'
 			]);
 		}
-		$sale = DB::table('sales')->where('users_user_id', '=', $master_id)->where('date', '=', $new_filter_date)->first();
+		$service = DB::table('services')->where('users_user_id', '=', $master_id)->where('date', '=', $new_filter_date)->first();
 		$check = DB::table('shifts')->where('master_id', '=', $master_id)->where('date', '=', $new_filter_date)->first();
 		if($shift_type == 0) {
-			if(!is_null($sale)) {
+			if(!is_null($service)) {
 				return view('add_shift', [
 					'masters' => $masters,
 					'products' => $products,
@@ -1216,11 +1216,11 @@ class TokioController extends Controller {
 			}
 		}
 		elseif($shift_type == 1) {
-			$this_sales = Sales::where('users_user_id', '=', $master_id)->where('date', '=', $new_filter_date)->get();
-			if(!is_null($sale)) {
-				foreach($this_sales as $this_sale) {
-					$start = strtotime($this_sale->time) - strtotime("00:00:00");
-					$end = strtotime($this_sale->time) - strtotime("00:00:00") + strtotime($this_sale->duration) - strtotime("00:00:00");
+			$this_services = Services::where('users_user_id', '=', $master_id)->where('date', '=', $new_filter_date)->get();
+			if(!is_null($service)) {
+				foreach($this_services as $this_service) {
+					$start = strtotime($this_service->time) - strtotime("00:00:00");
+					$end = strtotime($this_service->time) - strtotime("00:00:00") + strtotime($this_service->duration) - strtotime("00:00:00");
 
 					if($start >= $shift_end) {
 						return view('add_shift', [
@@ -1387,8 +1387,7 @@ class TokioController extends Controller {
 		return redirect('/');
 	}
 
-	public
-	function updateMaster() {
+	public function updateMaster() {
 		$user = Auth::user();
 		$id = request('id');
 		$name = request('name');
@@ -1400,20 +1399,20 @@ class TokioController extends Controller {
 		return redirect('/info-tables');
 	}
 
-	public
-	function addService() {
-		$name = request('name');
-		Products::insert(['name' => $name]);
+	public function clientDeleteService(Request $request) {
+		$client_id = request('client_id');
+		$service_id = request('service_id');
 
-		return redirect('/');
+		Services::where('id', '=', $service_id)->delete();
+
+		return redirect('/client/' . $client_id);
 	}
 
-	public
-	function deleteSale(Request $request) {
+	public function deleteService(Request $request) {
 		$id = request('id');
-		$sale_id = request('sale_id');
+		$service_id = request('service_id');
 
-		Sales::where('id', '=', $sale_id)->delete();
+		Services::where('id', '=', $service_id)->delete();
 		$master = request('master_page');
 		if($master == 1) {
 			return redirect('/master/' . $id);
@@ -1425,9 +1424,9 @@ class TokioController extends Controller {
 
 	public function addCost() {
 		$id = request('id');
-		$sale_id = request('sale_id');
+		$service_id = request('service_id');
 		$cost = request('cost');
-		Sales::where('id', '=', $sale_id)->update(['cost' => $cost]);
+		Services::where('id', '=', $service_id)->update(['cost' => $cost]);
 		$master = request('master_page');
 		if($master == 1) {
 			return redirect('/master/' . $id);
@@ -1437,9 +1436,271 @@ class TokioController extends Controller {
 		}
 	}
 
-	public function addSale(Request $request) {
-
+	public function addDiscount() {
 		$id = request('id');
+		$service_id = request('service_id');
+		$service = Services::where('id', '=', $service_id)->first();
+		$discount = request('discount');
+		if($service->discount !== null) {
+			//	dd('est');
+			$service->cost = $service->cost / (1 - $service->discount / 100);
+		}
+		$cost = $service->cost * (1 - $discount / 100);
+		Services::where('id', '=', $service_id)->update(['cost' => $cost, 'discount' => $discount]);
+		$master = request('master_page');
+		if($master == 1) {
+			return redirect('/master/' . $id);
+		}
+		else {
+			return redirect('/');
+		}
+	}
+
+	public function addText() {
+		$id = request('id');
+		$service_id = request('service_id');
+		$text = request('text');
+		Services::where('id', '=', $service_id)->update(['text' => $text]);
+		$master = request('master_page');
+		if($master == 1) {
+			return redirect('/master/' . $id);
+		}
+		else {
+			return redirect('/');
+		}
+	}
+
+	public function clientAddCost() {
+		$client_id = request('client_id');
+		$service_id = request('service_id');
+		$cost = request('cost');
+		Services::where('id', '=', $service_id)->update(['cost' => $cost]);
+
+		return redirect('/client/' . $client_id);
+	}
+
+	public function clientAddDiscount() {
+		$client_id = request('client_id');
+		$service_id = request('service_id');
+		$service = Services::where('id', '=', $service_id)->first();
+		$discount = request('discount');
+		if($service->discount !== null) {
+			//	dd('est');
+			$service->cost = $service->cost / (1 - $service->discount / 100);
+		}
+		$cost = $service->cost * (1 - $discount / 100);
+		Services::where('id', '=', $service_id)->update(['cost' => $cost, 'discount' => $discount]);
+		return redirect('/client/' . $client_id);
+	}
+
+	public function clientAddText() {
+		$client_id = request('client_id');
+		$service_id = request('service_id');
+		$text = request('text');
+		Services::where('id', '=', $service_id)->update(['text' => $text]);
+
+		return redirect('/client/' . $client_id);
+	}
+
+	public function chooseMaster() {
+		$master_id = request('master_id');
+		$master_name = Master::where('id', '=', $master_id)->select('name')->first();
+		$id = request('id');
+		$client = Client::where('id', '=', $id)->first();
+		//	dd($client);
+		$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+		$auth_user = Auth::user();
+		$masters = Master::where('salon', '=', $auth_user['salon'])->get();
+		$this_day = new DateTime('today');
+		$shifts = [];
+		$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		$client_services = Services::where('client_id', '=', $id)
+			->leftJoin('masters', 'masters.id', '=', 'services.users_user_id')
+			->leftJoin('products', 'services.product', '=', 'products.id')
+			->select('services.*', 'masters.name', 'products.name as product_name')
+			->orderBy('services.date', 'desc')
+			->get();
+		//	dd($client_services);
+		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+		$products = Products::orderBy('id')->get();
+		return view('client_card', [
+			'admin' => $auth_user['admin'],
+			'salon' => $auth_user['salon'],
+			'client' => $client,
+			'client_services' => $client_services,
+			'master_id' => $master_id,
+			'master_name' => $master_name->name,
+			'masters' => $masters,
+			'shifts' => $shifts,
+			'durs' => $durs,
+			'products' => $products
+		]);
+	}
+
+	public function chooseDate() {
+		$shift_id = request('shift_id');
+		$shift = Shift::where('id', '=', $shift_id)->first();
+		$shift_date = Shift::where('id', '=', $shift_id)->first();
+		$master_id = request('master_id');
+		$master_name = Master::where('id', '=', $master_id)->select('name')->first();
+		$id = request('id');
+		$client = Client::where('id', '=', $id)->first();
+		//	dd($client);
+		$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+		$auth_user = Auth::user();
+		$masters = Master::where('salon', '=', $auth_user['salon'])->get();
+		$this_day = new DateTime('today');
+		$shifts = [];
+
+		$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		$orders = Services::where('services.users_user_id', '=', $master_id)
+			->where('date', '=', $shift->date)
+			->get();
+		//	$times = [];
+		$tmp_array = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+		//	dd($master_id);
+		//	dd($shift_id);
+		//dd(sizeof($orders));
+		if(sizeof($orders) > 0) {
+			foreach($orders as $order) {
+				if($shift->shift_type == 1) {
+					foreach($tmp_array as $tmp_ar) {
+						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						$st = strtotime($order->time) - strtotime("00:00:00");
+						$ed = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+						if($st <= strtotime($tmp_ar) - strtotime("00:00:00") && $ed > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+					}
+				}
+				if($shift->shift_type == 3) {
+					//	$start_day = strtotime("09:00") - strtotime("00:00:00");
+					//	$end_day = strtotime("19:30") - strtotime("00:00:00");
+					//	dd($end_day);
+					foreach($tmp_array as $tmp_ar) {
+						/*		if($start_day > (strtotime($tmp_ar) - strtotime("00:00:00"))) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						if($end_day <= (strtotime($tmp_ar) - strtotime("00:00:00"))) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}*/
+						$st = strtotime($order->time) - strtotime("00:00:00");
+						$ed = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+						if($st <= strtotime($tmp_ar) - strtotime("00:00:00") && $ed > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+					}
+				}
+			}
+		}
+		else {
+			if($shift->shift_type == 1) {
+				foreach($tmp_array as $tmp_ar) {
+					if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+					if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+				}
+			}
+		}
+
+		$client_services = Services::where('client_id', '=', $id)
+			->leftJoin('masters', 'masters.id', '=', 'services.users_user_id')
+			->leftJoin('products', 'services.product', '=', 'products.id')
+			->select('services.*', 'masters.name', 'products.name as product_name')
+			->orderBy('services.date', 'desc')
+			->get();
+		$shift = Shift::where('id', '=', $shift_id)->first();
+		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+		$products = Products::orderBy('id')->get();
+		return view('client_card', [
+			'admin' => $auth_user['admin'],
+			'salon' => $auth_user['salon'],
+			'client' => $client,
+			'client_services' => $client_services,
+			'master_id' => $master_id,
+			'master_name' => $master_name->name,
+			'masters' => $masters,
+			'shifts' => $shifts,
+			'shift_id' => $shift_id,
+			'shift_date' => $shift_date->date,
+			'times' => $tmp_array,
+			'durs' => $durs,
+			'products' => $products,
+		]);
+	}
+
+	public function clientAddService() {
+		$master_id = request('master_id');
+		$shift_id = request('shift_id');
+		$shift = Shift::where('id', '=', $shift_id)->first();
+		$client_id = request('client_id');
+		$time = request('time');
+		$product = request('product');
+		$duration = request('duration');
+		$shift = Shift::where('id', '=', $shift_id)->first();
+		$services = Services::where('users_user_id', '=', $master_id)->where('date', '=', $shift->date)->get();
+		$start_time = strtotime($time) - strtotime("00:00:00");
+		$end_time = strtotime($time) - strtotime("00:00:00") + strtotime($duration) - strtotime("00:00:00");
+		$orders = Services::where('services.users_user_id', '=', $master_id)
+			->where('date', '=', $shift->date)
+			->get();
+		if(sizeof($orders) > 0) {
+			foreach($orders as $order) {
+				$check = 0;
+				$order_start = strtotime($order->time) - strtotime("00:00:00");
+				$order_end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+				if($order_start >= $start_time && $order_start < $end_time) {
+					$check = 1;
+				}
+				if($order_end > $start_time && $order_end <= $end_time) {
+					$check = 1;
+				}
+				if($start_time >= $order_start && $start_time < $order_end) {
+					$check = 1;
+				}
+				if($start_time > $order_end && $end_time <= $order_end) {
+					$check = 1;
+				}
+				if($check == 1) {
+					$auth_user = Auth::user();
+					$clients = Client::get();
+					foreach($clients as $client) {
+						$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+						//		$sales = Sales::where('client_id','=',$client->id)->sum('cost');
+						//		$client->spent_money = $client->spent_money + $sales;
+						//	dd($client->spent_money);
+					}
+					return view('client_list', [
+						'admin' => $auth_user['admin'],
+						'clients' => $clients,
+						'salon' => $auth_user['salon'],
+						'exception1' => 'Мастер в это время занят.'
+					]);
+				}
+			}
+			Services::insert(['users_user_id' => $master_id, 'date' => $shift->date, 'time' => $time, 'duration' => $duration, 'product' => $product, 'client_id' => $client_id]);
+		}
+		else {
+			Services::insert(['users_user_id' => $master_id, 'date' => $shift->date, 'time' => $time, 'duration' => $duration, 'product' => $product, 'client_id' => $client_id]);
+		}
+		return redirect('/client/' . $client_id);
+	}
+
+	public
+	function addService(Request $request) {
+
+		//$master_id = request('master_id1');
+		$master_id = request('master_id');
+		//	dd($master_id);
+		$client_id = request('client_id');
 		$shift_id = request('date');
 		$date = Shift::where('id', '=', $shift_id)->first();
 		$time = request('time');
@@ -1479,7 +1740,7 @@ class TokioController extends Controller {
 					$master->shifts_today = "нету смен";
 				}
 
-				$master->sales = count(DB::table('sales')
+				$master->services = count(DB::table('services')
 					->where('users_user_id', '=', $master->id)
 					->where('date', '>=', $first_day_of_month)
 					->where('date', '<=', $last_day_of_month)
@@ -1548,13 +1809,16 @@ class TokioController extends Controller {
 		$duration = request('duration');
 		//	$cost = request('cost');
 		$product = request('product');
-		$sales = Sales::where('users_user_id', '=', $id)->where('date', '=', $date->date)->get();
-		$shift = Shift::select('shift_type')->where('master_id', '=', $id)->where('date', '=', $date->date)->first();
+		//	dd($master_id);
+		$services = Services::where('users_user_id', '=', $master_id)->where('date', '=', $date->date)->get();
+		//	dd($date->date);
+		$shift = Shift::where('master_id', '=', $master_id)->where('date', '=', $date->date)->select('shifts.shift_type')->first();
+		//	dd($shift)  ;
 		$start_time = strtotime($time) - strtotime("00:00:00");
 		$end_time = strtotime($time) - strtotime("00:00:00") + strtotime($duration) - strtotime("00:00:00");
-		//$end_time = strtotime($time) - strtotime("00:00:00") + $duration * 3600;
-		$shift_start = strtotime("08:00") - strtotime("00:00:00");
-		$shift_end = strtotime("14:00") - strtotime("00:00:00");
+		$shift_start = strtotime("00:00:00");
+		$shift_end = strtotime("00:00:00");
+		//tovar
 		if(is_null($shift) || $shift->shift_type == 0) {
 			$auth_user = Auth::user();
 			$id = request('id');
@@ -1565,22 +1829,22 @@ class TokioController extends Controller {
 			//	dd($first_day_of_this_month);
 			$last_day_of_this_month = new DateTime('last day of this month');
 			$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
-			$sales = DB::table('sales')->join('products', 'products.id', '=', 'sales.product')
-				->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'products.name')->orderBy('date', 'asc')->orderBy('time', 'asc')->get();
+			$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
+				->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'asc')->orderBy('time', 'asc')->get();
 			$products = Products::orderBy('id')->get();
 			$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 			$orders = Shift::where('shifts.date', '>=', $this_day)
 				->where('shifts.master_id', '=', $id)
-				->leftJoin('sales', 'sales.date', '=', 'shifts.date')
-				->where('sales.users_user_id', '=', $id)
-				->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'sales.time', 'sales.duration')
+				->leftJoin('services', 'services.date', '=', 'shifts.date')
+				->where('services.users_user_id', '=', $id)
+				->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
 				->get();
 			//$orders = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->get();
 			//dd($shifts);
 			$times = [];
 			$shift_type1 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30'];
 			$shift_type2 = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
-			$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
+			$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
 			//$times[0] = $shift_type1;
 			//dd($times[0]);
 			$i = 0;
@@ -1591,11 +1855,19 @@ class TokioController extends Controller {
 					if($shift->id == $order->id) {
 						$check = 1;
 						if($order->shift_type == 1) {
-							$tmp_array = $shift_type1;
+							$tmp_array = $shift_type3;
+							foreach($tmp_array as $tmp_ar) {
+								if(strtotime($order->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+									unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+								}
+								if(strtotime($order->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+									unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+								}
+							}
 						}
-						elseif($order->shift_type == 2) {
-							$tmp_array = $shift_type2;
-						}
+						//					elseif($order->shift_type == 2) {
+						//						$tmp_array = $shift_type2;
+						//					}
 						elseif($order->shift_type == 3) {
 							$tmp_array = $shift_type3;
 						}
@@ -1606,11 +1878,19 @@ class TokioController extends Controller {
 				}
 				if($check == 0) {
 					if($shift->shift_type == 1) {
-						$tmp_array = $shift_type1;
+						$tmp_array = $shift_type3;
+						foreach($tmp_array as $tmp_ar) {
+							if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+								unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+							}
+							if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+								unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+							}
+						}
 					}
-					elseif($shift->shift_type == 2) {
-						$tmp_array = $shift_type2;
-					}
+					//	elseif($shift->shift_type == 2) {
+					//		$tmp_array = $shift_type2;
+					//	}
 					elseif($shift->shift_type == 3) {
 						$tmp_array = $shift_type3;
 					}
@@ -1648,32 +1928,32 @@ class TokioController extends Controller {
 				$i = $i + 1;
 				//dd($times);
 			}
-			$services = DB::table('sales')
+			$services1 = DB::table('services')
 				->where('users_user_id', '=', $id)
 				->where('date', '>=', $first_day_of_this_month)
 				->where('date', '<=', $last_day_of_this_month)
-				->join('products', 'products.id', '=', 'sales.product')
-				->select('sales.product', DB::raw('count(*) as total'))
-				->groupBy('sales.product')
+				->join('products', 'products.id', '=', 'services.product')
+				->select('services.product', DB::raw('count(*) as total'))
+				->groupBy('services.product')
 				->get();
-			foreach($services as $service) {
+			foreach($services1 as $service1) {
 				foreach($products as $product) {
-					if($service->product == $product->id) {
-						$service->name = $product->name;
+					if($service1->product == $product->id) {
+						$service1->name = $product->name;
 					}
 				}
 			}
 			//dd($times[2]);
 			//	dd($services);
 			$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
-			return view('master_sale', [
+			return view('master_service', [
 				'id' => $id,
 				'name' => $user[0]['name'],
 				'totalmoney' => $total_money,
-				'sales' => $sales,
+				'services' => $services,
 				'products' => $products,
 				'salon' => $auth_user['salon'],
-				'services' => $services,
+				'services1' => $services1,
 				'shifts' => $shifts,
 				'times' => $times,
 				'range' => $user[0]['range'],
@@ -1683,96 +1963,107 @@ class TokioController extends Controller {
 			]);
 		}
 		elseif($shift->shift_type == 1) {
-			$shift_start = strtotime("09:00") - strtotime("00:00:00");
-			$shift_end = strtotime("13:00") - strtotime("00:00:00");
-		}
-		elseif($shift->shift_type == 2) {
-			$shift_start = strtotime("14:00") - strtotime("00:00:00");
-			$shift_end = strtotime("18:00") - strtotime("00:00:00");
+			//	dd($date->id);
+			$tmp1 = Shift::where('id', '=', $date->id)->select('shifts.start_shift')->first();
+			$shift_start = strtotime($tmp1->start_shift) - strtotime("00:00:00");
+			$tmp1 = Shift::where('id', '=', $date->id)->select('shifts.end_shift')->first();
+			$shift_end = strtotime($tmp1->end_shift) - strtotime("00:00:00");
+			//dd($shift_end);
 		}
 		elseif($shift->shift_type == 3) {
 			$shift_start = strtotime("09:00") - strtotime("00:00:00");
-			$shift_end = strtotime("18:00") - strtotime("00:00:00");
+			$shift_end = strtotime("20:00") - strtotime("00:00:00");
 		}
 		//	dd($end_time);
 		$checker = 1;
-		foreach($sales as $sale) {
-			$sale_end_time = strtotime($sale->time) - strtotime("00:00:00") + strtotime($sale->duration) - strtotime("00:00:00");
-			$sale_start_time = strtotime($sale->time) - strtotime("00:00:00");
-			//dd($sale_end_time);
+		foreach($services as $service) {
+			$service_end_time = strtotime($service->time) - strtotime("00:00:00") + strtotime($service->duration) - strtotime("00:00:00");
+			$service_start_time = strtotime($service->time) - strtotime("00:00:00");
+			//dd($service_start_time);
+			//dd($service_end_time);
 			//ставить чтоб типо после смены еще дорабатывал или тютитька в тютитьку?
 			if($shift_start > $start_time || $shift_end <= $start_time) {
 				//	dd('1');
 				$checker = 0;
 			}
-			if(($sale_start_time >= $start_time && $sale_start_time < $end_time)) {
+			if(($service_start_time >= $start_time && $service_start_time < $end_time)) {
 				//	dd('2');
 				$checker = 0;
 			}
-			if(($sale_end_time > $start_time && $sale_end_time <= $end_time)) {
+			if(($service_end_time > $start_time && $service_end_time <= $end_time)) {
 				//	dd('3');
 				$checker = 0;
 			}
-			if(($sale_start_time <= $start_time && $start_time < $sale_end_time)) {
+			if(($service_start_time <= $start_time && $start_time < $service_end_time)) {
 				//	dd('4');
 				$checker = 0;
 			}
-			if(($sale_end_time >= $end_time && $sale_start_time < $end_time)) {
+			if(($service_end_time >= $end_time && $service_start_time < $end_time)) {
 				//	dd('5');
 				$checker = 0;
 			}
-			if(($sale_start_time <= $start_time && $sale_end_time >= $end_time)) {
+			if(($service_start_time <= $start_time && $service_end_time >= $end_time)) {
 				//	dd('6');
 				$checker = 0;
 			}
-			if(($sale_start_time >= $start_time && $sale_end_time <= $end_time)) {
+			if(($service_start_time >= $start_time && $service_end_time <= $end_time)) {
 				//	dd('7');
-				//dd('all right');
 				$checker = 0;
 			}
 		}
 		if($checker == 0) {
-			//	return view('master_sale',['exception1'=>'Мастер в это время занят.']);
+			//	return view('master_service',['exception1'=>'Мастер в это время занят.']);
 			$auth_user = Auth::user();
-			$id = request('id');
-			$user = Master::where('id', '=', $id)->get();
+			$master_id = request('master_id');
+			$user = Master::where('id', '=', $master_id)->get();
 			$first_day_of_this_month = new DateTime('first day of this month');
 			$this_day = new DateTime('today');
 			//$first_day_of_this_month = $first_day_of_this_month->format('Y-m-d');
 			//	dd($first_day_of_this_month);
 			$last_day_of_this_month = new DateTime('last day of this month');
-			$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
-			$sales = DB::table('sales')->join('products', 'products.id', '=', 'sales.product')
-				->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'products.name')->orderBy('date', 'asc')->orderBy('time', 'asc')->get();
+			$total_money = $this->currentTotalMoney($master_id, $last_day_of_this_month, $first_day_of_this_month);
+			$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
+				->where('users_user_id', '=', $master_id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'asc')->orderBy('time', 'asc')->get();
 			$products = Products::orderBy('id')->get();
-			$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+			$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 			$orders = Shift::where('shifts.date', '>=', $this_day)
-				->where('shifts.master_id', '=', $id)
-				->leftJoin('sales', 'sales.date', '=', 'shifts.date')
-				->where('sales.users_user_id', '=', $id)
-				->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'sales.time', 'sales.duration')
+				->where('shifts.master_id', '=', $master_id)
+				->leftJoin('services', 'services.date', '=', 'shifts.date')
+				->where('services.users_user_id', '=', $master_id)
+				->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
 				->get();
+			//dd($orders);
 			//$orders = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->get();
 			//dd($shifts);
 			$times = [];
 			$shift_type1 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30'];
 			$shift_type2 = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
-			$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
+			$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
 			//$times[0] = $shift_type1;
 			//dd($times[0]);
 			$i = 0;
-			//	$tmp_array = [];
+			$tmp_array = [];
 			foreach($shifts as $shift) {
 				$check = 0;
 				foreach($orders as $order) {
 					if($shift->id == $order->id) {
+						//	dd($order);
 						$check = 1;
 						if($order->shift_type == 1) {
-							$tmp_array = $shift_type1;
+							$tmp_array = $shift_type3;
+							foreach($tmp_array as $tmp_ar) {
+								if(strtotime($order->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+									unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+								}
+								if(strtotime($order->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+									unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+								}
+								//	dd($tmp_array);
+							}
 						}
-						elseif($order->shift_type == 2) {
-							$tmp_array = $shift_type2;
-						}
+						//					elseif($order->shift_type == 2) {
+						//						$tmp_array = $shift_type2;
+						//					}
 						elseif($order->shift_type == 3) {
 							$tmp_array = $shift_type3;
 						}
@@ -1783,11 +2074,19 @@ class TokioController extends Controller {
 				}
 				if($check == 0) {
 					if($shift->shift_type == 1) {
-						$tmp_array = $shift_type1;
+						$tmp_array = $shift_type3;
+						foreach($tmp_array as $tmp_ar) {
+							if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+								unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+							}
+							if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+								unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+							}
+						}
 					}
-					elseif($shift->shift_type == 2) {
-						$tmp_array = $shift_type2;
-					}
+					//	elseif($shift->shift_type == 2) {
+					//		$tmp_array = $shift_type2;
+					//	}
 					elseif($shift->shift_type == 3) {
 						$tmp_array = $shift_type3;
 					}
@@ -1796,6 +2095,7 @@ class TokioController extends Controller {
 				}
 				//dd($times);
 			}
+			//	dd($times);
 			$i = 0;
 			foreach($shifts as $shift) {
 				//$check = 0;
@@ -1825,32 +2125,33 @@ class TokioController extends Controller {
 				$i = $i + 1;
 				//dd($times);
 			}
-			$services = DB::table('sales')
-				->where('users_user_id', '=', $id)
+			$services1 = DB::table('services')
+				->where('users_user_id', '=', $master_id)
 				->where('date', '>=', $first_day_of_this_month)
 				->where('date', '<=', $last_day_of_this_month)
-				->join('products', 'products.id', '=', 'sales.product')
-				->select('sales.product', DB::raw('count(*) as total'))
-				->groupBy('sales.product')
+				->join('products', 'products.id', '=', 'services.product')
+				->select('services.product', DB::raw('count(*) as total'))
+				->groupBy('services.product')
 				->get();
-			foreach($services as $service) {
+			foreach($services1 as $service1) {
 				foreach($products as $product) {
-					if($service->product == $product->id) {
-						$service->name = $product->name;
+					if($service1->product == $product->id) {
+						$service1->name = $product->name;
 					}
 				}
 			}
 			//dd($times[2]);
 			//	dd($services);
 			$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
-			return view('master_sale', [
-				'id' => $id,
+
+			return view('master_service', [
+				'id' => $master_id,
 				'name' => $user[0]['name'],
 				'totalmoney' => $total_money,
-				'sales' => $sales,
+				'services' => $services,
 				'products' => $products,
 				'salon' => $auth_user['salon'],
-				'services' => $services,
+				'services1' => $services1,
 				'shifts' => $shifts,
 				'times' => $times,
 				'range' => $user[0]['range'],
@@ -1860,11 +2161,11 @@ class TokioController extends Controller {
 			]);
 		}
 		else {
-			Sales::insert(['users_user_id' => $id, 'date' => $date->date, 'time' => $time, 'duration' => $duration, 'product' => $product]);
+			Services::insert(['users_user_id' => $master_id, 'date' => $date->date, 'time' => $time, 'duration' => $duration, 'product' => $product, 'client_id' => $client_id]);
 		}
 		$master = request('master_page');
 		if($master == 1) {
-			return redirect('/master/' . $id);
+			return redirect('/master/' . $master_id);
 		}
 		else {
 			return redirect('/');
@@ -1872,11 +2173,112 @@ class TokioController extends Controller {
 	}
 
 	public
-	function deleteUser() {
+	function showClientList() {
+		$auth_user = Auth::user();
+		$clients = Client::get();
+		foreach($clients as $client) {
+			$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+			//		$sales = Sales::where('client_id','=',$client->id)->sum('cost');
+			//		$client->spent_money = $client->spent_money + $sales;
+			//	dd($client->spent_money);
+		}
+		return view('client_list', [
+			'admin' => $auth_user['admin'],
+			'clients' => $clients,
+			'salon' => $auth_user['salon'],
+		]);
+	}
+
+	public
+	function clientDateFilter() {
+		$new_filter_date = request('filter_date');
+		$client_id = request('id');
+		if($new_filter_date == null) {
+			$client = Client::where('id', '=', $client_id)->first();
+			//	dd($client);
+			$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+			$auth_user = Auth::user();
+			$client_services = Services::where('client_id', '=', $client_id)
+				->leftJoin('masters', 'masters.id', '=', 'services.users_user_id')
+				->leftJoin('products', 'services.product', '=', 'products.id')
+				->select('services.*', 'masters.name', 'products.name as product_name')
+				->orderBy('services.date', 'desc')
+				->get();
+			return view('client_card', [
+				'admin' => $auth_user['admin'],
+				'salon' => $auth_user['salon'],
+				'client' => $client,
+				'client_services' => $client_services,
+			]);
+		}
+		//dd($new_filter_date);
+		$id = request('id');
+		$client = Client::where('id', '=', $id)->first();
+		//	dd($client);
+		$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+		$auth_user = Auth::user();
+		return view('client_card', [
+			'admin' => $auth_user['admin'],
+			'salon' => $auth_user['salon'],
+			'client' => $client,
+			'new_filter_date' => $new_filter_date,
+		]);
+	}
+
+	public
+	function showClient() {
+		$id = request('id');
+		$client = Client::where('id', '=', $id)->first();
+		//	dd($client);
+		$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+		$auth_user = Auth::user();
+		$masters = Master::where('salon', '=', $auth_user['salon'])->get();
+		$client_services = Services::where('client_id', '=', $id)
+			->leftJoin('masters', 'masters.id', '=', 'services.users_user_id')
+			->leftJoin('products', 'services.product', '=', 'products.id')
+			->select('services.*', 'masters.name', 'products.name as product_name')
+			->orderBy('services.date', 'desc')
+			->get();
+		return view('client_card', [
+			'admin' => $auth_user['admin'],
+			'salon' => $auth_user['salon'],
+			'client' => $client,
+			'client_services' => $client_services,
+			'masters' => $masters,
+		]);
+	}
+
+	public function addClient() {
+		$name = request('name');
+		$tel = request('tel');
+		$address = request('address');
+		Client::insert(['name' => $name, 'tel' => $tel, 'address' => $address]);
+		return redirect('/show-client-list');
+	}
+
+	public function updateClient() {
+		$id = request('client_id');
+		$name = request('name');
+		$tel = request('tel');
+		$address = request('address');
+		//dd($id);
+		//Master::update(['name' => $name, 'salon' => $user['salon'], 'range' => $range, 'plan' => $plan]);
+		DB::table('clients')->where('id', '=', $id)->update(['name' => $name, 'tel' => $tel, 'address' => $address]);
+		return redirect('/show-client-list');
+	}
+
+	public function deleteUser() {
 		$id = request('id');
 		Master::where('id', '=', $id)->delete();
-		Sales::where('users_user_id', '=', $id)->delete();
+		//	Services::where('users_user_id', '=', $id)->delete();
 		return redirect('/info-tables');
+	}
+
+	public function deleteClient() {
+		$id = request('id');
+		Client::where('id', '=', $id)->delete();
+		//	Services::where('users_user_id', '=', $id)->delete();
+		return redirect('/client-list');
 	}
 
 	public
@@ -1886,35 +2288,35 @@ class TokioController extends Controller {
 	}
 
 	public
-	function thisMonthSales($id) {
-		$sales = Sales::where('users_user_id', '=', $id)->orderBy('date', 'asc')->get();
-		$this_month_sales = [];
-		foreach($sales as $sale) {
-			if(substr($sale['date'], 5, 2) == date("m")) {
-				array_push($this_month_sales, $sale);
+	function thisMonthServices($id) {
+		$services = Services::where('users_user_id', '=', $id)->orderBy('date', 'asc')->get();
+		$this_month_services = [];
+		foreach($services as $service) {
+			if(substr($service['date'], 5, 2) == date("m")) {
+				array_push($this_month_services, $service);
 			}
 		}
-		dd($this_month_sales);
-		return $this_month_sales;
+		dd($this_month_services);
+		return $this_month_services;
 	}
 
 	public
 	function totalCount($id) {
-		return Sales::where('users_user_id', '=', $id)->sum('count');
+		return Services::where('users_user_id', '=', $id)->sum('count');
 	}
 
 	public
 	function totalMoney($id) {
-		return Sales::where('users_user_id', '=', $id)->sum('cost');
+		return Services::where('users_user_id', '=', $id)->sum('cost');
 	}
 
 	public
 	function currentTotalCount($id, $cur_day, $first_day) {
-		return Sales::where('users_user_id', '=', $id)->where('date', '<=', $cur_day)->where('date', '>=', $first_day)->sum('count');
+		return Services::where('users_user_id', '=', $id)->where('date', '<=', $cur_day)->where('date', '>=', $first_day)->sum('count');
 	}
 
 	public
 	function currentTotalMoney($id, $cur_day, $first_day) {
-		return Sales::where('users_user_id', '=', $id)->where('date', '<=', $cur_day)->where('date', '>=', $first_day)->sum('cost');
+		return Services::where('users_user_id', '=', $id)->where('date', '<=', $cur_day)->where('date', '>=', $first_day)->sum('cost');
 	}
 }

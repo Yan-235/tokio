@@ -5,17 +5,18 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Master extends Authenticatable
-{
-    use Notifiable;
+class Master extends Authenticatable {
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'id', 'name','salon','range','plan'
-    ];
+	use Notifiable;
+
+	public $timestamps = false;
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array
+	 */
+	protected $fillable = [
+		'id', 'name', 'salon', 'range', 'plan'
+	];
 
 }

@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Sales extends Model {
+class Services extends Model {
 	public $timestamps = false;
 
 	protected $fillable = [

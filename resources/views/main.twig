@@ -33,7 +33,7 @@
 {% if admin == 1 %}
 	<div class="container-fluid is-margin-top-50">
 		<div class="row">
-			<div class="col s10 left-align">
+			<div class="col s9 left-align">
 				<form action="{{ route('change-salon') }}" method="get">
 					<div class="col s2">
 						<select name="new_salon" required>
@@ -45,6 +45,12 @@
 					</div>
 					<button type="submit" class="btn waves-effect waves-light green"><i
 								class="material-icons">swap_horiz</i></button>
+				</form>
+			</div>
+			<div class="col s1 left-align">
+				<form action="{{ route('show-client-list') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue"><i
+								class="material-icons">people</i></button>
 				</form>
 			</div>
 			<div class="col s1 left-align">
@@ -62,7 +68,13 @@
 {% else %}
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col s12 right-align">
+			<div class="col s11 right-align">
+				<form action="{{ route('show-client-list') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue"><i
+								class="material-icons">people</i></button>
+				</form>
+			</div>
+			<div class="col s1 right-align">
 				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
 							class="material-icons">exit_to_app</i></a>
 			</div>
@@ -186,7 +198,7 @@
 				<tbody>
 				{% for master in masters %}
 					<tr class="border-0">
-						<td class="border-0"><a href="{{ route('master-sale',[master.id]) }}" class="waves-effect waves-teal btn-flat
+						<td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
 												full-width text-center is-capitalize">{{ master.name }}</a></td>
 
 						{% set count = 0 %}
@@ -284,13 +296,13 @@
 				<tbody>
 				{% for master in masters %}
 					<tr class="border-0">
-						<td class="border-0"><a href="{{ route('master-sale',[master.id]) }}" class="waves-effect waves-teal btn-flat
+						<td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
 						full-width text-center is-capitalize">{{ master.name }}</a></td>
 						<td class="border-0">{{ master.shifts }}</td>
 						<td class="border-0">{{ master.cur_hours|number_format(1) }}/{{ master.cur_plan }}</td>
 						<td class="border-0">{{ master.current_money }}</td>
 						{% if cur_days!=0 %}
-							<td class="border-0">{{ (master.sales / cur_days)|number_format(2) }}</td>
+							<td class="border-0">{{ (master.services / cur_days)|number_format(2) }}</td>
 						{% else %}
 							<td class="border-0">0</td>
 						{% endif %}
@@ -323,7 +335,7 @@
 				<tbody>
 				{% for master in masters %}
 					<tr class="border-0">
-						<td class="border-0"><a href="{{ route('master-sale',[master.id]) }}" class="waves-effect waves-teal btn-flat
+						<td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
 						full-width text-center is-capitalize">{{ master.name }}</a></td>
 						<td class="border-0">{{ master.shifts_month }}</td>
 						<td class="border-0">{{ master.money }}</td>
