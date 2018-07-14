@@ -17,6 +17,7 @@ class CreateShiftsTable extends Migration
             $table->increments('id');
             $table->date('date')->nulladble();
             $table->integer('master_id')->nullable();
+            $table->integer('shift_type')->nullable();
             $table->time('start_shift')->nullable();
             $table->time('end_shift')->nullable();
         });

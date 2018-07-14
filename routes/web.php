@@ -20,7 +20,7 @@ Route::group(['middleware'=>['auth']], function () {
     Route::get('/add-master', 'TokioController@addMaster')->name('add-master');
     Route::get('/update-master', 'TokioController@updateMaster')->name('update-master');
     Route::get('/add-service', 'TokioController@addService')->name('add-service');
-   // Route::get('/add-service', 'TokioController@addService')->name('add-service');
+   Route::get('/add-service-to-salon', 'TokioController@addServiceToSalon')->name('add-service-to-salon');
     Route::get('/delete-service', 'TokioController@deleteService')->name('delete-service');
     Route::get('/client-delete-service', 'TokioController@clientDeleteService')->name('client-delete-service');
     Route::get('/tokio-logout', 'TokioController@logout')->name('tokio-logout');

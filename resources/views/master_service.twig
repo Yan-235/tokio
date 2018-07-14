@@ -29,17 +29,23 @@
 {% endif %}
 <div class="container-fluid">
 	<div class="row">
-		{% if admin ==1 %}
-			<div class="col s6 left-align">
-				<a href="{{ route('info-tables') }}" class="waves-effect waves-light btn"><i
-							class="material-icons">arrow_back</i></a>
-			</div>
-		{% else %}
-			<div class="col s6 left-align">
-				<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
-							class="material-icons">arrow_back</i></a>
-			</div>
-		{% endif %}
+		{#
+			{% if admin ==1 %}
+				<div class="col s6 left-align">
+					<a href="{{ route('info-tables') }}" class="waves-effect waves-light btn"><i
+								class="material-icons">arrow_back</i></a>
+				</div>
+			{% else %}
+				<div class="col s6 left-align">
+					<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
+								class="material-icons">arrow_back</i></a>
+				</div>
+			{% endif %}
+		#}
+		<div class="col s6 left-align">
+			<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
+						class="material-icons">arrow_back</i></a>
+		</div>
 		<div class="col s6 right-align">
 			<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
 						class="material-icons">exit_to_app</i></a>
@@ -220,18 +226,27 @@
 									<button class="btn waves-effect waves-light green">Добавить</button>
 								</form>
 							</td>
+							<td>
+								<form action="{{ route('add-discount') }}">
+									<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+									<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+									<input name="service_id" value="{{ service.id }}" hidden>
+									<input placeholder="Скидка" value="{{ service.discount }}" name="discount" type="number" min="0" max="99" step="1" readonly>
+									<button class="btn waves-effect waves-light green disabled">Добавить</button>
+								</form>
+							</td>
 						{% else %}
-								<td>{{ service.cost|number_format(2) }}</td>
+							<td>{{ service.cost|number_format(2) }}</td>
+							<td>
+								<form action="{{ route('add-discount') }}">
+									<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+									<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+									<input name="service_id" value="{{ service.id }}" hidden>
+									<input placeholder="Скидка" value="{{ service.discount }}" name="discount" type="number" min="0" max="99" step="1">
+									<button class="btn waves-effect waves-light green">Добавить</button>
+								</form>
+							</td>
 						{% endif %}
-						<td>
-							<form action="{{ route('add-discount') }}">
-								<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
-								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-								<input name="service_id" value="{{ service.id }}" hidden>
-								<input placeholder="Скидка" value="{{ service.discount }}" name="discount" type="number" min="0" max="99" step="1">
-								<button class="btn waves-effect waves-light green">Добавить</button>
-							</form>
-						</td>
 						<td>
 							<form action="{{ route('add-text') }}">
 								<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">

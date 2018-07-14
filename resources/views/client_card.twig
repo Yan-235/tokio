@@ -208,8 +208,8 @@
 					<th>Дата</th>
 					<th>Время</th>
 					<th>Мастер</th>
-					<th>Цена</th>
 					<th>Услуга</th>
+					<th>Цена</th>
 					<th>Скидка %</th>
 					<th>Примечание</th>
 					<th></th>
@@ -222,6 +222,7 @@
 						<td class="border-0">{{ client_service.date|date('d.m.Y') }}</td>
 						<td class="border-0">{{ client_service.time|date('H:i') }}</td>
 						<td class="border-0">{{ client_service.name }}</td>
+						<td class="border-0">{{ client_service.product_name }}</td>
 						{% if client_service.cost == null %}
 							<td>
 								<form action="{{ route('client-add-cost') }}">
@@ -231,18 +232,25 @@
 									<button class="btn waves-effect waves-light green">Добавить</button>
 								</form>
 							</td>
+							<td>
+								<form action="{{ route('client-add-discount') }}">
+									<input value="{{ client.id }}" name="client_id" type="hidden">
+									<input name="service_id" value="{{ client_service.id }}" hidden>
+									<input placeholder="Скидка" value="{{ client_service.discount }}" name="discount" type="number" min="0" max="99" step="1" readonly>
+									<button class="btn waves-effect waves-light green disabled">Добавить</button>
+								</form>
+							</td>
 						{% else %}
 							<td>{{ client_service.cost|number_format(2) }}</td>
+							<td>
+								<form action="{{ route('client-add-discount') }}">
+									<input value="{{ client.id }}" name="client_id" type="hidden">
+									<input name="service_id" value="{{ client_service.id }}" hidden>
+									<input placeholder="Скидка" value="{{ client_service.discount }}" name="discount" type="number" min="0" max="99" step="1">
+									<button class="btn waves-effect waves-light green">Добавить</button>
+								</form>
+							</td>
 						{% endif %}
-						<td class="border-0">{{ client_service.product_name }}</td>
-						<td>
-							<form action="{{ route('client-add-discount') }}">
-								<input value="{{ client.id }}" name="client_id" type="hidden">
-								<input name="service_id" value="{{ client_service.id }}" hidden>
-								<input placeholder="Скидка" value="{{ client_service.discount }}" name="discount" type="number" min="0" max="99" step="1">
-								<button class="btn waves-effect waves-light green">Добавить</button>
-							</form>
-						</td>
 						<td>
 							<form action="{{ route('client-add-text') }}">
 								<input value="{{ client.id }}" name="client_id" type="hidden">

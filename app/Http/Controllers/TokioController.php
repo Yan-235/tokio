@@ -522,7 +522,7 @@ class TokioController extends Controller {
 		$user = Master::where('id', '=', $id)->get();
 		$first_day_of_this_month = new DateTime('first day of this month');
 		$this_day = new DateTime('today');
-		//$first_day_of_this_month = $first_day_of_this_month->format('Y-m-d');
+		//$first_day_of_this_month = $first_day_of_this_month->for+mat('Y-m-d');
 		//	dd($first_day_of_this_month);
 		$last_day_of_this_month = new DateTime('last day of this month');
 		$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
@@ -530,6 +530,7 @@ class TokioController extends Controller {
 			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'desc')->get();
 		$products = Products::orderBy('id')->get();
 		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+	//	dd($shifts);
 		$orders = Shift::where('shifts.date', '>=', $this_day)
 			->where('shifts.master_id', '=', $id)
 			->leftJoin('services', 'services.date', '=', 'shifts.date')
@@ -537,27 +538,28 @@ class TokioController extends Controller {
 			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
 			->get();
 		//$orders = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->get();
-		//dd($shifts);
+		//dd($orders);
 		$times = [];
-		//$shift_type1 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30'];
+		$shift_type1 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30'];
 		//	$shift_type2 = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
 		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
 		//$times[0] = $shift_type1;
 		//dd($times[0]);
 		$i = 0;
-		//	$tmp_array = [];
+		$check = 0;
+		$tmp_array = [];
 		foreach($shifts as $shift) {
 			$check = 0;
-			foreach($orders as $order) {
-				if($shift->id == $order->id) {
+		//	foreach($orders as $order) {
+			//	if($shift->id == $order->id) {
 					$check = 1;
-					if($order->shift_type == 1) {
+					if($shift->shift_type == 1) {
 						$tmp_array = $shift_type3;
 						foreach($tmp_array as $tmp_ar) {
-							if(strtotime($order->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
 								unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 							}
-							if(strtotime($order->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
 								unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 							}
 						}
@@ -565,18 +567,20 @@ class TokioController extends Controller {
 					//					elseif($order->shift_type == 2) {
 					//						$tmp_array = $shift_type2;
 					//					}
-					elseif($order->shift_type == 3) {
+					elseif($shift->shift_type == 3) {
 						$tmp_array = $shift_type3;
 					}
 
 					$times[$i] = $tmp_array;
 					$i = $i + 1;
-				}
-			}
+			//	}
+		//	}
 			if($check == 0) {
 				if($shift->shift_type == 1) {
 					$tmp_array = $shift_type3;
+					//dd(strtotime($shift->start_shift) - strtotime("00:00:00"));
 					foreach($tmp_array as $tmp_ar) {
+				//	dd(strtotime($tmp_ar) - strtotime("00:00:00"));
 						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
 							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 						}
@@ -584,18 +588,16 @@ class TokioController extends Controller {
 							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 						}
 					}
+			//		dd($tmp_array);
 				}
-				//	elseif($shift->shift_type == 2) {
-				//		$tmp_array = $shift_type2;
-				//	}
 				elseif($shift->shift_type == 3) {
 					$tmp_array = $shift_type3;
 				}
 				$times[$i] = $tmp_array;
 				$i = $i + 1;
 			}
-			//dd($times);
 		}
+			//dd($times);
 		$i = 0;
 		foreach($shifts as $shift) {
 			//$check = 0;
@@ -2278,11 +2280,16 @@ class TokioController extends Controller {
 		$id = request('id');
 		Client::where('id', '=', $id)->delete();
 		//	Services::where('users_user_id', '=', $id)->delete();
-		return redirect('/client-list');
+		return redirect('/show-client-list');
 	}
 
-	public
-	function logout() {
+	public function addServiceToSalon() {
+		$name = request('name');
+		Products::insert(['name' => $name]);
+		return redirect('/');
+	}
+
+	public function logout() {
 		Auth::logout();
 		return redirect('/');
 	}
