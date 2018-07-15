@@ -86,6 +86,19 @@ class TokioController extends Controller {
 				->where('date', '>=', $first_day_of_month)
 				->where('date', '<=', $last_day_of_month)
 				->get());
+
+			$master->work_days = count(DB::table('shifts')
+				->where('master_id', '=', $master->id)
+				->where('date', '>=', $first_day_of_month)
+				->where('date', '<=', $last_day_of_month)
+				->get());
+			$master->work_services = count(DB::table('services')
+				->where('users_user_id', '=', $master->id)
+				->where('date', '>=', $first_day_of_month)
+				->where('date', '<=', $last_day_of_month)
+				->get());
+			//dd($master->work_days);
+			//dd($master->work_services);
 			$days_with_shifts_of_master = DB::table('shifts')->where('date', '<=', $new_filter_date2)->where('date', '>=', $new_filter_date1)->where('master_id', '=', $master->id)->get();
 			$master->shifts = 0;
 			foreach($days_with_shifts_of_master as $day_with_shifts_of_master) {
@@ -111,10 +124,21 @@ class TokioController extends Controller {
 			//dd($master->shifts_today);
 			$master->cur_plan = $master->plan * $master->shifts;
 
-			$master->cur_hours = Services::where('users_user_id', '=', $master->id)
-					->where('date', '>=', $new_filter_date1)
-					->where('date', '<=', $new_filter_date2)
-					->sum('duration') / 6000;
+			//$master->cur_hours
+			/*	$a	= new DateTime(Services::where('users_user_id', '=', $master->id)
+						->where('date', '>=', $new_filter_date1)
+						->where('date', '<=', $new_filter_date2)
+						->sum('duration'));
+	*/
+			$cts = Services::where('users_user_id', '=', $master->id)
+				->where('date', '>=', $new_filter_date1)
+				->where('date', '<=', $new_filter_date2)
+				->get();
+			$master->cur_hours = 0;
+			foreach($cts as $ct) {
+				$master->cur_hours = $master->cur_hours + (strtotime($ct->duration) - strtotime('00:00:00')) / 3600;
+			}
+			//	dd($master->cur_hours);
 		}
 
 		foreach($masters as $master) {
@@ -182,7 +206,7 @@ class TokioController extends Controller {
 		$new_filter_date = new DateTime('today');
 		$new_filter_date = $new_filter_date->format('Y-m-d');
 		$days_in_month = date("t");
-		$days_in_next_month = date('t', mktime(0,0,0,date('m')+1,1,date('y')));
+		$days_in_next_month = date('t', mktime(0, 0, 0, date('m') + 1, 1, date('y')));
 		$last_day_of_month = new DateTime('last day of this month');
 		$last_day_of_month = $last_day_of_month->format('Y-m-d');
 		$first_day_of_month = new DateTime('first day of this month');
@@ -387,6 +411,7 @@ class TokioController extends Controller {
 				->where('date', '<=', $new_filter_date2)
 				->get());
 
+
 			$days_with_shifts_of_master = DB::table('shifts')->where('date', '<=', $new_filter_date2)->where('date', '>=', $new_filter_date1)->where('master_id', '=', $master->id)->get();
 			$master->shifts = 0;
 			foreach($days_with_shifts_of_master as $day_with_shifts_of_master) {
@@ -410,11 +435,25 @@ class TokioController extends Controller {
 			}
 
 			$master->cur_plan = $master->plan * $master->shifts;
-
-			$master->cur_hours = Services::where('users_user_id', '=', $master->id)
-					->where('date', '>=', $new_filter_date1)
-					->where('date', '<=', $new_filter_date2)
-					->sum('duration') / 6000;
+			$cts = Services::where('users_user_id', '=', $master->id)
+				->where('date', '>=', $new_filter_date1)
+				->where('date', '<=', $new_filter_date2)
+				->get();
+			$master->cur_hours = 0;
+			foreach($cts as $ct) {
+				$master->cur_hours = $master->cur_hours + (strtotime($ct->duration) - strtotime('00:00:00')) / 3600;
+			}
+			$master->work_days = count(DB::table('shifts')
+				->where('master_id', '=', $master->id)
+				->where('date', '>=', $new_filter_date1)
+				->where('date', '<=', $new_filter_date2)
+				->get());
+			$master->work_services = count(DB::table('services')
+				->where('users_user_id', '=', $master->id)
+				->where('date', '>=', $new_filter_date1)
+				->where('date', '<=', $new_filter_date2)
+				->get());
+			//dd($master->work_days);
 			$id = $master->id;
 			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) + $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
 			$master->current_feedback = $this->masterFeedback($this->currentTotalCount($id, $new_filter_date2, $new_filter_date1), $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1));
@@ -707,7 +746,7 @@ class TokioController extends Controller {
 			->where('date', '>=', $first_day_of_this_month)
 			->where('date', '<=', $last_day_of_this_month)
 			->join('goods', 'goods.id', '=', 'sales.product')
-			->select('sales.product', DB::raw('count(*) as total'))
+			->select('sales.product', DB::raw('sum(count) as total'))
 			->groupBy('sales.product')
 			->get();
 		foreach($sales1 as $sale1) {

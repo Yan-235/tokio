@@ -180,8 +180,8 @@
 						<td class="border-0">{{ master.shifts }}</td>
 						<td class="border-0">{{ master.cur_hours|number_format(1) }}/{{ master.cur_plan }}</td>
 						<td class="border-0">{{ master.current_money }}</td>
-						{% if cur_days!=0 %}
-							<td class="border-0">{{ (master.services / cur_days)|number_format(2) }}</td>
+						{% if master.work_days!=0 %}
+							<td class="border-0">{{ (master.work_services / master.work_days)|number_format(2) }}</td>
 						{% else %}
 							<td class="border-0">0</td>
 						{% endif %}
