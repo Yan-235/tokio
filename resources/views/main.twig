@@ -117,6 +117,13 @@
 							</form>
 						</div>
 					</div>
+				</div>
+			</div>
+		</li>
+		<li>
+			<div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить услугу</div>
+			<div class="collapsible-body">
+				<div class="container-fluid">
 					<div class="row">
 						<div class="col s12">
 							<form action="{{ route('add-service-to-salon') }}" method="get">
@@ -125,6 +132,28 @@
 								</div>
 								<div class="input-field col s12 text-center">
 									<input placeholder="Название услуги" id="last_name" name="name" type="text" required>
+								</div>
+								<div class="input-field col s12 text-center">
+									<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</li>
+		<li>
+			<div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить товар</div>
+			<div class="collapsible-body">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col s12">
+							<form action="{{ route('add-good-to-salon') }}" method="get">
+								<div class="input-field col">
+									<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+								</div>
+								<div class="input-field col s12 text-center">
+									<input placeholder="Название товара" id="last_name" name="good_name" type="text" required>
 								</div>
 								<div class="input-field col s12 text-center">
 									<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>

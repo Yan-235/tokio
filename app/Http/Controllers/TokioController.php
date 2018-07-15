@@ -12,6 +12,8 @@ use App\Shift;
 use App\Master;
 use App\Products;
 use App\Client;
+use App\Goods;
+use App\Sales;
 
 class TokioController extends Controller {
 
@@ -526,11 +528,16 @@ class TokioController extends Controller {
 		//	dd($first_day_of_this_month);
 		$last_day_of_this_month = new DateTime('last day of this month');
 		$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$goods_total_money = $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
 		$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
 			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
-		$products = Products::orderBy('id')->get();
+		$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
+		//	dd($sales);
+		$products = Products::orderBy('id', 'asc')->get();
+		$goods = Goods::orderBy('id', 'asc')->get();
 		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
-	//	dd($shifts);
+		//	dd($shifts);
 		$orders = Shift::where('shifts.date', '>=', $this_day)
 			->where('shifts.master_id', '=', $id)
 			->leftJoin('services', 'services.date', '=', 'shifts.date')
@@ -550,37 +557,37 @@ class TokioController extends Controller {
 		$tmp_array = [];
 		foreach($shifts as $shift) {
 			$check = 0;
-		//	foreach($orders as $order) {
+			//	foreach($orders as $order) {
 			//	if($shift->id == $order->id) {
-					$check = 1;
-					if($shift->shift_type == 1) {
-						$tmp_array = $shift_type3;
-						foreach($tmp_array as $tmp_ar) {
-							if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
-								unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
-							}
-							if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
-								unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
-							}
-						}
+			$check = 1;
+			if($shift->shift_type == 1) {
+				$tmp_array = $shift_type3;
+				foreach($tmp_array as $tmp_ar) {
+					if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 					}
-					//					elseif($order->shift_type == 2) {
-					//						$tmp_array = $shift_type2;
-					//					}
-					elseif($shift->shift_type == 3) {
-						$tmp_array = $shift_type3;
+					if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 					}
+				}
+			}
+			//					elseif($order->shift_type == 2) {
+			//						$tmp_array = $shift_type2;
+			//					}
+			elseif($shift->shift_type == 3) {
+				$tmp_array = $shift_type3;
+			}
 
-					$times[$i] = $tmp_array;
-					$i = $i + 1;
+			$times[$i] = $tmp_array;
+			$i = $i + 1;
 			//	}
-		//	}
+			//	}
 			if($check == 0) {
 				if($shift->shift_type == 1) {
 					$tmp_array = $shift_type3;
 					//dd(strtotime($shift->start_shift) - strtotime("00:00:00"));
 					foreach($tmp_array as $tmp_ar) {
-				//	dd(strtotime($tmp_ar) - strtotime("00:00:00"));
+						//	dd(strtotime($tmp_ar) - strtotime("00:00:00"));
 						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
 							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 						}
@@ -588,7 +595,7 @@ class TokioController extends Controller {
 							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 						}
 					}
-			//		dd($tmp_array);
+					//		dd($tmp_array);
 				}
 				elseif($shift->shift_type == 3) {
 					$tmp_array = $shift_type3;
@@ -597,7 +604,7 @@ class TokioController extends Controller {
 				$i = $i + 1;
 			}
 		}
-			//dd($times);
+		//dd($times);
 		$i = 0;
 		foreach($shifts as $shift) {
 			//$check = 0;
@@ -642,6 +649,21 @@ class TokioController extends Controller {
 				}
 			}
 		}
+		$sales1 = DB::table('sales')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('goods', 'goods.id', '=', 'sales.product')
+			->select('sales.product', DB::raw('count(*) as total'))
+			->groupBy('sales.product')
+			->get();
+		foreach($sales1 as $sale1) {
+			foreach($goods as $good) {
+				if($sale1->product == $good->id) {
+					$sale1->name = $good->good_name;
+				}
+			}
+		}
 		//dd($times[2]);
 		//	dd($services);
 		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
@@ -649,16 +671,21 @@ class TokioController extends Controller {
 			'id' => $id,
 			'name' => $user[0]['name'],
 			'totalmoney' => $total_money,
+			'goodstotalmoney' => $goods_total_money,
 			'services' => $services,
 			'products' => $products,
 			'salon' => $auth_user['salon'],
 			'services1' => $services1,
+			'sales1' => $sales1,
+			'sales' => $sales,
 			'shifts' => $shifts,
 			'times' => $times,
 			'range' => $user[0]['range'],
 			'plan' => $user[0]['plan'],
 			'durs' => $durs,
 			'admin' => $auth_user['admin'],
+			'goods' => $goods,
+			'check_goods' => '0'
 		]);
 	}
 
@@ -1411,31 +1438,1059 @@ class TokioController extends Controller {
 	}
 
 	public function deleteService(Request $request) {
-		$id = request('id');
+		//	$id = request('id');
 		$service_id = request('service_id');
 
 		Services::where('id', '=', $service_id)->delete();
-		$master = request('master_page');
-		if($master == 1) {
-			return redirect('/master/' . $id);
+
+		$auth_user = Auth::user();
+		$id = request('id');
+		$user = Master::where('id', '=', $id)->get();
+		$first_day_of_this_month = new DateTime('first day of this month');
+		$this_day = new DateTime('today');
+		//$first_day_of_this_month = $first_day_of_this_month->for+mat('Y-m-d');
+		//	dd($first_day_of_this_month);
+		$last_day_of_this_month = new DateTime('last day of this month');
+		$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$goods_total_money = $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
+		$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
+		//	dd($sales);
+		$products = Products::orderBy('id', 'asc')->get();
+		$goods = Goods::orderBy('id', 'asc')->get();
+		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		//	dd($shifts);
+		$orders = Shift::where('shifts.date', '>=', $this_day)
+			->where('shifts.master_id', '=', $id)
+			->leftJoin('services', 'services.date', '=', 'shifts.date')
+			->where('services.users_user_id', '=', $id)
+			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+			->get();
+		//$orders = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->get();
+		//dd($orders);
+		$times = [];
+		$shift_type1 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30'];
+		//	$shift_type2 = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
+		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+		//$times[0] = $shift_type1;
+		//dd($times[0]);
+		$i = 0;
+		$check = 0;
+		$tmp_array = [];
+		foreach($shifts as $shift) {
+			$check = 0;
+			//	foreach($orders as $order) {
+			//	if($shift->id == $order->id) {
+			$check = 1;
+			if($shift->shift_type == 1) {
+				$tmp_array = $shift_type3;
+				foreach($tmp_array as $tmp_ar) {
+					if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+					if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+				}
+			}
+			//					elseif($order->shift_type == 2) {
+			//						$tmp_array = $shift_type2;
+			//					}
+			elseif($shift->shift_type == 3) {
+				$tmp_array = $shift_type3;
+			}
+
+			$times[$i] = $tmp_array;
+			$i = $i + 1;
+			//	}
+			//	}
+			if($check == 0) {
+				if($shift->shift_type == 1) {
+					$tmp_array = $shift_type3;
+					//dd(strtotime($shift->start_shift) - strtotime("00:00:00"));
+					foreach($tmp_array as $tmp_ar) {
+						//	dd(strtotime($tmp_ar) - strtotime("00:00:00"));
+						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+					}
+					//		dd($tmp_array);
+				}
+				elseif($shift->shift_type == 3) {
+					$tmp_array = $shift_type3;
+				}
+				$times[$i] = $tmp_array;
+				$i = $i + 1;
+			}
 		}
-		else {
-			return redirect('/');
+		//dd($times);
+		$i = 0;
+		foreach($shifts as $shift) {
+			//$check = 0;
+			foreach($orders as $order) {
+				if($shift->id == $order->id) {
+					//$check = 1;
+					$tmp_array = $times[$i];
+					$start = strtotime($order->time) - strtotime("00:00:00");
+					$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+					$j = 0;
+					foreach($tmp_array as $tmp_ar) {
+						//		dd($start);
+						//		dd($end);
+						$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+						//		dd($tmp);
+						if($tmp >= $start && $tmp < $end) {
+							//	dd($tmp);
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						$j = $j + 1;
+					}
+					//	dd($tmp_array);
+					$times[$i] = $tmp_array;
+					//$i = $i + 1;
+				}
+			}
+			$i = $i + 1;
+			//dd($times);
 		}
+		$services1 = DB::table('services')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('products', 'products.id', '=', 'services.product')
+			->select('services.product', DB::raw('count(*) as total'))
+			->groupBy('services.product')
+			->get();
+		foreach($services1 as $service1) {
+			foreach($products as $product) {
+				if($service1->product == $product->id) {
+					$service1->name = $product->name;
+				}
+			}
+		}
+		$sales1 = DB::table('sales')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('goods', 'goods.id', '=', 'sales.product')
+			->select('sales.product', DB::raw('count(*) as total'))
+			->groupBy('sales.product')
+			->get();
+		foreach($sales1 as $sale1) {
+			foreach($goods as $good) {
+				if($sale1->product == $good->id) {
+					$sale1->name = $good->good_name;
+				}
+			}
+		}
+		//dd($times[2]);
+		//	dd($services);
+		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+		return view('master_service', [
+			'id' => $id,
+			'name' => $user[0]['name'],
+			'totalmoney' => $total_money,
+			'goodstotalmoney' => $goods_total_money,
+			'services' => $services,
+			'products' => $products,
+			'salon' => $auth_user['salon'],
+			'services1' => $services1,
+			'sales1' => $sales1,
+			'sales' => $sales,
+			'shifts' => $shifts,
+			'times' => $times,
+			'range' => $user[0]['range'],
+			'plan' => $user[0]['plan'],
+			'durs' => $durs,
+			'admin' => $auth_user['admin'],
+			'goods' => $goods,
+			'check_goods' => '0'
+		]);
+	}
+
+	public function deleteSale(Request $request) {
+		//	$id = request('id');
+		$sale_id = request('sale_id');
+
+		Sales::where('id', '=', $sale_id)->delete();
+
+		$auth_user = Auth::user();
+		$id = request('master_id');
+		$user = Master::where('id', '=', $id)->get();
+		$first_day_of_this_month = new DateTime('first day of this month');
+		$this_day = new DateTime('today');
+		//$first_day_of_this_month = $first_day_of_this_month->for+mat('Y-m-d');
+		//	dd($first_day_of_this_month);
+		$last_day_of_this_month = new DateTime('last day of this month');
+		$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$goods_total_money = $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
+		$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
+		//	dd($sales);
+		$products = Products::orderBy('id', 'asc')->get();
+		$goods = Goods::orderBy('id', 'asc')->get();
+		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		//	dd($shifts);
+		$orders = Shift::where('shifts.date', '>=', $this_day)
+			->where('shifts.master_id', '=', $id)
+			->leftJoin('services', 'services.date', '=', 'shifts.date')
+			->where('services.users_user_id', '=', $id)
+			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+			->get();
+		//$orders = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->get();
+		//dd($orders);
+		$times = [];
+		$shift_type1 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30'];
+		//	$shift_type2 = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
+		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+		//$times[0] = $shift_type1;
+		//dd($times[0]);
+		$i = 0;
+		$check = 0;
+		$tmp_array = [];
+		foreach($shifts as $shift) {
+			$check = 0;
+			//	foreach($orders as $order) {
+			//	if($shift->id == $order->id) {
+			$check = 1;
+			if($shift->shift_type == 1) {
+				$tmp_array = $shift_type3;
+				foreach($tmp_array as $tmp_ar) {
+					if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+					if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+				}
+			}
+			//					elseif($order->shift_type == 2) {
+			//						$tmp_array = $shift_type2;
+			//					}
+			elseif($shift->shift_type == 3) {
+				$tmp_array = $shift_type3;
+			}
+
+			$times[$i] = $tmp_array;
+			$i = $i + 1;
+			//	}
+			//	}
+			if($check == 0) {
+				if($shift->shift_type == 1) {
+					$tmp_array = $shift_type3;
+					//dd(strtotime($shift->start_shift) - strtotime("00:00:00"));
+					foreach($tmp_array as $tmp_ar) {
+						//	dd(strtotime($tmp_ar) - strtotime("00:00:00"));
+						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+					}
+					//		dd($tmp_array);
+				}
+				elseif($shift->shift_type == 3) {
+					$tmp_array = $shift_type3;
+				}
+				$times[$i] = $tmp_array;
+				$i = $i + 1;
+			}
+		}
+		//dd($times);
+		$i = 0;
+		foreach($shifts as $shift) {
+			//$check = 0;
+			foreach($orders as $order) {
+				if($shift->id == $order->id) {
+					//$check = 1;
+					$tmp_array = $times[$i];
+					$start = strtotime($order->time) - strtotime("00:00:00");
+					$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+					$j = 0;
+					foreach($tmp_array as $tmp_ar) {
+						//		dd($start);
+						//		dd($end);
+						$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+						//		dd($tmp);
+						if($tmp >= $start && $tmp < $end) {
+							//	dd($tmp);
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						$j = $j + 1;
+					}
+					//	dd($tmp_array);
+					$times[$i] = $tmp_array;
+					//$i = $i + 1;
+				}
+			}
+			$i = $i + 1;
+			//dd($times);
+		}
+		$services1 = DB::table('services')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('products', 'products.id', '=', 'services.product')
+			->select('services.product', DB::raw('count(*) as total'))
+			->groupBy('services.product')
+			->get();
+		foreach($services1 as $service1) {
+			foreach($products as $product) {
+				if($service1->product == $product->id) {
+					$service1->name = $product->name;
+				}
+			}
+		}
+		$sales1 = DB::table('sales')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('goods', 'goods.id', '=', 'sales.product')
+			->select('sales.product', DB::raw('count(*) as total'))
+			->groupBy('sales.product')
+			->get();
+		foreach($sales1 as $sale1) {
+			foreach($goods as $good) {
+				if($sale1->product == $good->id) {
+					$sale1->name = $good->good_name;
+				}
+			}
+		}
+		//dd($times[2]);
+		//	dd($services);
+		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+		return view('master_service', [
+			'id' => $id,
+			'name' => $user[0]['name'],
+			'totalmoney' => $total_money,
+			'goodstotalmoney' => $goods_total_money,
+			'services' => $services,
+			'products' => $products,
+			'salon' => $auth_user['salon'],
+			'services1' => $services1,
+			'sales1' => $sales1,
+			'sales' => $sales,
+			'shifts' => $shifts,
+			'times' => $times,
+			'range' => $user[0]['range'],
+			'plan' => $user[0]['plan'],
+			'durs' => $durs,
+			'admin' => $auth_user['admin'],
+			'goods' => $goods,
+			'check_goods' => '1'
+		]);
+	}
+
+	public function addCostSale() {
+		$sale_id = request('sale_id');
+		$cost = request('cost');
+		Sales::where('id', '=', $sale_id)->update(['cost' => $cost]);
+		$auth_user = Auth::user();
+		$id = request('master_id');
+		$user = Master::where('id', '=', $id)->get();
+		$first_day_of_this_month = new DateTime('first day of this month');
+		$this_day = new DateTime('today');
+		//$first_day_of_this_month = $first_day_of_this_month->for+mat('Y-m-d');
+		//	dd($first_day_of_this_month);
+		$last_day_of_this_month = new DateTime('last day of this month');
+		$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$goods_total_money = $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
+		$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
+		//	dd($sales);
+		$products = Products::orderBy('id', 'asc')->get();
+		$goods = Goods::orderBy('id', 'asc')->get();
+		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		//	dd($shifts);
+		$orders = Shift::where('shifts.date', '>=', $this_day)
+			->where('shifts.master_id', '=', $id)
+			->leftJoin('services', 'services.date', '=', 'shifts.date')
+			->where('services.users_user_id', '=', $id)
+			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+			->get();
+		//$orders = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->get();
+		//dd($orders);
+		$times = [];
+		$shift_type1 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30'];
+		//	$shift_type2 = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
+		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+		//$times[0] = $shift_type1;
+		//dd($times[0]);
+		$i = 0;
+		$check = 0;
+		$tmp_array = [];
+		foreach($shifts as $shift) {
+			$check = 0;
+			//	foreach($orders as $order) {
+			//	if($shift->id == $order->id) {
+			$check = 1;
+			if($shift->shift_type == 1) {
+				$tmp_array = $shift_type3;
+				foreach($tmp_array as $tmp_ar) {
+					if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+					if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+				}
+			}
+			//					elseif($order->shift_type == 2) {
+			//						$tmp_array = $shift_type2;
+			//					}
+			elseif($shift->shift_type == 3) {
+				$tmp_array = $shift_type3;
+			}
+
+			$times[$i] = $tmp_array;
+			$i = $i + 1;
+			//	}
+			//	}
+			if($check == 0) {
+				if($shift->shift_type == 1) {
+					$tmp_array = $shift_type3;
+					//dd(strtotime($shift->start_shift) - strtotime("00:00:00"));
+					foreach($tmp_array as $tmp_ar) {
+						//	dd(strtotime($tmp_ar) - strtotime("00:00:00"));
+						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+					}
+					//		dd($tmp_array);
+				}
+				elseif($shift->shift_type == 3) {
+					$tmp_array = $shift_type3;
+				}
+				$times[$i] = $tmp_array;
+				$i = $i + 1;
+			}
+		}
+		//dd($times);
+		$i = 0;
+		foreach($shifts as $shift) {
+			//$check = 0;
+			foreach($orders as $order) {
+				if($shift->id == $order->id) {
+					//$check = 1;
+					$tmp_array = $times[$i];
+					$start = strtotime($order->time) - strtotime("00:00:00");
+					$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+					$j = 0;
+					foreach($tmp_array as $tmp_ar) {
+						//		dd($start);
+						//		dd($end);
+						$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+						//		dd($tmp);
+						if($tmp >= $start && $tmp < $end) {
+							//	dd($tmp);
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						$j = $j + 1;
+					}
+					//	dd($tmp_array);
+					$times[$i] = $tmp_array;
+					//$i = $i + 1;
+				}
+			}
+			$i = $i + 1;
+			//dd($times);
+		}
+		$services1 = DB::table('services')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('products', 'products.id', '=', 'services.product')
+			->select('services.product', DB::raw('count(*) as total'))
+			->groupBy('services.product')
+			->get();
+		foreach($services1 as $service1) {
+			foreach($products as $product) {
+				if($service1->product == $product->id) {
+					$service1->name = $product->name;
+				}
+			}
+		}
+		$sales1 = DB::table('sales')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('goods', 'goods.id', '=', 'sales.product')
+			->select('sales.product', DB::raw('count(*) as total'))
+			->groupBy('sales.product')
+			->get();
+		foreach($sales1 as $sale1) {
+			foreach($goods as $good) {
+				if($sale1->product == $good->id) {
+					$sale1->name = $good->good_name;
+				}
+			}
+		}
+		//dd($times[2]);
+		//	dd($services);
+		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+		return view('master_service', [
+			'id' => $id,
+			'name' => $user[0]['name'],
+			'totalmoney' => $total_money,
+			'goodstotalmoney' => $goods_total_money,
+			'services' => $services,
+			'products' => $products,
+			'salon' => $auth_user['salon'],
+			'services1' => $services1,
+			'sales1' => $sales1,
+			'sales' => $sales,
+			'shifts' => $shifts,
+			'times' => $times,
+			'range' => $user[0]['range'],
+			'plan' => $user[0]['plan'],
+			'durs' => $durs,
+			'admin' => $auth_user['admin'],
+			'goods' => $goods,
+			'check_goods' => '1'
+		]);
+	}
+
+	public function addDiscountSale() {
+		$sale_id = request('sale_id');
+		$sale = Sales::where('id', '=', $sale_id)->first();
+		$discount = request('discount');
+		if($sale->discount !== null) {
+			//	dd('est');
+			$sale->cost = $sale->cost / (1 - $sale->discount / 100);
+		}
+		$cost = $sale->cost * (1 - $discount / 100);
+		Sales::where('id', '=', $sale_id)->update(['cost' => $cost, 'discount' => $discount]);
+		$auth_user = Auth::user();
+		$id = request('master_id');
+		$user = Master::where('id', '=', $id)->get();
+		$first_day_of_this_month = new DateTime('first day of this month');
+		$this_day = new DateTime('today');
+		//$first_day_of_this_month = $first_day_of_this_month->for+mat('Y-m-d');
+		//	dd($first_day_of_this_month);
+		$last_day_of_this_month = new DateTime('last day of this month');
+		$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$goods_total_money = $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
+		$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
+		//	dd($sales);
+		$products = Products::orderBy('id', 'asc')->get();
+		$goods = Goods::orderBy('id', 'asc')->get();
+		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		//	dd($shifts);
+		$orders = Shift::where('shifts.date', '>=', $this_day)
+			->where('shifts.master_id', '=', $id)
+			->leftJoin('services', 'services.date', '=', 'shifts.date')
+			->where('services.users_user_id', '=', $id)
+			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+			->get();
+		//$orders = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->get();
+		//dd($orders);
+		$times = [];
+		$shift_type1 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30'];
+		//	$shift_type2 = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
+		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+		//$times[0] = $shift_type1;
+		//dd($times[0]);
+		$i = 0;
+		$check = 0;
+		$tmp_array = [];
+		foreach($shifts as $shift) {
+			$check = 0;
+			//	foreach($orders as $order) {
+			//	if($shift->id == $order->id) {
+			$check = 1;
+			if($shift->shift_type == 1) {
+				$tmp_array = $shift_type3;
+				foreach($tmp_array as $tmp_ar) {
+					if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+					if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+				}
+			}
+			//					elseif($order->shift_type == 2) {
+			//						$tmp_array = $shift_type2;
+			//					}
+			elseif($shift->shift_type == 3) {
+				$tmp_array = $shift_type3;
+			}
+
+			$times[$i] = $tmp_array;
+			$i = $i + 1;
+			//	}
+			//	}
+			if($check == 0) {
+				if($shift->shift_type == 1) {
+					$tmp_array = $shift_type3;
+					//dd(strtotime($shift->start_shift) - strtotime("00:00:00"));
+					foreach($tmp_array as $tmp_ar) {
+						//	dd(strtotime($tmp_ar) - strtotime("00:00:00"));
+						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+					}
+					//		dd($tmp_array);
+				}
+				elseif($shift->shift_type == 3) {
+					$tmp_array = $shift_type3;
+				}
+				$times[$i] = $tmp_array;
+				$i = $i + 1;
+			}
+		}
+		//dd($times);
+		$i = 0;
+		foreach($shifts as $shift) {
+			//$check = 0;
+			foreach($orders as $order) {
+				if($shift->id == $order->id) {
+					//$check = 1;
+					$tmp_array = $times[$i];
+					$start = strtotime($order->time) - strtotime("00:00:00");
+					$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+					$j = 0;
+					foreach($tmp_array as $tmp_ar) {
+						//		dd($start);
+						//		dd($end);
+						$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+						//		dd($tmp);
+						if($tmp >= $start && $tmp < $end) {
+							//	dd($tmp);
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						$j = $j + 1;
+					}
+					//	dd($tmp_array);
+					$times[$i] = $tmp_array;
+					//$i = $i + 1;
+				}
+			}
+			$i = $i + 1;
+			//dd($times);
+		}
+		$services1 = DB::table('services')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('products', 'products.id', '=', 'services.product')
+			->select('services.product', DB::raw('count(*) as total'))
+			->groupBy('services.product')
+			->get();
+		foreach($services1 as $service1) {
+			foreach($products as $product) {
+				if($service1->product == $product->id) {
+					$service1->name = $product->name;
+				}
+			}
+		}
+		$sales1 = DB::table('sales')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('goods', 'goods.id', '=', 'sales.product')
+			->select('sales.product', DB::raw('count(*) as total'))
+			->groupBy('sales.product')
+			->get();
+		foreach($sales1 as $sale1) {
+			foreach($goods as $good) {
+				if($sale1->product == $good->id) {
+					$sale1->name = $good->good_name;
+				}
+			}
+		}
+		//dd($times[2]);
+		//	dd($services);
+		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+		return view('master_service', [
+			'id' => $id,
+			'name' => $user[0]['name'],
+			'totalmoney' => $total_money,
+			'goodstotalmoney' => $goods_total_money,
+			'services' => $services,
+			'products' => $products,
+			'salon' => $auth_user['salon'],
+			'services1' => $services1,
+			'sales1' => $sales1,
+			'sales' => $sales,
+			'shifts' => $shifts,
+			'times' => $times,
+			'range' => $user[0]['range'],
+			'plan' => $user[0]['plan'],
+			'durs' => $durs,
+			'admin' => $auth_user['admin'],
+			'goods' => $goods,
+			'check_goods' => '1'
+		]);
+	}
+
+	public function addTextSale() {
+		$sale_id = request('sale_id');
+		$text = request('text');
+		Sales::where('id', '=', $sale_id)->update(['text' => $text]);
+		$auth_user = Auth::user();
+		$id = request('master_id');
+		$user = Master::where('id', '=', $id)->get();
+		$first_day_of_this_month = new DateTime('first day of this month');
+		$this_day = new DateTime('today');
+		//$first_day_of_this_month = $first_day_of_this_month->for+mat('Y-m-d');
+		//	dd($first_day_of_this_month);
+		$last_day_of_this_month = new DateTime('last day of this month');
+		$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$goods_total_money = $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
+		$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
+		//	dd($sales);
+		$products = Products::orderBy('id', 'asc')->get();
+		$goods = Goods::orderBy('id', 'asc')->get();
+		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		//	dd($shifts);
+		$orders = Shift::where('shifts.date', '>=', $this_day)
+			->where('shifts.master_id', '=', $id)
+			->leftJoin('services', 'services.date', '=', 'shifts.date')
+			->where('services.users_user_id', '=', $id)
+			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+			->get();
+		//$orders = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->get();
+		//dd($orders);
+		$times = [];
+		$shift_type1 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30'];
+		//	$shift_type2 = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
+		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+		//$times[0] = $shift_type1;
+		//dd($times[0]);
+		$i = 0;
+		$check = 0;
+		$tmp_array = [];
+		foreach($shifts as $shift) {
+			$check = 0;
+			//	foreach($orders as $order) {
+			//	if($shift->id == $order->id) {
+			$check = 1;
+			if($shift->shift_type == 1) {
+				$tmp_array = $shift_type3;
+				foreach($tmp_array as $tmp_ar) {
+					if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+					if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+				}
+			}
+			//					elseif($order->shift_type == 2) {
+			//						$tmp_array = $shift_type2;
+			//					}
+			elseif($shift->shift_type == 3) {
+				$tmp_array = $shift_type3;
+			}
+
+			$times[$i] = $tmp_array;
+			$i = $i + 1;
+			//	}
+			//	}
+			if($check == 0) {
+				if($shift->shift_type == 1) {
+					$tmp_array = $shift_type3;
+					//dd(strtotime($shift->start_shift) - strtotime("00:00:00"));
+					foreach($tmp_array as $tmp_ar) {
+						//	dd(strtotime($tmp_ar) - strtotime("00:00:00"));
+						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+					}
+					//		dd($tmp_array);
+				}
+				elseif($shift->shift_type == 3) {
+					$tmp_array = $shift_type3;
+				}
+				$times[$i] = $tmp_array;
+				$i = $i + 1;
+			}
+		}
+		//dd($times);
+		$i = 0;
+		foreach($shifts as $shift) {
+			//$check = 0;
+			foreach($orders as $order) {
+				if($shift->id == $order->id) {
+					//$check = 1;
+					$tmp_array = $times[$i];
+					$start = strtotime($order->time) - strtotime("00:00:00");
+					$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+					$j = 0;
+					foreach($tmp_array as $tmp_ar) {
+						//		dd($start);
+						//		dd($end);
+						$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+						//		dd($tmp);
+						if($tmp >= $start && $tmp < $end) {
+							//	dd($tmp);
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						$j = $j + 1;
+					}
+					//	dd($tmp_array);
+					$times[$i] = $tmp_array;
+					//$i = $i + 1;
+				}
+			}
+			$i = $i + 1;
+			//dd($times);
+		}
+		$services1 = DB::table('services')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('products', 'products.id', '=', 'services.product')
+			->select('services.product', DB::raw('count(*) as total'))
+			->groupBy('services.product')
+			->get();
+		foreach($services1 as $service1) {
+			foreach($products as $product) {
+				if($service1->product == $product->id) {
+					$service1->name = $product->name;
+				}
+			}
+		}
+		$sales1 = DB::table('sales')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('goods', 'goods.id', '=', 'sales.product')
+			->select('sales.product', DB::raw('count(*) as total'))
+			->groupBy('sales.product')
+			->get();
+		foreach($sales1 as $sale1) {
+			foreach($goods as $good) {
+				if($sale1->product == $good->id) {
+					$sale1->name = $good->good_name;
+				}
+			}
+		}
+		//dd($times[2]);
+		//	dd($services);
+		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+		return view('master_service', [
+			'id' => $id,
+			'name' => $user[0]['name'],
+			'totalmoney' => $total_money,
+			'goodstotalmoney' => $goods_total_money,
+			'services' => $services,
+			'products' => $products,
+			'salon' => $auth_user['salon'],
+			'services1' => $services1,
+			'sales1' => $sales1,
+			'sales' => $sales,
+			'shifts' => $shifts,
+			'times' => $times,
+			'range' => $user[0]['range'],
+			'plan' => $user[0]['plan'],
+			'durs' => $durs,
+			'admin' => $auth_user['admin'],
+			'goods' => $goods,
+			'check_goods' => '1'
+		]);
 	}
 
 	public function addCost() {
-		$id = request('id');
+		//	$id = request('id');
 		$service_id = request('service_id');
 		$cost = request('cost');
 		Services::where('id', '=', $service_id)->update(['cost' => $cost]);
 		$master = request('master_page');
-		if($master == 1) {
-			return redirect('/master/' . $id);
+		$auth_user = Auth::user();
+		$id = request('id');
+		$user = Master::where('id', '=', $id)->get();
+		$first_day_of_this_month = new DateTime('first day of this month');
+		$this_day = new DateTime('today');
+		//$first_day_of_this_month = $first_day_of_this_month->for+mat('Y-m-d');
+		//	dd($first_day_of_this_month);
+		$last_day_of_this_month = new DateTime('last day of this month');
+		$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$goods_total_money = $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
+		$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
+		//	dd($sales);
+		$products = Products::orderBy('id', 'asc')->get();
+		$goods = Goods::orderBy('id', 'asc')->get();
+		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		//	dd($shifts);
+		$orders = Shift::where('shifts.date', '>=', $this_day)
+			->where('shifts.master_id', '=', $id)
+			->leftJoin('services', 'services.date', '=', 'shifts.date')
+			->where('services.users_user_id', '=', $id)
+			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+			->get();
+		//$orders = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->get();
+		//dd($orders);
+		$times = [];
+		$shift_type1 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30'];
+		//	$shift_type2 = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
+		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+		//$times[0] = $shift_type1;
+		//dd($times[0]);
+		$i = 0;
+		$check = 0;
+		$tmp_array = [];
+		foreach($shifts as $shift) {
+			$check = 0;
+			//	foreach($orders as $order) {
+			//	if($shift->id == $order->id) {
+			$check = 1;
+			if($shift->shift_type == 1) {
+				$tmp_array = $shift_type3;
+				foreach($tmp_array as $tmp_ar) {
+					if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+					if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+				}
+			}
+			//					elseif($order->shift_type == 2) {
+			//						$tmp_array = $shift_type2;
+			//					}
+			elseif($shift->shift_type == 3) {
+				$tmp_array = $shift_type3;
+			}
+
+			$times[$i] = $tmp_array;
+			$i = $i + 1;
+			//	}
+			//	}
+			if($check == 0) {
+				if($shift->shift_type == 1) {
+					$tmp_array = $shift_type3;
+					//dd(strtotime($shift->start_shift) - strtotime("00:00:00"));
+					foreach($tmp_array as $tmp_ar) {
+						//	dd(strtotime($tmp_ar) - strtotime("00:00:00"));
+						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+					}
+					//		dd($tmp_array);
+				}
+				elseif($shift->shift_type == 3) {
+					$tmp_array = $shift_type3;
+				}
+				$times[$i] = $tmp_array;
+				$i = $i + 1;
+			}
 		}
-		else {
-			return redirect('/');
+		//dd($times);
+		$i = 0;
+		foreach($shifts as $shift) {
+			//$check = 0;
+			foreach($orders as $order) {
+				if($shift->id == $order->id) {
+					//$check = 1;
+					$tmp_array = $times[$i];
+					$start = strtotime($order->time) - strtotime("00:00:00");
+					$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+					$j = 0;
+					foreach($tmp_array as $tmp_ar) {
+						//		dd($start);
+						//		dd($end);
+						$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+						//		dd($tmp);
+						if($tmp >= $start && $tmp < $end) {
+							//	dd($tmp);
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						$j = $j + 1;
+					}
+					//	dd($tmp_array);
+					$times[$i] = $tmp_array;
+					//$i = $i + 1;
+				}
+			}
+			$i = $i + 1;
+			//dd($times);
 		}
+		$services1 = DB::table('services')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('products', 'products.id', '=', 'services.product')
+			->select('services.product', DB::raw('count(*) as total'))
+			->groupBy('services.product')
+			->get();
+		foreach($services1 as $service1) {
+			foreach($products as $product) {
+				if($service1->product == $product->id) {
+					$service1->name = $product->name;
+				}
+			}
+		}
+		$sales1 = DB::table('sales')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('goods', 'goods.id', '=', 'sales.product')
+			->select('sales.product', DB::raw('count(*) as total'))
+			->groupBy('sales.product')
+			->get();
+		foreach($sales1 as $sale1) {
+			foreach($goods as $good) {
+				if($sale1->product == $good->id) {
+					$sale1->name = $good->good_name;
+				}
+			}
+		}
+		//dd($times[2]);
+		//	dd($services);
+		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+		return view('master_service', [
+			'id' => $id,
+			'name' => $user[0]['name'],
+			'totalmoney' => $total_money,
+			'goodstotalmoney' => $goods_total_money,
+			'services' => $services,
+			'products' => $products,
+			'salon' => $auth_user['salon'],
+			'services1' => $services1,
+			'sales1' => $sales1,
+			'sales' => $sales,
+			'shifts' => $shifts,
+			'times' => $times,
+			'range' => $user[0]['range'],
+			'plan' => $user[0]['plan'],
+			'durs' => $durs,
+			'admin' => $auth_user['admin'],
+			'goods' => $goods,
+			'check_goods' => '0'
+		]);
 	}
 
 	public function addDiscount() {
@@ -1449,27 +2504,349 @@ class TokioController extends Controller {
 		}
 		$cost = $service->cost * (1 - $discount / 100);
 		Services::where('id', '=', $service_id)->update(['cost' => $cost, 'discount' => $discount]);
-		$master = request('master_page');
-		if($master == 1) {
-			return redirect('/master/' . $id);
+		$auth_user = Auth::user();
+		$id = request('id');
+		$user = Master::where('id', '=', $id)->get();
+		$first_day_of_this_month = new DateTime('first day of this month');
+		$this_day = new DateTime('today');
+		//$first_day_of_this_month = $first_day_of_this_month->for+mat('Y-m-d');
+		//	dd($first_day_of_this_month);
+		$last_day_of_this_month = new DateTime('last day of this month');
+		$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$goods_total_money = $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
+		$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
+		//	dd($sales);
+		$products = Products::orderBy('id', 'asc')->get();
+		$goods = Goods::orderBy('id', 'asc')->get();
+		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		//	dd($shifts);
+		$orders = Shift::where('shifts.date', '>=', $this_day)
+			->where('shifts.master_id', '=', $id)
+			->leftJoin('services', 'services.date', '=', 'shifts.date')
+			->where('services.users_user_id', '=', $id)
+			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+			->get();
+		//$orders = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->get();
+		//dd($orders);
+		$times = [];
+		$shift_type1 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30'];
+		//	$shift_type2 = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
+		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+		//$times[0] = $shift_type1;
+		//dd($times[0]);
+		$i = 0;
+		$check = 0;
+		$tmp_array = [];
+		foreach($shifts as $shift) {
+			$check = 0;
+			//	foreach($orders as $order) {
+			//	if($shift->id == $order->id) {
+			$check = 1;
+			if($shift->shift_type == 1) {
+				$tmp_array = $shift_type3;
+				foreach($tmp_array as $tmp_ar) {
+					if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+					if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+				}
+			}
+			//					elseif($order->shift_type == 2) {
+			//						$tmp_array = $shift_type2;
+			//					}
+			elseif($shift->shift_type == 3) {
+				$tmp_array = $shift_type3;
+			}
+
+			$times[$i] = $tmp_array;
+			$i = $i + 1;
+			//	}
+			//	}
+			if($check == 0) {
+				if($shift->shift_type == 1) {
+					$tmp_array = $shift_type3;
+					//dd(strtotime($shift->start_shift) - strtotime("00:00:00"));
+					foreach($tmp_array as $tmp_ar) {
+						//	dd(strtotime($tmp_ar) - strtotime("00:00:00"));
+						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+					}
+					//		dd($tmp_array);
+				}
+				elseif($shift->shift_type == 3) {
+					$tmp_array = $shift_type3;
+				}
+				$times[$i] = $tmp_array;
+				$i = $i + 1;
+			}
 		}
-		else {
-			return redirect('/');
+		//dd($times);
+		$i = 0;
+		foreach($shifts as $shift) {
+			//$check = 0;
+			foreach($orders as $order) {
+				if($shift->id == $order->id) {
+					//$check = 1;
+					$tmp_array = $times[$i];
+					$start = strtotime($order->time) - strtotime("00:00:00");
+					$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+					$j = 0;
+					foreach($tmp_array as $tmp_ar) {
+						//		dd($start);
+						//		dd($end);
+						$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+						//		dd($tmp);
+						if($tmp >= $start && $tmp < $end) {
+							//	dd($tmp);
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						$j = $j + 1;
+					}
+					//	dd($tmp_array);
+					$times[$i] = $tmp_array;
+					//$i = $i + 1;
+				}
+			}
+			$i = $i + 1;
+			//dd($times);
 		}
+		$services1 = DB::table('services')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('products', 'products.id', '=', 'services.product')
+			->select('services.product', DB::raw('count(*) as total'))
+			->groupBy('services.product')
+			->get();
+		foreach($services1 as $service1) {
+			foreach($products as $product) {
+				if($service1->product == $product->id) {
+					$service1->name = $product->name;
+				}
+			}
+		}
+		$sales1 = DB::table('sales')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('goods', 'goods.id', '=', 'sales.product')
+			->select('sales.product', DB::raw('count(*) as total'))
+			->groupBy('sales.product')
+			->get();
+		foreach($sales1 as $sale1) {
+			foreach($goods as $good) {
+				if($sale1->product == $good->id) {
+					$sale1->name = $good->good_name;
+				}
+			}
+		}
+		//dd($times[2]);
+		//	dd($services);
+		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+		return view('master_service', [
+			'id' => $id,
+			'name' => $user[0]['name'],
+			'totalmoney' => $total_money,
+			'goodstotalmoney' => $goods_total_money,
+			'services' => $services,
+			'products' => $products,
+			'salon' => $auth_user['salon'],
+			'services1' => $services1,
+			'sales1' => $sales1,
+			'sales' => $sales,
+			'shifts' => $shifts,
+			'times' => $times,
+			'range' => $user[0]['range'],
+			'plan' => $user[0]['plan'],
+			'durs' => $durs,
+			'admin' => $auth_user['admin'],
+			'goods' => $goods,
+			'check_goods' => '0'
+		]);
 	}
 
 	public function addText() {
-		$id = request('id');
+		//$id = request('id');
 		$service_id = request('service_id');
 		$text = request('text');
 		Services::where('id', '=', $service_id)->update(['text' => $text]);
-		$master = request('master_page');
-		if($master == 1) {
-			return redirect('/master/' . $id);
+		$auth_user = Auth::user();
+		$id = request('id');
+		$user = Master::where('id', '=', $id)->get();
+		$first_day_of_this_month = new DateTime('first day of this month');
+		$this_day = new DateTime('today');
+		//$first_day_of_this_month = $first_day_of_this_month->for+mat('Y-m-d');
+		//	dd($first_day_of_this_month);
+		$last_day_of_this_month = new DateTime('last day of this month');
+		$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$goods_total_money = $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+		$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
+		$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
+			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
+		//	dd($sales);
+		$products = Products::orderBy('id', 'asc')->get();
+		$goods = Goods::orderBy('id', 'asc')->get();
+		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		//	dd($shifts);
+		$orders = Shift::where('shifts.date', '>=', $this_day)
+			->where('shifts.master_id', '=', $id)
+			->leftJoin('services', 'services.date', '=', 'shifts.date')
+			->where('services.users_user_id', '=', $id)
+			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+			->get();
+		//$orders = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->get();
+		//dd($orders);
+		$times = [];
+		$shift_type1 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30'];
+		//	$shift_type2 = ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
+		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+		//$times[0] = $shift_type1;
+		//dd($times[0]);
+		$i = 0;
+		$check = 0;
+		$tmp_array = [];
+		foreach($shifts as $shift) {
+			$check = 0;
+			//	foreach($orders as $order) {
+			//	if($shift->id == $order->id) {
+			$check = 1;
+			if($shift->shift_type == 1) {
+				$tmp_array = $shift_type3;
+				foreach($tmp_array as $tmp_ar) {
+					if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+					if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+				}
+			}
+			//					elseif($order->shift_type == 2) {
+			//						$tmp_array = $shift_type2;
+			//					}
+			elseif($shift->shift_type == 3) {
+				$tmp_array = $shift_type3;
+			}
+
+			$times[$i] = $tmp_array;
+			$i = $i + 1;
+			//	}
+			//	}
+			if($check == 0) {
+				if($shift->shift_type == 1) {
+					$tmp_array = $shift_type3;
+					//dd(strtotime($shift->start_shift) - strtotime("00:00:00"));
+					foreach($tmp_array as $tmp_ar) {
+						//	dd(strtotime($tmp_ar) - strtotime("00:00:00"));
+						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+					}
+					//		dd($tmp_array);
+				}
+				elseif($shift->shift_type == 3) {
+					$tmp_array = $shift_type3;
+				}
+				$times[$i] = $tmp_array;
+				$i = $i + 1;
+			}
 		}
-		else {
-			return redirect('/');
+		//dd($times);
+		$i = 0;
+		foreach($shifts as $shift) {
+			//$check = 0;
+			foreach($orders as $order) {
+				if($shift->id == $order->id) {
+					//$check = 1;
+					$tmp_array = $times[$i];
+					$start = strtotime($order->time) - strtotime("00:00:00");
+					$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+					$j = 0;
+					foreach($tmp_array as $tmp_ar) {
+						//		dd($start);
+						//		dd($end);
+						$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+						//		dd($tmp);
+						if($tmp >= $start && $tmp < $end) {
+							//	dd($tmp);
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						$j = $j + 1;
+					}
+					//	dd($tmp_array);
+					$times[$i] = $tmp_array;
+					//$i = $i + 1;
+				}
+			}
+			$i = $i + 1;
+			//dd($times);
 		}
+		$services1 = DB::table('services')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('products', 'products.id', '=', 'services.product')
+			->select('services.product', DB::raw('count(*) as total'))
+			->groupBy('services.product')
+			->get();
+		foreach($services1 as $service1) {
+			foreach($products as $product) {
+				if($service1->product == $product->id) {
+					$service1->name = $product->name;
+				}
+			}
+		}
+		$sales1 = DB::table('sales')
+			->where('users_user_id', '=', $id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('goods', 'goods.id', '=', 'sales.product')
+			->select('sales.product', DB::raw('count(*) as total'))
+			->groupBy('sales.product')
+			->get();
+		foreach($sales1 as $sale1) {
+			foreach($goods as $good) {
+				if($sale1->product == $good->id) {
+					$sale1->name = $good->good_name;
+				}
+			}
+		}
+		//dd($times[2]);
+		//	dd($services);
+		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+		return view('master_service', [
+			'id' => $id,
+			'name' => $user[0]['name'],
+			'totalmoney' => $total_money,
+			'goodstotalmoney' => $goods_total_money,
+			'services' => $services,
+			'products' => $products,
+			'salon' => $auth_user['salon'],
+			'services1' => $services1,
+			'sales1' => $sales1,
+			'sales' => $sales,
+			'shifts' => $shifts,
+			'times' => $times,
+			'range' => $user[0]['range'],
+			'plan' => $user[0]['plan'],
+			'durs' => $durs,
+			'admin' => $auth_user['admin'],
+			'goods' => $goods,
+			'check_goods' => '0'
+		]);
 	}
 
 	public function clientAddCost() {
@@ -1696,6 +3073,155 @@ class TokioController extends Controller {
 		return redirect('/client/' . $client_id);
 	}
 
+	public function addSale() {
+		$master_id = request('master_id');
+		$shift_id = request('date');
+		$shift = Shift::where('id', '=', $shift_id)->first();
+		$good_id = request('good');
+		$cost = request('cost');
+		Sales::insert(['users_user_id' => $master_id, 'date' => $shift->date, 'product' => $good_id, 'cost' => $cost]);
+
+		$auth_user = Auth::user();
+		//	$id = request('id');
+		$user = Master::where('id', '=', $master_id)->get();
+		$first_day_of_this_month = new DateTime('first day of this month');
+		$this_day = new DateTime('today');
+		$last_day_of_this_month = new DateTime('last day of this month');
+		$total_money = $this->currentTotalMoney($master_id, $last_day_of_this_month, $first_day_of_this_month);
+		$goods_total_money = $this->goodsCurrentTotalMoney($master_id, $last_day_of_this_month, $first_day_of_this_month);
+		$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
+			->where('users_user_id', '=', $master_id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
+		$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
+			->where('users_user_id', '=', $master_id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
+		$products = Products::orderBy('id', 'asc')->get();
+		$goods = Goods::orderBy('id', 'asc')->get();
+		$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		$orders = Shift::where('shifts.date', '>=', $this_day)
+			->where('shifts.master_id', '=', $master_id)
+			->leftJoin('services', 'services.date', '=', 'shifts.date')
+			->where('services.users_user_id', '=', $master_id)
+			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+			->get();
+		$times = [];
+		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+		$i = 0;
+		$check = 0;
+		$tmp_array = [];
+		foreach($shifts as $shift) {
+			$check = 0;
+			$check = 1;
+			if($shift->shift_type == 1) {
+				$tmp_array = $shift_type3;
+				foreach($tmp_array as $tmp_ar) {
+					if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+					if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+						unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+					}
+				}
+			}
+			elseif($shift->shift_type == 3) {
+				$tmp_array = $shift_type3;
+			}
+
+			$times[$i] = $tmp_array;
+			$i = $i + 1;
+			if($check == 0) {
+				if($shift->shift_type == 1) {
+					$tmp_array = $shift_type3;
+					foreach($tmp_array as $tmp_ar) {
+						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+					}
+				}
+				elseif($shift->shift_type == 3) {
+					$tmp_array = $shift_type3;
+				}
+				$times[$i] = $tmp_array;
+				$i = $i + 1;
+			}
+		}
+		$i = 0;
+		foreach($shifts as $shift) {
+			foreach($orders as $order) {
+				if($shift->id == $order->id) {
+					$tmp_array = $times[$i];
+					$start = strtotime($order->time) - strtotime("00:00:00");
+					$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+					$j = 0;
+					foreach($tmp_array as $tmp_ar) {
+						$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+						if($tmp >= $start && $tmp < $end) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+						}
+						$j = $j + 1;
+					}
+					$times[$i] = $tmp_array;
+				}
+			}
+			$i = $i + 1;
+		}
+		$services1 = DB::table('services')
+			->where('users_user_id', '=', $master_id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('products', 'products.id', '=', 'services.product')
+			->select('services.product', DB::raw('count(*) as total'))
+			->groupBy('services.product')
+			->get();
+		foreach($services1 as $service1) {
+			foreach($products as $product) {
+				if($service1->product == $product->id) {
+					$service1->name = $product->name;
+				}
+			}
+		}
+		$sales1 = DB::table('sales')
+			->where('users_user_id', '=', $master_id)
+			->where('date', '>=', $first_day_of_this_month)
+			->where('date', '<=', $last_day_of_this_month)
+			->join('goods', 'goods.id', '=', 'sales.product')
+			->select('sales.product', DB::raw('count(*) as total'))
+			->groupBy('sales.product')
+			->get();
+		foreach($sales1 as $sale1) {
+			foreach($goods as $good) {
+				if($sale1->product == $good->id) {
+					$sale1->name = $good->good_name;
+				}
+			}
+		}
+		//dd($times[2]);
+		//	dd($services);
+		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+		return view('master_service', [
+			'id' => $master_id,
+			'name' => $user[0]['name'],
+			'totalmoney' => $total_money,
+			'goodstotalmoney' => $goods_total_money,
+			'services' => $services,
+			'products' => $products,
+			'salon' => $auth_user['salon'],
+			'services1' => $services1,
+			'sales1' => $sales1,
+			'sales' => $sales,
+			'shifts' => $shifts,
+			'times' => $times,
+			'range' => $user[0]['range'],
+			'plan' => $user[0]['plan'],
+			'durs' => $durs,
+			'admin' => $auth_user['admin'],
+			'goods' => $goods,
+			'check_goods' => '1'
+		]);
+		//return redirect('/master/' . $master_id);
+	}
+
 	public
 	function addService(Request $request) {
 
@@ -1831,9 +3357,13 @@ class TokioController extends Controller {
 			//	dd($first_day_of_this_month);
 			$last_day_of_this_month = new DateTime('last day of this month');
 			$total_money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+			$goods_total_money = $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
 			$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
 				->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
-			$products = Products::orderBy('id')->get();
+			$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
+				->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
+			$products = Products::orderBy('id', 'asc')->get();
+			$goods = Goods::orderBy('id', 'asc')->get();
 			$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 			$orders = Shift::where('shifts.date', '>=', $this_day)
 				->where('shifts.master_id', '=', $id)
@@ -1853,29 +3383,29 @@ class TokioController extends Controller {
 			$tmp_array = [];
 			foreach($shifts as $shift) {
 				$check = 0;
-			//	foreach($orders as $order) {
+				//	foreach($orders as $order) {
 				//	if($shift->id == $order->id) {
-						$check = 1;
-						if($shift->shift_type == 1) {
-							$tmp_array = $shift_type3;
-							foreach($tmp_array as $tmp_ar) {
-								if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
-									unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
-								}
-								if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
-									unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
-								}
-							}
+				$check = 1;
+				if($shift->shift_type == 1) {
+					$tmp_array = $shift_type3;
+					foreach($tmp_array as $tmp_ar) {
+						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 						}
-						//					elseif($order->shift_type == 2) {
-						//						$tmp_array = $shift_type2;
-						//					}
-						elseif($shift->shift_type == 3) {
-							$tmp_array = $shift_type3;
+						if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 						}
+					}
+				}
+				//					elseif($order->shift_type == 2) {
+				//						$tmp_array = $shift_type2;
+				//					}
+				elseif($shift->shift_type == 3) {
+					$tmp_array = $shift_type3;
+				}
 
-						$times[$i] = $tmp_array;
-						$i = $i + 1;
+				$times[$i] = $tmp_array;
+				$i = $i + 1;
 				//	}
 				//}
 				if($check == 0) {
@@ -1945,6 +3475,21 @@ class TokioController extends Controller {
 					}
 				}
 			}
+			$sales1 = DB::table('sales')
+				->where('users_user_id', '=', $id)
+				->where('date', '>=', $first_day_of_this_month)
+				->where('date', '<=', $last_day_of_this_month)
+				->join('goods', 'goods.id', '=', 'sales.product')
+				->select('sales.product', DB::raw('count(*) as total'))
+				->groupBy('sales.product')
+				->get();
+			foreach($sales1 as $sale1) {
+				foreach($goods as $good) {
+					if($sale1->product == $good->id) {
+						$sale1->name = $good->good_name;
+					}
+				}
+			}
 			//dd($times[2]);
 			//	dd($services);
 			$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
@@ -1952,15 +3497,20 @@ class TokioController extends Controller {
 				'id' => $id,
 				'name' => $user[0]['name'],
 				'totalmoney' => $total_money,
+				'goodstotalmoney' => $goods_total_money,
 				'services' => $services,
 				'products' => $products,
 				'salon' => $auth_user['salon'],
 				'services1' => $services1,
+				'sales1' => $sales1,
+				'sales' => $sales,
 				'shifts' => $shifts,
 				'times' => $times,
 				'range' => $user[0]['range'],
 				'plan' => $user[0]['plan'],
 				'durs' => $durs,
+				'goods' => $goods,
+				'check_goods' => '0',
 				'exception1' => 'Мастер в это время не работает.'
 			]);
 		}
@@ -2014,7 +3564,6 @@ class TokioController extends Controller {
 			}
 		}
 		if($checker == 0) {
-			//	return view('master_service',['exception1'=>'Мастер в это время занят.']);
 			$auth_user = Auth::user();
 			$master_id = request('master_id');
 			$user = Master::where('id', '=', $master_id)->get();
@@ -2024,9 +3573,13 @@ class TokioController extends Controller {
 			//	dd($first_day_of_this_month);
 			$last_day_of_this_month = new DateTime('last day of this month');
 			$total_money = $this->currentTotalMoney($master_id, $last_day_of_this_month, $first_day_of_this_month);
+			$goods_total_money = $this->goodsCurrentTotalMoney($master_id, $last_day_of_this_month, $first_day_of_this_month);
 			$services = DB::table('services')->join('products', 'products.id', '=', 'services.product')
 				->where('users_user_id', '=', $master_id)->where('date', '>=', $first_day_of_this_month)->select('services.*', 'products.name')->orderBy('date', 'desc')->orderBy('time', 'asc')->get();
-			$products = Products::orderBy('id')->get();
+			$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
+				->where('users_user_id', '=', $master_id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
+			$products = Products::orderBy('id', 'asc')->get();
+			$goods = Goods::orderBy('id', 'asc')->get();
 			$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 			$orders = Shift::where('shifts.date', '>=', $this_day)
 				->where('shifts.master_id', '=', $master_id)
@@ -2047,31 +3600,31 @@ class TokioController extends Controller {
 			$tmp_array = [];
 			foreach($shifts as $shift) {
 				$check = 0;
-			//	foreach($orders as $order) {
-			//		if($shift->id == $order->id) {
-						//	dd($order);
-						$check = 1;
-						if($shift->shift_type == 1) {
-							$tmp_array = $shift_type3;
-							foreach($tmp_array as $tmp_ar) {
-								if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
-									unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
-								}
-								if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
-									unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
-								}
-								//	dd($tmp_array);
-							}
+				//	foreach($orders as $order) {
+				//		if($shift->id == $order->id) {
+				//	dd($order);
+				$check = 1;
+				if($shift->shift_type == 1) {
+					$tmp_array = $shift_type3;
+					foreach($tmp_array as $tmp_ar) {
+						if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 						}
-						//					elseif($order->shift_type == 2) {
-						//						$tmp_array = $shift_type2;
-						//					}
-						elseif($shift->shift_type == 3) {
-							$tmp_array = $shift_type3;
+						if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+							unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
 						}
+						//	dd($tmp_array);
+					}
+				}
+				//					elseif($order->shift_type == 2) {
+				//						$tmp_array = $shift_type2;
+				//					}
+				elseif($shift->shift_type == 3) {
+					$tmp_array = $shift_type3;
+				}
 
-						$times[$i] = $tmp_array;
-						$i = $i + 1;
+				$times[$i] = $tmp_array;
+				$i = $i + 1;
 				//	}
 				//}
 				if($check == 0) {
@@ -2142,6 +3695,21 @@ class TokioController extends Controller {
 					}
 				}
 			}
+			$sales1 = DB::table('sales')
+				->where('users_user_id', '=', $master_id)
+				->where('date', '>=', $first_day_of_this_month)
+				->where('date', '<=', $last_day_of_this_month)
+				->join('goods', 'goods.id', '=', 'sales.product')
+				->select('sales.product', DB::raw('count(*) as total'))
+				->groupBy('sales.product')
+				->get();
+			foreach($sales1 as $sale1) {
+				foreach($goods as $good) {
+					if($sale1->product == $good->id) {
+						$sale1->name = $good->good_name;
+					}
+				}
+			}
 			//dd($times[2]);
 			//	dd($services);
 			$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
@@ -2150,15 +3718,20 @@ class TokioController extends Controller {
 				'id' => $master_id,
 				'name' => $user[0]['name'],
 				'totalmoney' => $total_money,
+				'goodstotalmoney' => $goods_total_money,
 				'services' => $services,
 				'products' => $products,
 				'salon' => $auth_user['salon'],
 				'services1' => $services1,
+				'sales1' => $sales1,
+				'sales' => $sales,
 				'shifts' => $shifts,
 				'times' => $times,
 				'range' => $user[0]['range'],
 				'plan' => $user[0]['plan'],
 				'durs' => $durs,
+				'goods' => $goods,
+				'check_goods' => '0',
 				'exception1' => 'Мастер в это время занят.'
 			]);
 		}
@@ -2289,6 +3862,12 @@ class TokioController extends Controller {
 		return redirect('/');
 	}
 
+	public function addGoodToSalon() {
+		$good_name = request('good_name');
+		Goods::insert(['good_name' => $good_name]);
+		return redirect('/');
+	}
+
 	public function logout() {
 		Auth::logout();
 		return redirect('/');
@@ -2317,13 +3896,15 @@ class TokioController extends Controller {
 		return Services::where('users_user_id', '=', $id)->sum('cost');
 	}
 
-	public
-	function currentTotalCount($id, $cur_day, $first_day) {
+	public function currentTotalCount($id, $cur_day, $first_day) {
 		return Services::where('users_user_id', '=', $id)->where('date', '<=', $cur_day)->where('date', '>=', $first_day)->sum('count');
 	}
 
-	public
-	function currentTotalMoney($id, $cur_day, $first_day) {
+	public function currentTotalMoney($id, $cur_day, $first_day) {
 		return Services::where('users_user_id', '=', $id)->where('date', '<=', $cur_day)->where('date', '>=', $first_day)->sum('cost');
+	}
+
+	public function goodsCurrentTotalMoney($id, $cur_day, $first_day) {
+		return Sales::where('users_user_id', '=', $id)->where('date', '<=', $cur_day)->where('date', '>=', $first_day)->sum('cost');
 	}
 }
