@@ -74,9 +74,6 @@ class TokioController extends Controller {
 				if($shifts_today->shift_type == 1) {
 					$master->shifts_today = "1-ая смена";
 				}
-				elseif($shifts_today->shift_type == 2) {
-					$master->shifts_today = "2-ая смена";
-				}
 				elseif($shifts_today->shift_type == 3) {
 					$master->shifts_today = "целый день";
 				}
@@ -185,13 +182,21 @@ class TokioController extends Controller {
 		$new_filter_date = new DateTime('today');
 		$new_filter_date = $new_filter_date->format('Y-m-d');
 		$days_in_month = date("t");
+		$days_in_next_month = date('t', mktime(0,0,0,date('m')+1,1,date('y')));
 		$last_day_of_month = new DateTime('last day of this month');
 		$last_day_of_month = $last_day_of_month->format('Y-m-d');
 		$first_day_of_month = new DateTime('first day of this month');
 		$first_day_of_month = $first_day_of_month->format('Y-m-d');
+		$last_day_of_next_month = new DateTime('last day of next month');
+		$last_day_of_next_month = $last_day_of_next_month->format('Y-m-d');
+		$first_day_of_next_month = new DateTime('first day of next month');
+		$first_day_of_next_month = $first_day_of_next_month->format('Y-m-d');
 		$month_types = [];
 		$month_starts = [];
 		$month_ends = [];
+		$next_month_types = [];
+		$next_month_starts = [];
+		$next_month_ends = [];
 		foreach($masters as $master) {
 
 			$shifts_today = 0;
@@ -240,14 +245,15 @@ class TokioController extends Controller {
 				$master->shifts_today = "нету смен";
 			}
 			$shifts_of_month = DB::table('shifts')->where('date', '>=', $first_day_of_month)->where('date', '<=', $last_day_of_month)->where('master_id', '=', $master->id)->get();
+			$shifts_of_next_month = DB::table('shifts')->where('date', '>=', $first_day_of_next_month)->where('date', '<=', $last_day_of_next_month)->where('master_id', '=', $master->id)->get();
 			$tmp_day = new DateTime($first_day_of_month);
+			$next_tmp_day = new DateTime($first_day_of_next_month);
 			//$tmp_day = $tmp_day->format('Y-m-d');
 			for($i = 0; $i <= $days_in_month - 1; $i++) {
 				//dd($tmp_day);
 				$checker = 0;
+				$next_checker = 0;
 				foreach($shifts_of_month as $shift_of_month) {
-					//dd($shift_of_month->date);
-					//	dd($tmp_day->format('Y-m-d'));
 					if(strtotime($shift_of_month->date) == strtotime($tmp_day->format('Y-m-d'))) {
 						$month_types[$i] = $shift_of_month->shift_type;
 						$month_starts[$i] = $shift_of_month->start_shift;
@@ -255,19 +261,34 @@ class TokioController extends Controller {
 						$checker = 1;
 					}
 				}
+				foreach($shifts_of_next_month as $shift_of_next_month) {
+					if(strtotime($shift_of_next_month->date) == strtotime($next_tmp_day->format('Y-m-d'))) {
+						$next_month_types[$i] = $shift_of_next_month->shift_type;
+						$next_month_starts[$i] = $shift_of_next_month->start_shift;
+						$next_month_ends[$i] = $shift_of_next_month->end_shift;
+						$next_checker = 1;
+					}
+				}
 				if($checker == 0) {
 					$month_types[$i] = 0;
+				}
+				if($next_checker == 0) {
+					$next_month_types[$i] = 0;
 				}
 				if(strtotime($tmp_day->format('Y-m-d')) == strtotime($new_filter_date)) {
 					$month_types[$i] = $month_types[$i] + 10;
 				}
 				$tmp_day->modify('+1 day');
+				$next_tmp_day->modify('+1 day');
 				//	$tmp_day = $tmp_day->format('Y-m-d');
 				//dd($tmp_day);
 			}
 			$master->array = $month_types;
 			$master->starts = $month_starts;
 			$master->ends = $month_ends;
+			$master->next_array = $next_month_types;
+			$master->next_starts = $next_month_starts;
+			$master->next_ends = $next_month_ends;
 			//	dd($master->array);
 		}
 		return view('main', [
@@ -276,6 +297,7 @@ class TokioController extends Controller {
 			'products' => $products,
 			'new_filter_date' => $new_filter_date,
 			'days_in_month' => $days_in_month,
+			'days_in_next_month' => $days_in_next_month,
 			'admin' => $auth_user['admin'],
 			//	'month_types' => $month_types
 		]);

@@ -36,13 +36,24 @@
 								class="material-icons">swap_horiz</i></button>
 				</form>
 			</div>
-
+			<div class="col s1 left-align">
+				<form action="{{ route('show-client-list') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue"><i
+								class="material-icons">people</i></button>
+				</form>
+			</div>
 			<div class="col s1 right-align">
 				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
 							class="material-icons">exit_to_app</i></a>
 			</div>
 		{% else %}
-			<div class="col s11 right-align">
+			<div class="col offset-col s10 col s1 right-align">
+				<form action="{{ route('show-client-list') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue"><i
+								class="material-icons">people</i></button>
+				</form>
+			</div>
+			<div class="col 1 right-align">
 				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
 							class="material-icons">exit_to_app</i></a>
 			</div>

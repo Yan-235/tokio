@@ -107,20 +107,23 @@
 		</li>
 	</ul>
 </div>
-{#
+
 <div class="container-fluid is-margin-top-50">
 	<div class="row">
 		<div class="col s12">
 			<form action="{{ route('search-client') }}" method="GET" class="search-simple">
 				<div class="row">
-					<div class="col offset-s2 col s6">
+					<div class="col offset-s2 col s7">
 						<div class="form-group">
 							<input type="text" class="form-control" name="q" value="{{ old('q') }}" required>
 						</div>
 					</div>
-					<div class="col s2 text-center">
+					<div class="col s1 text-center">
 						<div class="form-group">
-							<input class="waves-effect waves-teal btn-flat" type="submit" value="Искать">
+						{#
+							<input class="btn waves-effect waves-light" type="submit" value="Искать">
+						#}
+							<button class="btn waves-effect waves-light" type="submit"><i class="material-icons">search</i></button>
 						</div>
 					</div>
 				</div>
@@ -164,7 +167,7 @@
 		</div>
 	</div>
 </div>
-#}
+
 <div class="container-fluid is-margin-top-50">
 	<div class="row">
 		<div class="col s12">
