@@ -87,11 +87,11 @@
 									<label for="range">Адрес</label>
 								</div>
 								<div class="input-field col s4">
-									<input placeholder="Введите имя и фамилию клиента" id="name" name="name" type="text" maxlength="255" class="validate"  required>
+									<input placeholder="Введите имя и фамилию клиента" id="name" name="name" type="text" maxlength="255" class="validate" required>
 								</div>
 								<div class="input-field col s3">
 									<input placeholder="Введите телефон клиента" id="tel" name="tel" type="text" maxlength="14"
-									       class="validate" >
+									       class="validate">
 								</div>
 								<div class="input-field col s5">
 									<input placeholder="Введите адрес клиента" id="address" name="address" type="text" maxlength="255" class="validate">
@@ -107,6 +107,64 @@
 		</li>
 	</ul>
 </div>
+{#
+<div class="container-fluid is-margin-top-50">
+	<div class="row">
+		<div class="col s12">
+			<form action="{{ route('search-client') }}" method="GET" class="search-simple">
+				<div class="row">
+					<div class="col offset-s2 col s6">
+						<div class="form-group">
+							<input type="text" class="form-control" name="q" value="{{ old('q') }}" required>
+						</div>
+					</div>
+					<div class="col s2 text-center">
+						<div class="form-group">
+							<input class="waves-effect waves-teal btn-flat" type="submit" value="Искать">
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="container-fluid is-margin-top-50">
+	<div class="row">
+		<div class="col s12">
+			{% if searched_clients %}
+				<table class="highlight centered">
+					<thead>
+					<tr>
+						<th>ФИО</th>
+						<th>Телефон</th>
+						<th>Адрес</th>
+						<th>Потраченные деньги</th>
+						<th></th>
+					</tr>
+					</thead>
+
+					<tbody>
+					{% for client in searched_clients %}
+						<tr class="border-0">
+							<td class="border-0"><a href="{{ route('show-client',[client.id]) }}" class="waves-effect waves-teal btn-flat
+						full-width text-center is-capitalize">{{ client.name }}</a></td>
+							<td class="border-0">{{ client.tel }}</td>
+							<td class="border-0">{{ client.address }}</td>
+							{% if client.spent_money == null %}
+								<td class="border-0">0</td>
+							{% else %}
+								<td class="border-0">{{ client.spent_money }}</td>
+							{% endif %}
+							<td class="border-0"><a href="{{ route('delete-client',[client.id]) }}" class="btn waves-effect waves-light red"><i class="material-icons"></i>Удалить</a></td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			{% endif %}
+		</div>
+	</div>
+</div>
+#}
 <div class="container-fluid is-margin-top-50">
 	<div class="row">
 		<div class="col s12">

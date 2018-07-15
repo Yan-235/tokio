@@ -57,6 +57,8 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/choose-date', 'TokioController@chooseDate')->name('choose-date');
 	Route::get('/add-sale', 'TokioController@addSale')->name('add-sale');
 	Route::get('/client-add-sale', 'TokioController@clientAddSale')->name('client-add-sale');
+
+	Route::get('/search-client', 'SearchController@searchClient')->name('search-client');
 });
 
 Auth::routes();
