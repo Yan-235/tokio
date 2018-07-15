@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/delete-service', 'TokioController@deleteService')->name('delete-service');
 	Route::get('/delete-sale', 'TokioController@deleteSale')->name('delete-sale');
 	Route::get('/client-delete-service', 'TokioController@clientDeleteService')->name('client-delete-service');
+	Route::get('/client-delete-sale', 'TokioController@clientDeleteSale')->name('client-delete-sale');
 	Route::get('/tokio-logout', 'TokioController@logout')->name('tokio-logout');
 	Route::get('/change-salon', 'TokioController@changeSalon')->name('change-salon');
 	Route::get('/date-filter', 'TokioController@dateFilter')->name('date-filter');
@@ -38,18 +39,24 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/add-discount-sale', 'TokioController@addDiscountSale')->name('add-discount-sale');
 	Route::get('/add-text-sale', 'TokioController@addTextSale')->name('add-text-sale');
 	Route::get('/client-add-cost', 'TokioController@clientAddCost')->name('client-add-cost');
+	Route::get('/goods-client-add-cost', 'TokioController@goodsclientAddCost')->name('goods-client-add-cost');
 	Route::get('/client-add-text', 'TokioController@clientAddText')->name('client-add-text');
+	Route::get('/goods-client-add-text', 'TokioController@goodsClientAddText')->name('goods-client-add-text');
 	Route::get('/client-add-discount', 'TokioController@clientAddDiscount')->name('client-add-discount');
+	Route::get('/goods-client-add-discount', 'TokioController@goodsClientAddDiscount')->name('goods-client-add-discount');
 	Route::get('/show-client-list', 'TokioController@showClientList')->name('show-client-list');
 	Route::get('/client/{id}', 'TokioController@showClient')->name('show-client');
+	Route::get('/goods-client/{id}', 'TokioController@goodsShowClient')->name('goods-show-client');
 	Route::get('/delete-client/{id}', 'TokioController@deleteClient')->name('delete-client');
 	Route::get('/update-client', 'TokioController@updateClient')->name('update-client');
 	Route::get('/add-client', 'TokioController@addClient')->name('add-client');
 	Route::get('/client-date-filter', 'TokioController@clientDateFilter')->name('client-date-filter');
 	Route::get('/client-add-service', 'TokioController@clientAddService')->name('client-add-service');
 	Route::get('/choose-master', 'TokioController@chooseMaster')->name('choose-master');
+	Route::get('/goods-choose-master', 'TokioController@goodsChooseMaster')->name('goods-choose-master');
 	Route::get('/choose-date', 'TokioController@chooseDate')->name('choose-date');
 	Route::get('/add-sale', 'TokioController@addSale')->name('add-sale');
+	Route::get('/client-add-sale', 'TokioController@clientAddSale')->name('client-add-sale');
 });
 
 Auth::routes();

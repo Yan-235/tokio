@@ -123,7 +123,7 @@ class TokioController extends Controller {
 		foreach($masters as $master) {
 			$id = $master->id;
 			//	$master->count = $this->currentTotalCount($id, $new_filter_date, $first_day_of_month);
-			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1);
+			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) + $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
 			//	$master->current_feedback = $this->masterFeedback($master->count, $master->money);
 		}
 
@@ -133,7 +133,7 @@ class TokioController extends Controller {
 		foreach($masters as $master) {
 			$id = $master->id;
 			//	$master->count = $this->currentTotalCount($id,$last_day_of_this_month,$first_day_of_this_month);
-			$master->money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+			$master->money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month) + $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
 			//	$master->feedback = $this->masterFeedback($master->count, $master->money);
 		}
 
@@ -365,9 +365,9 @@ class TokioController extends Controller {
 					->where('date', '<=', $new_filter_date2)
 					->sum('duration') / 6000;
 			$id = $master->id;
-			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1);
+			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) + $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
 
-			$master->money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+			$master->money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month) + $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
 		}
 
 		return view('info_tables', [
@@ -1435,6 +1435,15 @@ class TokioController extends Controller {
 		Services::where('id', '=', $service_id)->delete();
 
 		return redirect('/client/' . $client_id);
+	}
+
+	public function clientDeleteSale(Request $request) {
+		$client_id = request('client_id');
+		$sale_id = request('sale_id');
+
+		Sales::where('id', '=', $sale_id)->delete();
+
+		return redirect('/goods-client/' . $client_id);
 	}
 
 	public function deleteService(Request $request) {
@@ -2858,6 +2867,15 @@ class TokioController extends Controller {
 		return redirect('/client/' . $client_id);
 	}
 
+	public function goodsClientAddCost() {
+		$client_id = request('client_id');
+		$sale_id = request('sale_id');
+		$cost = request('cost');
+		Sales::where('id', '=', $sale_id)->update(['cost' => $cost]);
+
+		return redirect('/goods-client/' . $client_id);
+	}
+
 	public function clientAddDiscount() {
 		$client_id = request('client_id');
 		$service_id = request('service_id');
@@ -2872,6 +2890,20 @@ class TokioController extends Controller {
 		return redirect('/client/' . $client_id);
 	}
 
+	public function goodsClientAddDiscount() {
+		$client_id = request('client_id');
+		$sale_id = request('sale_id');
+		$sale = Sales::where('id', '=', $sale_id)->first();
+		$discount = request('discount');
+		if($sale->discount !== null) {
+			//	dd('est');
+			$sale->cost = $sale->cost / (1 - $sale->discount / 100);
+		}
+		$cost = $sale->cost * (1 - $discount / 100);
+		Sales::where('id', '=', $sale_id)->update(['cost' => $cost, 'discount' => $discount]);
+		return redirect('/goods-client/' . $client_id);
+	}
+
 	public function clientAddText() {
 		$client_id = request('client_id');
 		$service_id = request('service_id');
@@ -2881,6 +2913,15 @@ class TokioController extends Controller {
 		return redirect('/client/' . $client_id);
 	}
 
+	public function goodsClientAddText() {
+		$client_id = request('client_id');
+		$sale_id = request('sale_id');
+		$text = request('text');
+		Sales::where('id', '=', $sale_id)->update(['text' => $text]);
+
+		return redirect('/goods-client/' . $client_id);
+	}
+
 	public function chooseMaster() {
 		$master_id = request('master_id');
 		$master_name = Master::where('id', '=', $master_id)->select('name')->first();
@@ -2888,6 +2929,7 @@ class TokioController extends Controller {
 		$client = Client::where('id', '=', $id)->first();
 		//	dd($client);
 		$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+		$client->goods_spent_money = Sales::where('client_id', '=', $client->id)->sum('cost');
 		$auth_user = Auth::user();
 		$masters = Master::where('salon', '=', $auth_user['salon'])->get();
 		$this_day = new DateTime('today');
@@ -2899,10 +2941,64 @@ class TokioController extends Controller {
 			->select('services.*', 'masters.name', 'products.name as product_name')
 			->orderBy('services.date', 'desc')
 			->get();
+		$sales = Sales::where('client_id', '=', $id)
+			->leftJoin('masters', 'masters.id', '=', 'sales.users_user_id')
+			->leftJoin('goods', 'sales.product', '=', 'goods.id')
+			->select('sales.*', 'masters.name', 'goods.good_name')
+			->orderBy('sales.date', 'desc')
+			->get();
+		//dd($sales);
 		//	dd($client_services);
 		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
 		$products = Products::orderBy('id')->get();
+		$goods = Goods::orderBy('id')->get();
 		return view('client_card', [
+			'admin' => $auth_user['admin'],
+			'salon' => $auth_user['salon'],
+			'client' => $client,
+			'client_services' => $client_services,
+			'sales' => $sales,
+			'master_id' => $master_id,
+			'master_name' => $master_name->name,
+			'masters' => $masters,
+			'shifts' => $shifts,
+			'durs' => $durs,
+			'products' => $products,
+			'goods' => $goods,
+			'check_goods' => '0',
+		]);
+	}
+
+	public function goodsChooseMaster() {
+		$master_id = request('master_id');
+		$master_name = Master::where('id', '=', $master_id)->select('name')->first();
+		$id = request('id');
+		$client = Client::where('id', '=', $id)->first();
+		//	dd($client);
+		$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+		$client->goods_spent_money = Sales::where('client_id', '=', $client->id)->sum('cost');
+		$auth_user = Auth::user();
+		$masters = Master::where('salon', '=', $auth_user['salon'])->get();
+		$this_day = new DateTime('today');
+		$shifts = [];
+		$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		$client_services = Services::where('client_id', '=', $id)
+			->leftJoin('masters', 'masters.id', '=', 'services.users_user_id')
+			->leftJoin('products', 'services.product', '=', 'products.id')
+			->select('services.*', 'masters.name', 'products.name as product_name')
+			->orderBy('services.date', 'desc')
+			->get();
+		$sales = Sales::where('client_id', '=', $id)
+			->leftJoin('masters', 'masters.id', '=', 'sales.users_user_id')
+			->leftJoin('goods', 'sales.product', '=', 'goods.id')
+			->select('sales.*', 'masters.name', 'goods.good_name')
+			->orderBy('sales.date', 'desc')
+			->get();
+		//	dd($client_services);
+		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
+		$products = Products::orderBy('id')->get();
+		$goods = Goods::orderBy('id')->get();
+		return view('goods_client_card', [
 			'admin' => $auth_user['admin'],
 			'salon' => $auth_user['salon'],
 			'client' => $client,
@@ -2912,7 +3008,10 @@ class TokioController extends Controller {
 			'masters' => $masters,
 			'shifts' => $shifts,
 			'durs' => $durs,
-			'products' => $products
+			'products' => $products,
+			'sales' => $sales,
+			'goods' => $goods,
+			'check_goods' => '1',
 		]);
 	}
 
@@ -2926,6 +3025,7 @@ class TokioController extends Controller {
 		$client = Client::where('id', '=', $id)->first();
 		//	dd($client);
 		$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+		$client->goods_spent_money = Sales::where('client_id', '=', $client->id)->sum('cost');
 		$auth_user = Auth::user();
 		$masters = Master::where('salon', '=', $auth_user['salon'])->get();
 		$this_day = new DateTime('today');
@@ -3016,6 +3116,19 @@ class TokioController extends Controller {
 		]);
 	}
 
+	public function clientAddSale() {
+		$master_id = request('master_id');
+		$shift_id = request('shift_id');
+		$client_id = request('client_id');
+		$good = request('good');
+		$cost = request('cost');
+		$shift = Shift::where('id', '=', $shift_id)->first();
+
+		Sales::insert(['users_user_id' => $master_id, 'date' => $shift->date, 'product' => $good, 'cost' => $cost,'client_id' => $client_id]);
+
+		return redirect('/goods-client/' . $client_id);
+	}
+
 	public function clientAddService() {
 		$master_id = request('master_id');
 		$shift_id = request('shift_id');
@@ -3053,6 +3166,7 @@ class TokioController extends Controller {
 					$clients = Client::get();
 					foreach($clients as $client) {
 						$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+						$client->goods_spent_money = Sales::where('client_id', '=', $client->id)->sum('cost');
 						//		$sales = Sales::where('client_id','=',$client->id)->sum('cost');
 						//		$client->spent_money = $client->spent_money + $sales;
 						//	dd($client->spent_money);
@@ -3752,7 +3866,8 @@ class TokioController extends Controller {
 		$auth_user = Auth::user();
 		$clients = Client::get();
 		foreach($clients as $client) {
-			$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+			$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost') + Sales::where('client_id', '=', $client->id)->sum('cost');
+
 			//		$sales = Sales::where('client_id','=',$client->id)->sum('cost');
 			//		$client->spent_money = $client->spent_money + $sales;
 			//	dd($client->spent_money);
@@ -3772,6 +3887,7 @@ class TokioController extends Controller {
 			$client = Client::where('id', '=', $client_id)->first();
 			//	dd($client);
 			$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+			$client->goods_spent_money = Sales::where('client_id', '=', $client->id)->sum('cost');
 			$auth_user = Auth::user();
 			$client_services = Services::where('client_id', '=', $client_id)
 				->leftJoin('masters', 'masters.id', '=', 'services.users_user_id')
@@ -3791,6 +3907,7 @@ class TokioController extends Controller {
 		$client = Client::where('id', '=', $id)->first();
 		//	dd($client);
 		$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+		$client->goods_spent_money = Sales::where('client_id', '=', $client->id)->sum('cost');
 		$auth_user = Auth::user();
 		return view('client_card', [
 			'admin' => $auth_user['admin'],
@@ -3806,6 +3923,7 @@ class TokioController extends Controller {
 		$client = Client::where('id', '=', $id)->first();
 		//	dd($client);
 		$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+		$client->goods_spent_money = Sales::where('client_id', '=', $client->id)->sum('cost');
 		$auth_user = Auth::user();
 		$masters = Master::where('salon', '=', $auth_user['salon'])->get();
 		$client_services = Services::where('client_id', '=', $id)
@@ -3814,12 +3932,52 @@ class TokioController extends Controller {
 			->select('services.*', 'masters.name', 'products.name as product_name')
 			->orderBy('services.date', 'desc')
 			->get();
+		$sales = Sales::where('client_id', '=', $id)
+			->leftJoin('masters', 'masters.id', '=', 'sales.users_user_id')
+			->leftJoin('goods', 'sales.product', '=', 'goods.id')
+			->select('sales.*', 'masters.name', 'goods.good_name')
+			->orderBy('sales.date', 'desc')
+			->get();
 		return view('client_card', [
 			'admin' => $auth_user['admin'],
 			'salon' => $auth_user['salon'],
 			'client' => $client,
 			'client_services' => $client_services,
+			'sales' => $sales,
 			'masters' => $masters,
+			'check_goods' => '0',
+		]);
+	}
+
+	public
+	function goodsShowClient() {
+		$id = request('id');
+		$client = Client::where('id', '=', $id)->first();
+		//	dd($client);
+		$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
+		$client->goods_spent_money = Sales::where('client_id', '=', $client->id)->sum('cost');
+		$auth_user = Auth::user();
+		$masters = Master::where('salon', '=', $auth_user['salon'])->get();
+		$client_services = Services::where('client_id', '=', $id)
+			->leftJoin('masters', 'masters.id', '=', 'services.users_user_id')
+			->leftJoin('products', 'services.product', '=', 'products.id')
+			->select('services.*', 'masters.name', 'products.name as product_name')
+			->orderBy('services.date', 'desc')
+			->get();
+		$sales = Sales::where('client_id', '=', $id)
+			->leftJoin('masters', 'masters.id', '=', 'sales.users_user_id')
+			->leftJoin('goods', 'sales.product', '=', 'goods.id')
+			->select('sales.*', 'masters.name', 'goods.good_name')
+			->orderBy('sales.date', 'desc')
+			->get();
+		return view('goods_client_card', [
+			'admin' => $auth_user['admin'],
+			'salon' => $auth_user['salon'],
+			'client' => $client,
+			'client_services' => $client_services,
+			'sales' => $sales,
+			'masters' => $masters,
+			'check_goods' => '0',
 		]);
 	}
 

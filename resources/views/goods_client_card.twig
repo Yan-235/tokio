@@ -97,17 +97,21 @@
 	<div class="row">
 		<div class="col s12 text-center">
 
+
 			<div class="col s6">
-				<button class="waves-effect waves-light btn">Услуги</button>
+				<a href="{{ route('show-client',[client.id]) }}">
+					<button class="waves-effect waves-light btn grey">Услуги</button>
+				</a>
 			</div>
 			<div class="col s6">
-				<a href="{{ route('goods-show-client',[client.id]) }}" ><button class="waves-effect waves-light btn grey">Товары</button></a>
+				<button class="waves-effect waves-light btn">Товары</button>
 			</div>
+
 
 		</div>
 	</div>
 </div>
-<section id="goods" hidden>
+<section id="goods">
 	<div class="container is-margin-top-50">
 		<div class="row">
 
@@ -131,7 +135,7 @@
 			</div>
 
 
-			<form action="{{ route('add-sale') }}" method="get">
+			<form action="{{ route('client-add-sale') }}" method="get">
 				<div class="input-field">
 					<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 				</div>
@@ -140,7 +144,7 @@
 				<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
 
 				<div class="input-field col s3">
-					<select name="date" required>
+					<select name="shift_id" required>
 						<option value="" disabled selected>Дата</option>
 						{% for shift in shifts %}
 							<option value="{{ shift.id }}" onClick="show();">{{ shift.date|date("d-m-Y") }}</option>
@@ -196,7 +200,7 @@
 						<td>{{ sale.name }}</td>
 						{% if sale.cost == null %}
 							<td>
-								<form action="{{ route('add-cost-sale') }}">
+								<form action="{{ route('goods-client-add-cost') }}">
 									<input value="{{ client.id }}" placeholder="ID" name="client_id" type="hidden">
 									<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
 									<input name="sale_id" value="{{ sale.id }}" hidden>
@@ -205,7 +209,7 @@
 								</form>
 							</td>
 							<td>
-								<form action="{{ route('add-discount-sale') }}">
+								<form action="{{ route('goods-client-add-discount') }}">
 									<input value="{{ client.id }}" placeholder="ID" name="client_id" type="hidden">
 									<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
 									<input name="sale_id" value="{{ sale.id }}" hidden>
@@ -216,7 +220,7 @@
 						{% else %}
 							<td>{{ sale.cost|number_format(2) }}</td>
 							<td>
-								<form action="{{ route('add-discount-sale') }}">
+								<form action="{{ route('goods-client-add-discount') }}">
 									<input value="{{ client.id }}" placeholder="ID" name="client_id" type="hidden">
 									<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
 									<input name="sale_id" value="{{ sale.id }}" hidden>
@@ -226,7 +230,7 @@
 							</td>
 						{% endif %}
 						<td>
-							<form action="{{ route('add-text-sale') }}">
+							<form action="{{ route('goods-client-add-text') }}">
 								<input value="{{ client.id }}" placeholder="ID" name="client_id" type="hidden">
 								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
 								<input name="sale_id" value="{{ sale.id }}" hidden>
@@ -235,7 +239,7 @@
 							</form>
 						</td>
 						<td>
-							<form action="{{ route('delete-sale') }}">
+							<form action="{{ route('client-delete-sale') }}">
 								<input name="sale_id" value="{{ sale.id }}" hidden>
 								<input value="{{ client.id }}" placeholder="ID" name="client_id" type="hidden">
 								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
@@ -249,189 +253,9 @@
 		</div>
 	</div>
 </section>
-<section id="services">
-	<div class="container is-margin-top-50">
-		{#
-		<div class="row">
-			<div class="col s12 text-center">
-				<form action="{{ route('client-date-filter') }}" method="get">
-					<input name="id" value="{{ client.id }}" hidden>
-					{% if new_filter_date == null %}
-						<div class="input-field col offset-s4 col s2">
-							<input value="{{ theme.getDateEnd|date("Y-m-d") }}" type="date" name="filter_date">
-						</div>
-					{% else %}
-						<div class="input-field col offset-s4 col s2">
-							<input placeholder="Дата" value="{{ new_filter_date }}" name="filter_date" type="date" required>
-						</div>
-					{% endif %}
-					<div class="col s3">
-						<button type="submit" class="waves-effect waves-light btn" href="#">Изменить</button>
-					</div>
-				</form>
-			</div>
-		</div>
-			#}
-		<div class="row">
-			<div class="input-field col s3">
-				<form action="{{ route('choose-master') }}">
-					<input name="id" value="{{ client.id }}" hidden required>
-					<select name="master_id" onchange="this.form.submit()" required>
-						{% if master_name == null %}
-							<option value="" disabled selected>Мастер</option>
-						{% else %}
-							<option value="" disabled selected>{{ master_name }}</option>
-						{% endif %}
-						{% for master in masters %}
-							<option value="{{ master.id }}">
-								{{ master.name }}
-							</option>
-						{% endfor %}
-					</select>
-				</form>
-			</div>
-			<div class="input-field col s2">
-				<form action="{{ route('choose-date') }}">
-					<input name="id" value="{{ client.id }}" hidden required>
-					<input name="master_id" value="{{ master_id }}" hidden required>
-					<select name="shift_id" onchange="this.form.submit()" required>
-						{% if shift_date == null %}
-							<option value="" disabled selected>Дата</option>
-						{% else %}
-							<option value="" disabled selected>{{ shift_date|date('d.m.Y') }}</option>
-						{% endif %}
-						{% for shift in shifts %}
-							<option value="{{ shift.id }}">
-								{{ shift.date|date('d.m.Y') }}
-							</option>
-						{% endfor %}
-					</select>
-				</form>
-			</div>
-			<form action="{{ route('client-add-service') }}" method="get">
-				<input name="client_id" value="{{ client.id }}" required hidden>
-				<input name="master_id" value="{{ master_id }}" required hidden>
-				<input name="shift_id" value="{{ shift_id }}" required hidden>
-				<div class="input-field col s2">
-					<select name="time" required>
-						<option value="" disabled selected>Время</option>
-						{% for time in times %}
-							<option value="{{ time }}">{{ time }}</option>
-						{% endfor %}
-					</select>
-				</div>
-				<div class="input-field col s3">
-					<select name="product" required>
-						<option value="" disabled selected>Услуга</option>
-						{% for product in products %}
-							<option value="{{ product.id }}">{{ product.name }}</option>
-						{% endfor %}
-					</select>
-				</div>
-				<div class="input-field col s2">
-					<select name="duration" required>
-						<option value="" disabled selected>Длительность</option>
-						{% for dur in durs %}
-							<option value="{{ dur }}">{{ dur }}</option>
-						{% endfor %}
-					</select>
-				</div>
 
-				<div class="input-field col s12 text-center">
-					<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
-				</div>
-			</form>
-		</div>
-		<input value="{{ master_id }}" hidden>
-		<input value="{{ shift_id }}" hidden>
-
-	</div>
-	<div class="container">
-		<div class="row">
-			<div class="col s4 center-align">
-				<h5>{{ client.name }}</h5>
-			</div>
-			<div class="col s8 center-align">
-				<h5>Итого: <b class="materialize-red-text">{{ client.spent_money }}p</b></h5>
-			</div>
-		</div>
-	</div>
-	<div class="container-fluid is-margin-top-50">
-		<div class="row">
-			<div class="col s12">
-				<table class="highlight centered">
-					<thead>
-					<tr>
-						<th>Дата</th>
-						<th>Время</th>
-						<th>Мастер</th>
-						<th>Услуга</th>
-						<th>Цена</th>
-						<th>Скидка %</th>
-						<th>Примечание</th>
-						<th></th>
-					</tr>
-					</thead>
-
-					<tbody>
-					{% for client_service in client_services %}
-						<tr class="border-0">
-							<td class="border-0">{{ client_service.date|date('d.m.Y') }}</td>
-							<td class="border-0">{{ client_service.time|date('H:i') }}</td>
-							<td class="border-0">{{ client_service.name }}</td>
-							<td class="border-0">{{ client_service.product_name }}</td>
-							{% if client_service.cost == null %}
-								<td>
-									<form action="{{ route('client-add-cost') }}">
-										<input value="{{ client.id }}" name="client_id" type="hidden">
-										<input name="service_id" value="{{ client_service.id }}" hidden>
-										<input placeholder="Цена" value="{{ client_service.cost }}" name="cost" type="number" min="0" step="0.01" required>
-										<button class="btn waves-effect waves-light green">Добавить</button>
-									</form>
-								</td>
-								<td>
-									<form action="{{ route('client-add-discount') }}">
-										<input value="{{ client.id }}" name="client_id" type="hidden">
-										<input name="service_id" value="{{ client_service.id }}" hidden>
-										<input placeholder="Скидка" value="{{ client_service.discount }}" name="discount" type="number" min="0" max="99" step="1" readonly>
-										<button class="btn waves-effect waves-light green disabled">Добавить</button>
-									</form>
-								</td>
-							{% else %}
-								<td>{{ client_service.cost|number_format(2) }}</td>
-								<td>
-									<form action="{{ route('client-add-discount') }}">
-										<input value="{{ client.id }}" name="client_id" type="hidden">
-										<input name="service_id" value="{{ client_service.id }}" hidden>
-										<input placeholder="Скидка" value="{{ client_service.discount }}" name="discount" type="number" min="0" max="99" step="1">
-										<button class="btn waves-effect waves-light green">Добавить</button>
-									</form>
-								</td>
-							{% endif %}
-							<td>
-								<form action="{{ route('client-add-text') }}">
-									<input value="{{ client.id }}" name="client_id" type="hidden">
-									<input name="service_id" value="{{ client_service.id }}" hidden>
-									<input value="{{ client_service.text }}" name="text" type="text" maxlength="255">
-									<button class="btn waves-effect waves-light green">Добавить</button>
-								</form>
-							</td>
-							<td class="border-0">
-								<form action="{{ route('client-delete-service') }}">
-									<input name="service_id" value="{{ client_service.id }}" hidden>
-									<input value="{{ client.id }}" name="client_id" hidden>
-									<button class="btn waves-effect waves-light red">Удалить</button>
-								</form>
-							</td>
-						</tr>
-					{% endfor %}
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
-</section>
 <input id="exception1" value="{{ exception1 }}" hidden>
+
 
 <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="/js/materialize.min.js"></script>
@@ -490,7 +314,29 @@
 
 	}
 
+	check_goods = last = new Number(parseInt(document.getElementById('check_goods').getAttribute('value'), 10));
+	if(check_goods == 1) {
+		document.getElementById('goods').style.display = 'block';
+		document.getElementById('services').style.display = 'none';
+		document.getElementById('show_goods').style.display = 'block';
+		document.getElementById('show_services').style.display = 'none';
+	}
 
+	function show_goods() {
+		document.getElementById('check_goods').setAttribute('value', '1');
+		document.getElementById('show_goods').style.display = 'block';
+		document.getElementById('show_services').style.display = 'none';
+		document.getElementById('goods').style.display = 'block';
+		document.getElementById('services').style.display = 'none';
+	}
+
+	function show_services() {
+		document.getElementById('check_goods').setAttribute('value', '0');
+		document.getElementById('show_services').style.display = 'block';
+		document.getElementById('show_goods').style.display = 'none';
+		document.getElementById('goods').style.display = 'none';
+		document.getElementById('services').style.display = 'block';
+	}
 </script>
 
 </body>
