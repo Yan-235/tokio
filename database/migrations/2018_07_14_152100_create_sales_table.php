@@ -20,6 +20,7 @@ class CreateSalesTable extends Migration {
 			$table->string('cost')->nullable();
 			$table->string('product');
 			$table->integer('discount')->nullable();
+			$table->integer('count');
 			$table->string('text')->nullable();
 		});
 	}

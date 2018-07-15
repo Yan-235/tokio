@@ -143,6 +143,7 @@
 				<input name="master_id" value="{{ master_id }}" required hidden>
 				<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
 
+				{#
 				<div class="input-field col s3">
 					<select name="shift_id" required>
 						<option value="" disabled selected>Дата</option>
@@ -150,6 +151,10 @@
 							<option value="{{ shift.id }}" onClick="show();">{{ shift.date|date("d-m-Y") }}</option>
 						{% endfor %}
 					</select>
+				</div>
+				#}
+				<div class="input-field col s2">
+					<input type="date" name="date" required>
 				</div>
 
 				<div class="input-field col s3">
@@ -161,7 +166,11 @@
 					</select>
 				</div>
 
-				<div class="input-field col s3">
+				<div class="input-field col s2">
+					<input type="number" name="count" min="1" placeholder="Количество" required>
+				</div>
+
+				<div class="input-field col s2">
 					<input placeholder="Цена" value="" name="cost" type="number" min="0" step="0.01">
 				</div>
 
@@ -186,6 +195,7 @@
 				<tr>
 					<th>Дата</th>
 					<th>Товар</th>
+					<th>Количество</th>
 					<th>Цена</th>
 					<th>Скидка %</th>
 					<th>Примечание</th>
@@ -197,7 +207,8 @@
 				{% for sale in sales %}
 					<tr>
 						<td>{{ sale.date| date("d/m/Y") }}</td>
-						<td>{{ sale.name }}</td>
+						<td>{{ sale.good_name }}</td>
+						<td>{{ sale.count }}</td>
 						{% if sale.cost == null %}
 							<td>
 								<form action="{{ route('goods-client-add-cost') }}">

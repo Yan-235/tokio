@@ -122,8 +122,9 @@ class TokioController extends Controller {
 
 		foreach($masters as $master) {
 			$id = $master->id;
-			//	$master->count = $this->currentTotalCount($id, $new_filter_date, $first_day_of_month);
+
 			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) + $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
+			$master->current_feedback = $this->masterFeedback($this->currentTotalCount($id, $new_filter_date2, $new_filter_date1), $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1));
 			//	$master->current_feedback = $this->masterFeedback($master->count, $master->money);
 		}
 
@@ -134,7 +135,9 @@ class TokioController extends Controller {
 			$id = $master->id;
 			//	$master->count = $this->currentTotalCount($id,$last_day_of_this_month,$first_day_of_this_month);
 			$master->money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month) + $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
-			//	$master->feedback = $this->masterFeedback($master->count, $master->money);
+
+			$master->feedback = $this->masterFeedback($this->currentTotalCount($id, $last_day_of_this_month, $first_day_of_this_month), $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month));
+			//dd($this->currentTotalCount($id, $last_day_of_this_month, $first_day_of_this_month));
 		}
 
 		return view('info_tables', [
@@ -147,6 +150,32 @@ class TokioController extends Controller {
 			'cur_days' => $cur_days,
 			'admin' => $auth_user['admin']
 		]);
+	}
+
+	public function masterFeedback($total_count, $total_money) {
+		$feedback = 0;
+
+		if($total_count == 0) {
+			$msg = 'ÐÐµÑ‚ Ð¿Ñ€Ð¾Ð´Ð°Ð¶';
+		}
+
+		if($total_count >= 1 && $total_count <= 3) {
+			$coeff = 0.08;
+			$feedback = $coeff * $total_money;
+		}
+		elseif($total_count >= 4 && $total_count <= 6) {
+			$coeff = 0.1;
+			$feedback = $coeff * $total_money;
+		}
+		elseif($total_count >= 7 && $total_count <= 10) {
+			$coeff = 0.13;
+			$feedback = $coeff * $total_money;
+		}
+		elseif($total_count > 10) {
+			$coeff = 0.15;
+			$feedback = $coeff * $total_money;
+		}
+		return $feedback;
 	}
 
 	public function index() {
@@ -366,7 +395,8 @@ class TokioController extends Controller {
 					->sum('duration') / 6000;
 			$id = $master->id;
 			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) + $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
-
+			$master->current_feedback = $this->masterFeedback($this->currentTotalCount($id, $new_filter_date2, $new_filter_date1), $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1));
+			$master->feedback = $this->masterFeedback($this->currentTotalCount($id, $last_day_of_this_month, $first_day_of_this_month), $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month));
 			$master->money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month) + $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
 		}
 
@@ -521,6 +551,7 @@ class TokioController extends Controller {
 
 		$auth_user = Auth::user();
 		$id = request('id');
+
 		$user = Master::where('id', '=', $id)->get();
 		$first_day_of_this_month = new DateTime('first day of this month');
 		$this_day = new DateTime('today');
@@ -3118,13 +3149,15 @@ class TokioController extends Controller {
 
 	public function clientAddSale() {
 		$master_id = request('master_id');
-		$shift_id = request('shift_id');
+		//	$shift_id = request('shift_id');
 		$client_id = request('client_id');
 		$good = request('good');
 		$cost = request('cost');
-		$shift = Shift::where('id', '=', $shift_id)->first();
-
-		Sales::insert(['users_user_id' => $master_id, 'date' => $shift->date, 'product' => $good, 'cost' => $cost,'client_id' => $client_id]);
+		$count = request('count');
+		//	$shift = Shift::where('id', '=', $shift_id)->first();
+		$date = request('date');
+		//	Sales::insert(['users_user_id' => $master_id, 'date' => $shift->date, 'product' => $good, 'cost' => $cost, 'client_id' => $client_id]);
+		Sales::insert(['users_user_id' => $master_id, 'date' => $date, 'product' => $good, 'cost' => $cost, 'count' => $count, 'client_id' => $client_id]);
 
 		return redirect('/goods-client/' . $client_id);
 	}
@@ -3189,11 +3222,14 @@ class TokioController extends Controller {
 
 	public function addSale() {
 		$master_id = request('master_id');
-		$shift_id = request('date');
-		$shift = Shift::where('id', '=', $shift_id)->first();
+		//$shift_id = request('date');
+		//	$shift = Shift::where('id', '=', $shift_id)->first();
 		$good_id = request('good');
 		$cost = request('cost');
-		Sales::insert(['users_user_id' => $master_id, 'date' => $shift->date, 'product' => $good_id, 'cost' => $cost]);
+		$count = request('count');
+		$date = request('date');
+		//Sales::insert(['users_user_id' => $master_id, 'date' => $shift->date, 'product' => $good_id, 'cost' => $cost]);
+		Sales::insert(['users_user_id' => $master_id, 'date' => $date, 'product' => $good_id, 'cost' => $cost, 'count' => $count]);
 
 		$auth_user = Auth::user();
 		//	$id = request('id');
@@ -4055,7 +4091,7 @@ class TokioController extends Controller {
 	}
 
 	public function currentTotalCount($id, $cur_day, $first_day) {
-		return Services::where('users_user_id', '=', $id)->where('date', '<=', $cur_day)->where('date', '>=', $first_day)->sum('count');
+		return Sales::where('users_user_id', '=', $id)->where('date', '<=', $cur_day)->where('date', '>=', $first_day)->sum('count');
 	}
 
 	public function currentTotalMoney($id, $cur_day, $first_day) {

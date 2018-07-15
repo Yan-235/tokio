@@ -175,6 +175,7 @@
 					</div>
 					<input value="{{ id }}" placeholder="ID" id="master_id" name="master_id" hidden>
 					<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+				{#
 					<div class="input-field col s4">
 						<select name="date" required>
 							<option value="" disabled selected>Дата</option>
@@ -183,6 +184,10 @@
 							{% endfor %}
 							<input id="refresher" type="button" value="{{ i }}" hidden>
 						</select>
+					</div>
+				#}
+					<div class="input-field col s2">
+						<input type="date" name="date" required>
 					</div>
 
 					<div class="input-field col s4">
@@ -193,6 +198,11 @@
 							{% endfor %}
 						</select>
 					</div>
+
+					<div class="input-field col s2">
+						<input type="number" name="count" min="1" placeholder="Количество" required>
+					</div>
+
 
 					<div class="input-field col s4">
 						<input placeholder="Цена" value="" name="cost" type="number" min="0" step="0.01">
@@ -220,6 +230,7 @@
 				<tr>
 					<th>Дата</th>
 					<th>Товар</th>
+					<th>Количество</th>
 					<th>Цена</th>
 					<th>Скидка %</th>
 					<th>Примечание</th>
@@ -231,7 +242,8 @@
 				{% for sale in sales %}
 					<tr>
 						<td>{{ sale.date| date("d/m/Y") }}</td>
-						<td>{{ sale.name }}</td>
+						<td>{{ sale.good_name }}</td>
+						<td>{{ sale.count }}</td>
 						{% if sale.cost == null %}
 							<td>
 								<form action="{{ route('add-cost-sale') }}">

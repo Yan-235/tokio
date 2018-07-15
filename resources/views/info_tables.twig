@@ -161,7 +161,7 @@
 					<th>Мастер</th>
 					<th>Кол-во смен</th>
 					<th>Факт/План</th>
-					<th>3/П</th>
+					<th>Доход</th>
 					<th>ср. чел</th>
 					<th>Загруженность</th>
 				</tr>
@@ -202,7 +202,7 @@
 					<th>Мастер</th>
 					<th>Кол-во смен</th>
 					<th>Доход</th>
-					<th></th>
+					<th>Заработано</th>
 					<th></th>
 				</tr>
 				</thead>
@@ -214,7 +214,7 @@
 						full-width text-center is-capitalize">{{ master.name }}</a></td>
 						<td class="border-0">{{ master.shifts_month }}</td>
 						<td class="border-0">{{ master.money }}</td>
-						{#	<td class="border-0">{{ master.feedback }}</td>#}
+						<td class="border-0">{{ master.feedback }}</td>
 						<td class="border-0"><a href="{{ route('delete-user',[master.id]) }}" class="btn waves-effect waves-light red"><i
 										class="material-icons"></i>Удалить</a></td>
 					</tr>
