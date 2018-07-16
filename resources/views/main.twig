@@ -30,29 +30,35 @@
 		<img src="img/city-logo-2.jpg" alt="city-logo-2">
 	</div>
 {% endif %}
+{% if salon == 4 %}
+	<div align="center">
+		<img src="" alt="city-logo-3">
+	</div>
+{% endif %}
 {% if admin == 1 %}
 	<div class="container-fluid is-margin-top-50">
 		<div class="row">
-			<div class="col s9 left-align">
+			<div class="col s7 left-align">
 				<form action="{{ route('change-salon') }}" method="get">
-					<div class="col s2">
+					<div class="col s4 ">
 						<select name="new_salon" required>
 							<option value="" disabled selected>Салон</option>
 							<option value="1">Токио</option>
 							<option value="2">Сити 1</option>
 							<option value="3">Сити 2</option>
+							<option value="4">Бьюти зона</option>
 						</select>
 					</div>
 					<button type="submit" class="btn waves-effect waves-light green"><i
 								class="material-icons">swap_horiz</i></button>
 				</form>
 			</div>
-			<div class="col s1 right-align">
+			<div class="col s2 right-align">
 				<form action="{{ route('show-client-list') }}" method="get">
 					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
 				</form>
 			</div>
-			<div class="col s1 left-align">
+			<div class="col s2 left-align">
 				<form action="{{ route('info-tables') }}" method="get">
 					<button type="submit" class="btn waves-effect waves-light blue">Информация</button>
 				</form>
@@ -177,17 +183,21 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class=" col s12">
-			<div class="col offset-s10 col s1">
-				<button class="btn  waves-light" id="show_this_month" onclick="show_this_month()"><i class="material-icons">chevron_left</i></button>
+			<div class="col offset-s8 col s1">
+				<button class="btn  waves-light" id="show_this_month" onclick="show_prev_month()">{{ name_prev_month }}</button>
 			</div>
 			<div class="col s1">
-				<button class="btn waves-light" id="show_next_month" onclick="show_next_month()"><i class="material-icons">chevron_right</i></button>
+				<button class="btn  waves-light" id="show_this_month" onclick="show_this_month()">{{ name_this_month }}</button>
+			</div>
+			<div class="col s2 left-align">
+				<button class="btn waves-light" id="show_next_month" onclick="show_next_month()">{{ name_next_month }}</button>
 			</div>
 		</div>
 	</div>
 	<div class="row">
 		<div class=" col s12">
 			<section id="this_month">
+				<h5>{{ name_this_month }}</h5>
 				<table class="highlight centered">
 					<thead>
 					<tr>
@@ -269,7 +279,91 @@
 					</tbody>
 				</table>
 			</section>
+			<section id="prev_month" hidden>
+				<h5>{{ name_prev_month }}</h5>
+				<table class="highlight centered">
+					<thead>
+					<tr>
+						<th>Мастер</th>
+						<th> 1</th>
+						<th> 2</th>
+						<th> 3</th>
+						<th> 4</th>
+						<th> 5</th>
+						<th> 6</th>
+						<th> 7</th>
+						<th> 8</th>
+						<th> 9</th>
+						<th>10</th>
+						<th>11</th>
+						<th>12</th>
+						<th>13</th>
+						<th>14</th>
+						<th>15</th>
+						<th>16</th>
+						<th>17</th>
+						<th>18</th>
+						<th>19</th>
+						<th>20</th>
+						<th>21</th>
+						<th>22</th>
+						<th>23</th>
+						<th>24</th>
+						<th>25</th>
+						<th>26</th>
+						<th>27</th>
+						<th>28</th>
+						{% if  days_in_prev_month > 28 %}
+							<th>29</th>
+							{% if days_in_prev_month > 29 %}
+								<th>30</th>
+								{% if days_in_prev_month > 30 %}
+									<th>31</th>
+								{% endif %}
+							{% endif %}
+						{% endif %}
+					</tr>
+					</thead>
+
+					<tbody>
+					{% for master in masters %}
+						<tr class="border-0">
+							<td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
+												full-width text-center is-capitalize">{{ master.name }}</a></td>
+
+							{% set count = 0 %}
+							{% for type in master.prev_array %}
+								{% if  type == 1 %}
+
+									<td class="black_border font_size_10px"><span>{{ master.prev_starts[count]|date('H:i') }}<br>{{ master.prev_ends[count]|date('H:i') }}</span></td>
+
+
+								{% elseif type ==3 %}
+									<td class="black_border"><i
+												class="material-icons green_">add_circle</i></td>
+								{% elseif type ==0 %}
+									<td class="black_border"><i
+												class="material-icons red_">remove_circle_outline</i></td>
+								{% elseif  type == 11 %}
+
+									<td class="black_border chosen font_size_10px"><span>{{ master.prev_starts[count]|date('H:i') }}<br>{{ master.prev_ends[count]|date('H:i') }}</span></td>
+
+								{% elseif type == 13 %}
+									<td class="black_border chosen"><i
+												class="material-icons green_">add_circle</i></td>
+								{% elseif type == 10 %}
+									<td class="black_border  chosen"><i
+												class="material-icons red_">remove_circle_outline</i></td>
+								{% endif %}
+								{% set count = count + 1 %}
+							{% endfor %}
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</section>
 			<section id="next_month" hidden>
+				<h5>{{ name_next_month }}</h5>
 				<table class="highlight centered">
 					<thead>
 					<tr>
@@ -355,168 +449,6 @@
 	</div>
 </div>
 
-{#<div class="container-fluid is-margin-top-50">
-	<div class="row">
-		<div class="col s12 text-center">
-			<form action="{{ route('date-filter') }}" method="get">
-				{% if new_filter_date1 == null %}
-					<div class="input-field col offset-s3 col s2">
-						<input value="{{ theme.getDateEnd|date("Y-m-d") }}" type="date" name="filter_date1">
-					</div>
-				{% else %}
-					<div class="input-field col offset-s3 col s2">
-						<input value="{{ new_filter_date1 }}" type="date" name="filter_date1">
-					</div>
-				{% endif %}
-				{% if new_filter_date2 == null %}
-					<div class="input-field  col s2">
-						<input value="{{ theme.getDateEnd|date("Y-m-d") }}" type="date" name="filter_date2">
-					</div>
-				{% else %}
-					<div class="input-field col s2">
-						<input value="{{ new_filter_date2 }}" type="date" name="filter_date2">
-					</div>
-				{% endif %}
-				<div class="col s2">
-					<button type="submit" class="waves-effect waves-light btn" href="#">Изменить</button>
-				</div>
-			</form>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col s12 text-center">
-			<table class="highlight centered">
-				<thead>
-				<tr>
-					<th>Мастер</th>
-					<th>Кол-во смен</th>
-					<th>Факт/План</th>
-					<th>3/П</th>
-					<th>ср. чел</th>
-					<th>загруженность</th>
-				</tr>
-				</thead>
-
-				<tbody>
-				{% for master in masters %}
-					<tr class="border-0">
-						<td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
-						full-width text-center is-capitalize">{{ master.name }}</a></td>
-						<td class="border-0">{{ master.shifts }}</td>
-						<td class="border-0">{{ master.cur_hours|number_format(1) }}/{{ master.cur_plan }}</td>
-						<td class="border-0">{{ master.current_money }}</td>
-						{% if cur_days!=0 %}
-							<td class="border-0">{{ (master.services / cur_days)|number_format(2) }}</td>
-						{% else %}
-							<td class="border-0">0</td>
-						{% endif %}
-						{% if master.cur_plan!=0 %}
-							<td class="border-0">{{ (master.cur_hours / master.cur_plan *100)|number_format(2) }}%</td>
-						{% else %}
-							<td class="border-0">0%</td>
-						{% endif %}
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
-</div>#}
-{#<div class="container-fluid is-margin-top-50">
-	<div class="row">
-		<div class="col s12">
-			<table class="highlight centered">
-				<thead>
-				<tr>
-					<th>Мастер</th>
-					<th>Кол-во смен</th>
-					<th>Доход</th>
-					<th></th>
-					<th></th>
-				</tr>
-				</thead>
-
-				<tbody>
-				{% for master in masters %}
-					<tr class="border-0">
-						<td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
-						full-width text-center is-capitalize">{{ master.name }}</a></td>
-						<td class="border-0">{{ master.shifts_month }}</td>
-						<td class="border-0">{{ master.money }}</td>
-						<td class="border-0"><a href="{{ route('delete-user',[master.id]) }}" class="btn waves-effect waves-light red"><i
-										class="material-icons"></i>Удалить</a></td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
-</div>#}
-{#<div class="container-fluid is-margin-top-50">
-	<div class="row">
-		<div class="col s12 text-center">
-			<form action="{{ route('shift-date-filter') }}" method="get">
-				{% if new_filter_date == null %}
-					<div class="input-field col offset-s4 col s2">
-						<input value="{{ theme.getDateEnd|date("Y-m-d") }}" type="date" name="filter_date">
-					</div>
-				{% else %}
-					<div class="input-field col offset-s4 col s2">
-						<input value="{{ new_filter_date }}" type="date" name="filter_date">
-					</div>
-				{% endif %}
-				<div class="col s3">
-					<button type="submit" class="waves-effect waves-light btn" href="#">Перейти</button>
-				</div>
-			</form>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col offset-s4 col s4">
-			<table class="highlight centered">
-				<thead>
-				<tr>
-					<th>Мастер</th>
-					<th>Смена</th>
-				</tr>
-				</thead>
-
-				<tbody>
-				{% for master in masters %}
-					<tr class="border-0">
-						<td class="border-0">{{ master.name }}</td>
-						<td class="border-0">
-							<form method="get" action="{{ route('add-shift') }}">
-								{{ csrf_field() }}
-								<input name="master_id" value="{{ master.id }}" hidden>
-								<input name="new_filter_date" value="{{ new_filter_date }}" hidden>
-								{% if new_filter_date == null %}
-									<select name="shift_type" disabled>
-										<option value="" disabled selected>{{ master.shifts_today }}</option>
-										<option value=0>нету смен</option>
-										<option value=1>1-ая смена</option>
-										<option value=2>2-ая смена</option>
-										<option value=3>целый день</option>
-									</select>
-								{% else %}
-									<select name="shift_type">
-										<option value="" disabled selected>{{ master.shifts_today }}</option>
-										<option value=0>нету смен</option>
-										<option value=1>1-ая смена</option>
-										<option value=2>2-ая смена</option>
-										<option value=3>целый день</option>
-									</select>
-								{% endif %}
-								<button type="submit" class="waves-effect waves-light btn" href="#">Сохранить</button>
-							</form>
-						</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
-</div>#}
 <input id="exception1" value="{{ exception1 }}" hidden>
 
 <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
@@ -537,13 +469,21 @@
 		$('.collapsible').collapsible();
 	});
 
+	function show_prev_month() {
+		document.getElementById('prev_month').style.display = 'block';
+		document.getElementById('next_month').style.display = 'none';
+		document.getElementById('this_month').style.display = 'none';
+	}
+
 	function show_next_month() {
 		document.getElementById('next_month').style.display = 'block';
 		document.getElementById('this_month').style.display = 'none';
+		document.getElementById('prev_month').style.display = 'none';
 	}
 
 	function show_this_month() {
 		document.getElementById('next_month').style.display = 'none';
+		document.getElementById('prev_month').style.display = 'none';
 		document.getElementById('this_month').style.display = 'block';
 	}
 </script>

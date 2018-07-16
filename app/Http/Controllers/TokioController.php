@@ -207,6 +207,27 @@ class TokioController extends Controller {
 		$new_filter_date = $new_filter_date->format('Y-m-d');
 		$days_in_month = date("t");
 		$days_in_next_month = date('t', mktime(0, 0, 0, date('m') + 1, 1, date('y')));
+		$days_in_prev_month = date('t', mktime(0, 0, 0, date('m') - 1, 1, date('y')));
+		$_monthsList = array(
+			"1" => "Январь", "2" => "Февраль", "3" => "Март",
+			"4" => "Апрель", "5" => "Май", "6" => "Июнь",
+			"7" => "Июль", "8" => "Август", "9" => "Сентябрь",
+			"10" => "Октябрь", "11" => "Ноябрь", "12" => "Декабрь");
+
+		$this_month = $_monthsList[date("n")];
+		if(date("n") == 1) {
+			$prev_month = $_monthsList[date("n") + 11];
+		}
+		else {
+			$prev_month = $_monthsList[date("n") - 1];
+		}
+		if(date("n") == 12) {
+			$next_month = $_monthsList[date("n") - 11];
+		}
+		else {
+			$next_month = $_monthsList[date("n") + 1];
+		}
+		//dd($next_month);
 		$last_day_of_month = new DateTime('last day of this month');
 		$last_day_of_month = $last_day_of_month->format('Y-m-d');
 		$first_day_of_month = new DateTime('first day of this month');
@@ -215,12 +236,19 @@ class TokioController extends Controller {
 		$last_day_of_next_month = $last_day_of_next_month->format('Y-m-d');
 		$first_day_of_next_month = new DateTime('first day of next month');
 		$first_day_of_next_month = $first_day_of_next_month->format('Y-m-d');
+		$last_day_of_prev_month = new DateTime('last day of previous month');
+		$last_day_of_prev_month = $last_day_of_prev_month->format('Y-m-d');
+		$first_day_of_prev_month = new DateTime('first day of previous month');
+		$first_day_of_prev_month = $first_day_of_prev_month->format('Y-m-d');
 		$month_types = [];
 		$month_starts = [];
 		$month_ends = [];
 		$next_month_types = [];
 		$next_month_starts = [];
 		$next_month_ends = [];
+		$prev_month_types = [];
+		$prev_month_starts = [];
+		$prev_month_ends = [];
 		foreach($masters as $master) {
 
 			$shifts_today = 0;
@@ -270,13 +298,14 @@ class TokioController extends Controller {
 			}
 			$shifts_of_month = DB::table('shifts')->where('date', '>=', $first_day_of_month)->where('date', '<=', $last_day_of_month)->where('master_id', '=', $master->id)->get();
 			$shifts_of_next_month = DB::table('shifts')->where('date', '>=', $first_day_of_next_month)->where('date', '<=', $last_day_of_next_month)->where('master_id', '=', $master->id)->get();
+			$shifts_of_prev_month = DB::table('shifts')->where('date', '>=', $first_day_of_prev_month)->where('date', '<=', $last_day_of_prev_month)->where('master_id', '=', $master->id)->get();
 			$tmp_day = new DateTime($first_day_of_month);
 			$next_tmp_day = new DateTime($first_day_of_next_month);
+			$prev_tmp_day = new DateTime($first_day_of_prev_month);
 			//$tmp_day = $tmp_day->format('Y-m-d');
 			for($i = 0; $i <= $days_in_month - 1; $i++) {
 				//dd($tmp_day);
 				$checker = 0;
-				$next_checker = 0;
 				foreach($shifts_of_month as $shift_of_month) {
 					if(strtotime($shift_of_month->date) == strtotime($tmp_day->format('Y-m-d'))) {
 						$month_types[$i] = $shift_of_month->shift_type;
@@ -285,6 +314,18 @@ class TokioController extends Controller {
 						$checker = 1;
 					}
 				}
+				if($checker == 0) {
+					$month_types[$i] = 0;
+				}
+				if(strtotime($tmp_day->format('Y-m-d')) == strtotime($new_filter_date)) {
+					$month_types[$i] = $month_types[$i] + 10;
+				}
+				$tmp_day->modify('+1 day');
+			}
+
+			for($i = 0; $i <= $days_in_next_month - 1; $i++) {
+				//dd($tmp_day);
+				$next_checker = 0;
 				foreach($shifts_of_next_month as $shift_of_next_month) {
 					if(strtotime($shift_of_next_month->date) == strtotime($next_tmp_day->format('Y-m-d'))) {
 						$next_month_types[$i] = $shift_of_next_month->shift_type;
@@ -293,26 +334,39 @@ class TokioController extends Controller {
 						$next_checker = 1;
 					}
 				}
-				if($checker == 0) {
-					$month_types[$i] = 0;
-				}
 				if($next_checker == 0) {
 					$next_month_types[$i] = 0;
 				}
-				if(strtotime($tmp_day->format('Y-m-d')) == strtotime($new_filter_date)) {
-					$month_types[$i] = $month_types[$i] + 10;
-				}
-				$tmp_day->modify('+1 day');
+
 				$next_tmp_day->modify('+1 day');
-				//	$tmp_day = $tmp_day->format('Y-m-d');
-				//dd($tmp_day);
 			}
+			for($i = 0; $i <= $days_in_prev_month - 1; $i++) {
+				$prev_checker = 0;
+				foreach($shifts_of_prev_month as $shift_of_prev_month) {
+					if(strtotime($shift_of_prev_month->date) == strtotime($prev_tmp_day->format('Y-m-d'))) {
+						$prev_month_types[$i] = $shift_of_prev_month->shift_type;
+						$prev_month_starts[$i] = $shift_of_prev_month->start_shift;
+						$prev_month_ends[$i] = $shift_of_prev_month->end_shift;
+						$prev_checker = 1;
+					}
+				}
+				if($prev_checker == 0) {
+					$prev_month_types[$i] = 0;
+				}
+				$prev_tmp_day->modify('+1 day');
+			}
+			//	dd($month_types);
+			//	dd($prev_month_types);
+			//	dd($next_month_types);
 			$master->array = $month_types;
 			$master->starts = $month_starts;
 			$master->ends = $month_ends;
 			$master->next_array = $next_month_types;
 			$master->next_starts = $next_month_starts;
 			$master->next_ends = $next_month_ends;
+			$master->prev_array = $prev_month_types;
+			$master->prev_starts = $prev_month_starts;
+			$master->prev_ends = $prev_month_ends;
 			//	dd($master->array);
 		}
 		return view('main', [
@@ -322,7 +376,11 @@ class TokioController extends Controller {
 			'new_filter_date' => $new_filter_date,
 			'days_in_month' => $days_in_month,
 			'days_in_next_month' => $days_in_next_month,
+			'days_in_prev_month' => $days_in_prev_month,
 			'admin' => $auth_user['admin'],
+			'name_this_month' => $this_month,
+			'name_prev_month' => $prev_month,
+			'name_next_month' => $next_month,
 			//	'month_types' => $month_types
 		]);
 	}
@@ -410,7 +468,6 @@ class TokioController extends Controller {
 				->where('date', '>=', $new_filter_date1)
 				->where('date', '<=', $new_filter_date2)
 				->get());
-
 
 			$days_with_shifts_of_master = DB::table('shifts')->where('date', '<=', $new_filter_date2)->where('date', '>=', $new_filter_date1)->where('master_id', '=', $master->id)->get();
 			$master->shifts = 0;

@@ -27,34 +27,58 @@
 		<img src="/img/city-logo-2.jpg" alt="logo-city-2">
 	</div>
 {% endif %}
+{% if salon == 4 %}
+	<div align="center">
+		<img src="" alt="city-logo-3">
+	</div>
+{% endif %}
 <div class="container-fluid">
 	<div class="row">
-		{#
-			{% if admin ==1 %}
-				<div class="col s6 left-align">
-					<a href="{{ route('info-tables') }}" class="waves-effect waves-light btn"><i
-								class="material-icons">arrow_back</i></a>
-				</div>
-			{% else %}
-				<div class="col s6 left-align">
-					<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
-								class="material-icons">arrow_back</i></a>
-				</div>
-			{% endif %}
-		#}
-		<div class="col s6 left-align">
+		<div class="col s1 left-align">
 			<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
 						class="material-icons">arrow_back</i></a>
 		</div>
-		<div class="col offset-col s5 col s1 right-align">
-			<form action="{{ route('show-client-list') }}" method="get">
-				<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
-			</form>
-		</div>
-		<div class="col s1 right-align">
-			<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
-						class="material-icons">exit_to_app</i></a>
-		</div>
+		{% if admin == 1 %}
+			<div class="col s6 left-align">
+				<form action="{{ route('change-salon') }}" method="get">
+					<div class="col s4 ">
+						<select name="new_salon" required>
+							<option value="" disabled selected>Салон</option>
+							<option value="1">Токио</option>
+							<option value="2">Сити 1</option>
+							<option value="3">Сити 2</option>
+							<option value="4">Бьюти зона</option>
+						</select>
+					</div>
+					<button type="submit" class="btn waves-effect waves-light green"><i
+								class="material-icons">swap_horiz</i></button>
+				</form>
+			</div>
+			<div class="col s2 right-align">
+				<form action="{{ route('show-client-list') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+				</form>
+			</div>
+			<div class="col s2 left-align">
+				<form action="{{ route('info-tables') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue">Информация</button>
+				</form>
+			</div>
+			<div class="col s1 right-align">
+				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+							class="material-icons">exit_to_app</i></a>
+			</div>
+		{% else %}
+			<div class="col offset-col s9 col s2 right-align">
+				<form action="{{ route('show-client-list') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+				</form>
+			</div>
+			<div class="col 1 right-align">
+				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+							class="material-icons">exit_to_app</i></a>
+			</div>
+		{% endif %}
 	</div>
 </div>
 
@@ -130,41 +154,41 @@
 		<div class="col s12 text-center">
 
 
-					{% if check_goods == '0' %}
-						<section id="show_services">
-							<div class="col s6">
-								<button class="waves-effect waves-light btn" onclick="show_services()">Услуги</button>
-							</div>
-							<div class="col s6">
-								<button class="waves-effect waves-light btn grey" onclick="show_goods()">Товары</button>
-							</div>
-						</section>
-						<section id="show_goods" hidden>
-							<div class="col s6">
-								<button class="waves-effect waves-light btn grey" onclick="show_services()">Услуги</button>
-							</div>
-							<div class="col s6">
-								<button class="waves-effect waves-light btn" onclick="show_goods()">Товары</button>
-							</div>
-						</section>
-					{% else %}
-						<section id="show_services" hidden>
-							<div class="col s6">
-								<button class="waves-effect waves-light btn" onclick="show_services()">Услуги</button>
-							</div>
-							<div class="col s6">
-								<button class="waves-effect waves-light btn grey" onclick="show_goods()">Товары</button>
-							</div>
-						</section>
-						<section id="show_goods">
-							<div class="col s6">
-								<button class="waves-effect waves-light btn grey" onclick="show_services()">Услуги</button>
-							</div>
-							<div class="col s6">
-								<button class="waves-effect waves-light btn" onclick="show_goods()">Товары</button>
-							</div>
-						</section>
-					{% endif %}
+			{% if check_goods == '0' %}
+				<section id="show_services">
+					<div class="col s6">
+						<button class="waves-effect waves-light btn" onclick="show_services()">Услуги</button>
+					</div>
+					<div class="col s6">
+						<button class="waves-effect waves-light btn grey" onclick="show_goods()">Товары</button>
+					</div>
+				</section>
+				<section id="show_goods" hidden>
+					<div class="col s6">
+						<button class="waves-effect waves-light btn grey" onclick="show_services()">Услуги</button>
+					</div>
+					<div class="col s6">
+						<button class="waves-effect waves-light btn" onclick="show_goods()">Товары</button>
+					</div>
+				</section>
+			{% else %}
+				<section id="show_services" hidden>
+					<div class="col s6">
+						<button class="waves-effect waves-light btn" onclick="show_services()">Услуги</button>
+					</div>
+					<div class="col s6">
+						<button class="waves-effect waves-light btn grey" onclick="show_goods()">Товары</button>
+					</div>
+				</section>
+				<section id="show_goods">
+					<div class="col s6">
+						<button class="waves-effect waves-light btn grey" onclick="show_services()">Услуги</button>
+					</div>
+					<div class="col s6">
+						<button class="waves-effect waves-light btn" onclick="show_goods()">Товары</button>
+					</div>
+				</section>
+			{% endif %}
 
 		</div>
 	</div>
@@ -180,17 +204,17 @@
 					</div>
 					<input value="{{ id }}" placeholder="ID" id="master_id" name="master_id" hidden>
 					<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-				{#
-					<div class="input-field col s4">
-						<select name="date" required>
-							<option value="" disabled selected>Дата</option>
-							{% for shift in shifts %}
-								<option type="radio" id="{{ i }}" value="{{ shift.id }}" onClick="show();">{{ shift.date|date("d-m-Y") }}</option>
-							{% endfor %}
-							<input id="refresher" type="button" value="{{ i }}" hidden>
-						</select>
-					</div>
-				#}
+					{#
+						<div class="input-field col s4">
+							<select name="date" required>
+								<option value="" disabled selected>Дата</option>
+								{% for shift in shifts %}
+									<option type="radio" id="{{ i }}" value="{{ shift.id }}" onClick="show();">{{ shift.date|date("d-m-Y") }}</option>
+								{% endfor %}
+								<input id="refresher" type="button" value="{{ i }}" hidden>
+							</select>
+						</div>
+					#}
 					<div class="input-field col s2">
 						<input type="date" name="date" required>
 					</div>
@@ -225,9 +249,9 @@
 			<h5>{{ name }}</h5>
 		</div>
 		{% if admin == 1 %}
-		<div class="col s7 center-align">
-			<h5>Запланированный доход за месяц: <b class="materialize-red-text">{{ goodstotalmoney }}p</b></h5>
-		</div>
+			<div class="col s7 center-align">
+				<h5>Запланированный доход за месяц: <b class="materialize-red-text">{{ goodstotalmoney }}p</b></h5>
+			</div>
 		{% endif %}
 	</div>
 	<div class="row">
@@ -284,7 +308,7 @@
 						{% endif %}
 						<td>
 							<form action="{{ route('add-text-sale') }}">
-								<input value="{{ id }}" placeholder="ID"  name="master_id" type="hidden">
+								<input value="{{ id }}" placeholder="ID" name="master_id" type="hidden">
 								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
 								<input name="sale_id" value="{{ sale.id }}" hidden>
 								<input value="{{ sale.text }}" name="text" type="text" maxlength="255">
@@ -294,7 +318,7 @@
 						<td>
 							<form action="{{ route('delete-sale') }}">
 								<input name="sale_id" value="{{ sale.id }}" hidden>
-								<input value="{{ id }}" placeholder="ID"  name="master_id" type="hidden">
+								<input value="{{ id }}" placeholder="ID" name="master_id" type="hidden">
 								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
 								<button class="btn waves-effect waves-light red">Удалить</button>
 							</form>
@@ -412,9 +436,9 @@
 				<h5>{{ name }}</h5>
 			</div>
 			{% if admin == 1 %}
-			<div class="col s7 center-align">
-				<h5>Запланированный доход за месяц: <b class="materialize-red-text">{{ totalmoney }}p</b></h5>
-			</div>
+				<div class="col s7 center-align">
+					<h5>Запланированный доход за месяц: <b class="materialize-red-text">{{ totalmoney }}p</b></h5>
+				</div>
 			{% endif %}
 		</div>
 
