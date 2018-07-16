@@ -38,7 +38,7 @@
 {% if admin == 1 %}
 	<div class="container-fluid is-margin-top-50">
 		<div class="row">
-			<div class="col s7 left-align">
+			<div class="col s5 left-align">
 				<form action="{{ route('change-salon') }}" method="get">
 					<div class="col s4 ">
 						<select name="new_salon" required>
@@ -54,6 +54,11 @@
 				</form>
 			</div>
 			<div class="col s2 right-align">
+				<form action="{{ route('show-day-report') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue">Отчёт за день</button>
+				</form>
+			</div>
+			<div class="col s1 center-align">
 				<form action="{{ route('show-client-list') }}" method="get">
 					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
 				</form>
@@ -112,6 +117,9 @@
 										<option value="1">1</option>
 										<option value="2">2</option>
 										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+										<option value="6">6</option>
 									</select>
 								</div>
 								<div class="input-field col s12 text-center">
@@ -155,8 +163,11 @@
 								<div class="input-field col">
 									<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 								</div>
-								<div class="input-field col s12 text-center">
+								<div class="input-field col s9 text-center">
 									<input placeholder="Название товара" id="last_name" name="good_name" type="text" required>
+								</div>
+								<div class="input-field col s2 text-center">
+									<input placeholder="Цена" name="good_cost" type="number" min="0"  step="0.01" required>
 								</div>
 								<div class="input-field col s12 text-center">
 									<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>

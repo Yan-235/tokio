@@ -59,6 +59,8 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/client-add-sale', 'TokioController@clientAddSale')->name('client-add-sale');
 	Route::get('/current-total-count', 'TokioController@currentTotalCount')->name('current-total-count');
 	Route::get('/master-feedback', 'TokioController@masterFeedback')->name('master-feedback');
+	Route::get('/show-day-report', 'TokioController@showDayReport')->name('show-day-report');
+	Route::get('/add-report', 'TokioController@addReport')->name('add-report');
 
 	Route::get('/search-client', 'SearchController@searchClient')->name('search-client');
 });

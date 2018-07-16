@@ -14,8 +14,90 @@ use App\Products;
 use App\Client;
 use App\Goods;
 use App\Sales;
+use App\Reports;
 
 class TokioController extends Controller {
+
+	public function showDayReport() {
+		$auth_user = Auth::user();
+		$today = new DateTime('today');
+		$today = $today->format('Y-m-d');
+		$masters = Master::where('salon', '=', $auth_user['salon'])
+			->orderBy('id')
+			->get();
+		//	$services = Services::where('date', '=', $today)->get();
+		$sales = Sales::where('date', '=', $today)->get();
+		$shifts = Shift::where('date', '=', $today)->get();
+		//dd($shifts);
+		$today_masters = [];
+		$today_money = [];
+		$today_reports = [];
+		$i = 0;
+		foreach($masters as $master) {
+			foreach($shifts as $shift) {
+				//dd($shift->master_id);
+				if($master->id == $shift->master_id) {
+					$today_masters[$i] = $master;
+					$i = $i + 1;
+				}
+			}
+		}
+		foreach($masters as $master) {
+			foreach($sales as $sale) {
+				if($master->id == $sale->users_user_id) {
+					$checker = 0;
+					foreach($today_masters as $today_master) {
+						if($today_master->id == $sale->users_user_id) {
+							$checker = 1;
+						}
+						if($checker == 0) {
+							$today_masters[$i] = $master;
+							$i = $i + 1;
+						}
+					}
+				}
+			}
+		}
+		$result = 0.01 - 0.01;
+		for($i = 0; $i < sizeof($today_masters); $i++) {
+			$today_money[$i] = Services::where('date', '=', $today)->where('users_user_id', '=', $today_masters[$i]->id)->sum('cost');
+			$today_money[$i] = $today_money[$i] + Sales::where('date', '=', $today)->where('users_user_id', '=', $today_masters[$i]->id)->sum('cost');
+			$today_reports[$i] = Reports::where('date', '=', $today)->where('master_id', '=', $today_masters[$i]->id)->first();
+			if($today_reports[$i] != null) {
+				if($today_reports[$i]->money != null) {
+					$result = $result + $today_money[$i] + $today_reports[$i]->money;
+				}
+				else {
+					$result = $result + $today_money[$i];
+				}
+			}
+		}
+		$size = sizeof($today_masters);
+		//dd($today_reports);
+		return view('day_report', [
+			'salon' => $auth_user['salon'],
+			'size' => $size,
+			'today_masters' => $today_masters,
+			'today_money' => $today_money,
+			'today_reports' => $today_reports,
+			'result' => $result,
+			'today' => $today,
+		]);
+	}
+
+	public function addReport() {
+		$date = request('date');
+		$report_id = request('report_id');
+		$master_id = request('master_id');
+		$money = request('money');
+		if(Reports::where('id', '=', $report_id)->first() != null) {
+			Reports::where('master_id', '=', $master_id)->where('date', '=', $date)->update(['money' => $money]);
+		}
+		else {
+			Reports::insert(['date' => $date, 'master_id' => $master_id, 'money' => $money]);
+		}
+		return redirect('/show-day-report');
+	}
 
 	public function showInfoTables() {
 		$new_filter_date = new DateTime('today');
@@ -140,13 +222,13 @@ class TokioController extends Controller {
 			}
 			//	dd($master->cur_hours);
 		}
-
+		$result = 0;
 		foreach($masters as $master) {
 			$id = $master->id;
 
 			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) + $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
 			$master->current_feedback = $this->masterFeedback($this->currentTotalCount($id, $new_filter_date2, $new_filter_date1), $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1));
-			//	$master->current_feedback = $this->masterFeedback($master->count, $master->money);
+			$result = $result + $master->current_money;
 		}
 
 		$first_day_of_this_month = new DateTime('first day of this month');
@@ -169,7 +251,8 @@ class TokioController extends Controller {
 			'new_filter_date1' => $new_filter_date1,
 			'new_filter_date2' => $new_filter_date2,
 			'cur_days' => $cur_days,
-			'admin' => $auth_user['admin']
+			'admin' => $auth_user['admin'],
+			'result' => $result,
 		]);
 	}
 
@@ -442,6 +525,7 @@ class TokioController extends Controller {
 		$first_day_of_month = $first_day_of_month->format('Y-m-d');
 		$first_day_of_this_month = new DateTime('first day of this month');
 		$last_day_of_this_month = new DateTime('last day of this month');
+		$result = 0;
 		foreach($masters as $master) {
 			$shifts_today = 0;
 			$shifts_ts = DB::table('shifts')->select('shift_type')->where('date', '=', $new_filter_date)->where('master_id', '=', $master->id)->get();
@@ -513,6 +597,7 @@ class TokioController extends Controller {
 			//dd($master->work_days);
 			$id = $master->id;
 			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) + $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
+			$result = $result + $master->current_money;
 			$master->current_feedback = $this->masterFeedback($this->currentTotalCount($id, $new_filter_date2, $new_filter_date1), $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1));
 			$master->feedback = $this->masterFeedback($this->currentTotalCount($id, $last_day_of_this_month, $first_day_of_this_month), $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month));
 			$master->money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month) + $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
@@ -527,7 +612,8 @@ class TokioController extends Controller {
 			'new_filter_date2' => $new_filter_date2,
 			'days_in_month' => $days_in_month,
 			'cur_days' => $cur_days,
-			'admin' => $auth_user['admin']
+			'admin' => $auth_user['admin'],
+			'result' => $result,
 		]);
 	}
 
@@ -583,24 +669,7 @@ class TokioController extends Controller {
 				->where('date', '<=', $last_day_of_month)
 				->get());
 
-			/*	$days_with_shifts_of_master = DB::table('shifts')->where('date', '<=', $new_filter_date2)->where('date', '>=', $new_filter_date1)->where('master_id', '=', $master->id)->get();
-				$shifts_of_master = 0;
-				foreach($days_with_shifts_of_master as $day_with_shifts_of_master) {
-					if($day_with_shifts_of_master->shift_type == 3) {
-						$shifts_of_master = $shifts_of_master + 2;
-					}
-					else {
-						$shifts_of_master = $shifts_of_master + 1;
-					}
-				}
-				$master->shifts = $shifts_of_master;
-
-				$master->plan = $master->range * 100;*/
-
 			$id = $master->id;
-			//	$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1);
-
-			//	$master->money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
 
 			$shifts_today = 0;
 			$shifts_ts = DB::table('shifts')->select('shift_type')->where('date', '=', $new_filter_date)->where('master_id', '=', $master->id)->get();
@@ -1736,7 +1805,7 @@ class TokioController extends Controller {
 			->where('date', '>=', $first_day_of_this_month)
 			->where('date', '<=', $last_day_of_this_month)
 			->join('goods', 'goods.id', '=', 'sales.product')
-			->select('sales.product', DB::raw('count(*) as total'))
+			->select('sales.product', DB::raw('sum(count) as total'))
 			->groupBy('sales.product')
 			->get();
 		foreach($sales1 as $sale1) {
@@ -1912,7 +1981,7 @@ class TokioController extends Controller {
 			->where('date', '>=', $first_day_of_this_month)
 			->where('date', '<=', $last_day_of_this_month)
 			->join('goods', 'goods.id', '=', 'sales.product')
-			->select('sales.product', DB::raw('count(*) as total'))
+			->select('sales.product', DB::raw('sum(count) as total'))
 			->groupBy('sales.product')
 			->get();
 		foreach($sales1 as $sale1) {
@@ -2086,7 +2155,7 @@ class TokioController extends Controller {
 			->where('date', '>=', $first_day_of_this_month)
 			->where('date', '<=', $last_day_of_this_month)
 			->join('goods', 'goods.id', '=', 'sales.product')
-			->select('sales.product', DB::raw('count(*) as total'))
+			->select('sales.product', DB::raw('sum(count) as total'))
 			->groupBy('sales.product')
 			->get();
 		foreach($sales1 as $sale1) {
@@ -2266,7 +2335,7 @@ class TokioController extends Controller {
 			->where('date', '>=', $first_day_of_this_month)
 			->where('date', '<=', $last_day_of_this_month)
 			->join('goods', 'goods.id', '=', 'sales.product')
-			->select('sales.product', DB::raw('count(*) as total'))
+			->select('sales.product', DB::raw('sum(count) as total'))
 			->groupBy('sales.product')
 			->get();
 		foreach($sales1 as $sale1) {
@@ -2440,7 +2509,7 @@ class TokioController extends Controller {
 			->where('date', '>=', $first_day_of_this_month)
 			->where('date', '<=', $last_day_of_this_month)
 			->join('goods', 'goods.id', '=', 'sales.product')
-			->select('sales.product', DB::raw('count(*) as total'))
+			->select('sales.product', DB::raw('sum(count) as total'))
 			->groupBy('sales.product')
 			->get();
 		foreach($sales1 as $sale1) {
@@ -2616,7 +2685,7 @@ class TokioController extends Controller {
 			->where('date', '>=', $first_day_of_this_month)
 			->where('date', '<=', $last_day_of_this_month)
 			->join('goods', 'goods.id', '=', 'sales.product')
-			->select('sales.product', DB::raw('count(*) as total'))
+			->select('sales.product', DB::raw('sum(count) as total'))
 			->groupBy('sales.product')
 			->get();
 		foreach($sales1 as $sale1) {
@@ -2797,7 +2866,7 @@ class TokioController extends Controller {
 			->where('date', '>=', $first_day_of_this_month)
 			->where('date', '<=', $last_day_of_this_month)
 			->join('goods', 'goods.id', '=', 'sales.product')
-			->select('sales.product', DB::raw('count(*) as total'))
+			->select('sales.product', DB::raw('sum(count) as total'))
 			->groupBy('sales.product')
 			->get();
 		foreach($sales1 as $sale1) {
@@ -2972,7 +3041,7 @@ class TokioController extends Controller {
 			->where('date', '>=', $first_day_of_this_month)
 			->where('date', '<=', $last_day_of_this_month)
 			->join('goods', 'goods.id', '=', 'sales.product')
-			->select('sales.product', DB::raw('count(*) as total'))
+			->select('sales.product', DB::raw('sum(count) as total'))
 			->groupBy('sales.product')
 			->get();
 		foreach($sales1 as $sale1) {
@@ -3270,8 +3339,9 @@ class TokioController extends Controller {
 		//	$shift_id = request('shift_id');
 		$client_id = request('client_id');
 		$good = request('good');
-		$cost = request('cost');
 		$count = request('count');
+		$good_cost = Goods::where('id', '=', $good)->first();
+		$cost = $count * $good_cost->good_cost;
 		//	$shift = Shift::where('id', '=', $shift_id)->first();
 		$date = request('date');
 		//	Sales::insert(['users_user_id' => $master_id, 'date' => $shift->date, 'product' => $good, 'cost' => $cost, 'client_id' => $client_id]);
@@ -3343,8 +3413,10 @@ class TokioController extends Controller {
 		//$shift_id = request('date');
 		//	$shift = Shift::where('id', '=', $shift_id)->first();
 		$good_id = request('good');
-		$cost = request('cost');
 		$count = request('count');
+		$good_cost = Goods::where('id', '=', $good_id)->first();
+		$cost = $count * $good_cost->good_cost;
+		//	dd($good_cost);
 		$date = request('date');
 		//Sales::insert(['users_user_id' => $master_id, 'date' => $shift->date, 'product' => $good_id, 'cost' => $cost]);
 		Sales::insert(['users_user_id' => $master_id, 'date' => $date, 'product' => $good_id, 'cost' => $cost, 'count' => $count]);
@@ -3454,7 +3526,7 @@ class TokioController extends Controller {
 			->where('date', '>=', $first_day_of_this_month)
 			->where('date', '<=', $last_day_of_this_month)
 			->join('goods', 'goods.id', '=', 'sales.product')
-			->select('sales.product', DB::raw('count(*) as total'))
+			->select('sales.product', DB::raw('sum(count) as total'))
 			->groupBy('sales.product')
 			->get();
 		foreach($sales1 as $sale1) {
@@ -3748,7 +3820,7 @@ class TokioController extends Controller {
 				->where('date', '>=', $first_day_of_this_month)
 				->where('date', '<=', $last_day_of_this_month)
 				->join('goods', 'goods.id', '=', 'sales.product')
-				->select('sales.product', DB::raw('count(*) as total'))
+				->select('sales.product', DB::raw('sum(count) as total'))
 				->groupBy('sales.product')
 				->get();
 			foreach($sales1 as $sale1) {
@@ -3968,7 +4040,7 @@ class TokioController extends Controller {
 				->where('date', '>=', $first_day_of_this_month)
 				->where('date', '<=', $last_day_of_this_month)
 				->join('goods', 'goods.id', '=', 'sales.product')
-				->select('sales.product', DB::raw('count(*) as total'))
+				->select('sales.product', DB::raw('sum(count) as total'))
 				->groupBy('sales.product')
 				->get();
 			foreach($sales1 as $sale1) {
@@ -4176,7 +4248,8 @@ class TokioController extends Controller {
 
 	public function addGoodToSalon() {
 		$good_name = request('good_name');
-		Goods::insert(['good_name' => $good_name]);
+		$good_cost = request('good_cost');
+		Goods::insert(['good_name' => $good_name, 'good_cost' => $good_cost]);
 		return redirect('/');
 	}
 
