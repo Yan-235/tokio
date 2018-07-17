@@ -167,7 +167,7 @@
 									<input placeholder="Название товара" id="last_name" name="good_name" type="text" required>
 								</div>
 								<div class="input-field col s2 text-center">
-									<input placeholder="Цена" name="good_cost" type="number" min="0"  step="0.01" required>
+									<input placeholder="Цена" name="good_cost" type="number" min="0" step="0.01" required>
 								</div>
 								<div class="input-field col s12 text-center">
 									<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
@@ -191,6 +191,8 @@
 		</li>
 	</ul>
 </div>
+
+
 <div class="container-fluid">
 	<div class="row">
 		<div class=" col s12">
@@ -262,23 +264,56 @@
 							{% set count = 0 %}
 							{% for type in master.array %}
 								{% if  type == 1 %}
-
-									<td class="black_border font_size_10px"><span>{{ master.starts[count]|date('H:i') }}<br>{{ master.ends[count]|date('H:i') }}</span></td>
+									<td class="black_border font_size_10px">
+										<div class="poster">
+											<span>{{ master.starts[count]|date('H:i') }}<br>{{ master.ends[count]|date('H:i') }}</span>
+											<div class="descr">
+												{% for time in master.times[count] %}
+													<p>{{ time }}</p>
+												{% endfor %}
+											</div>
+										</div>
+									</td>
 
 
 								{% elseif type ==3 %}
-									<td class="black_border"><i
-												class="material-icons green_">add_circle</i></td>
+									<td class="black_border">
+										<div class="poster">
+											<i class="material-icons green_">add_circle</i>
+											<div class="descr">
+												{% for time in master.times[count] %}
+													<p>{{ time }}</p>
+												{% endfor %}
+											</div>
+										</div>
+									</td>
 								{% elseif type ==0 %}
-									<td class="black_border"><i
-												class="material-icons red_">remove_circle_outline</i></td>
+									<td class="black_border">
+										<i class="material-icons red_">remove_circle_outline</i></td>
 								{% elseif  type == 11 %}
 
-									<td class="black_border chosen font_size_10px"><span>{{ master.starts[count]|date('H:i') }}<br>{{ master.ends[count]|date('H:i') }}</span></td>
+									<td class="black_border chosen font_size_10px">
+										<div class="poster">
+											<span>{{ master.starts[count]|date('H:i') }}<br>{{ master.ends[count]|date('H:i') }}</span>
+											<div class="descr">
+												{% for time in master.times[count] %}
+													<p>{{ time }}</p>
+												{% endfor %}
+											</div>
+										</div>
+									</td>
 
 								{% elseif type == 13 %}
-									<td class="black_border chosen"><i
-												class="material-icons green_">add_circle</i></td>
+									<td class="black_border chosen">
+										<div class="poster">
+											<i class="material-icons green_">add_circle</i>
+											<div class="descr">
+												{% for time in master.times[count] %}
+													<p>{{ time }}</p>
+												{% endfor %}
+											</div>
+										</div>
+									</td>
 								{% elseif type == 10 %}
 									<td class="black_border  chosen"><i
 												class="material-icons red_">remove_circle_outline</i></td>
@@ -346,22 +381,56 @@
 							{% for type in master.prev_array %}
 								{% if  type == 1 %}
 
-									<td class="black_border font_size_10px"><span>{{ master.prev_starts[count]|date('H:i') }}<br>{{ master.prev_ends[count]|date('H:i') }}</span></td>
+									<td class="black_border font_size_10px">
+										<div class="poster">
+											<span>{{ master.prev_starts[count]|date('H:i') }}<br>{{ master.prev_ends[count]|date('H:i') }}</span>
+											<div class="descr">
+												{% for time in master.prev_times[count] %}
+													<p>{{ time }}</p>
+												{% endfor %}
+											</div>
+										</div>
+									</td>
 
 
 								{% elseif type ==3 %}
-									<td class="black_border"><i
-												class="material-icons green_">add_circle</i></td>
+									<td class="black_border">
+										<div class="poster">
+											<i class="material-icons green_">add_circle</i>
+											<div class="descr">
+												{% for time in master.prev_times[count] %}
+													<p>{{ time }}</p>
+												{% endfor %}
+											</div>
+										</div>
+									</td>
 								{% elseif type ==0 %}
 									<td class="black_border"><i
 												class="material-icons red_">remove_circle_outline</i></td>
 								{% elseif  type == 11 %}
 
-									<td class="black_border chosen font_size_10px"><span>{{ master.prev_starts[count]|date('H:i') }}<br>{{ master.prev_ends[count]|date('H:i') }}</span></td>
+									<td class="black_border chosen font_size_10px">
+										<div class="poster">
+											<span>{{ master.prev_starts[count]|date('H:i') }}<br>{{ master.prev_ends[count]|date('H:i') }}</span>
+											<div class="descr">
+												{% for time in master.prev_times[count] %}
+													<p>{{ time }}</p>
+												{% endfor %}
+											</div>
+										</div>
+									</td>
 
 								{% elseif type == 13 %}
-									<td class="black_border chosen"><i
-												class="material-icons green_">add_circle</i></td>
+									<td class="black_border chosen">
+										<div class="poster">
+											<i class="material-icons green_">add_circle</i>
+											<div class="descr">
+												{% for time in master.prev_times[count] %}
+													<p>{{ time }}</p>
+												{% endfor %}
+											</div>
+										</div>
+									</td>
 								{% elseif type == 10 %}
 									<td class="black_border  chosen"><i
 												class="material-icons red_">remove_circle_outline</i></td>
@@ -429,22 +498,56 @@
 							{% for type in master.next_array %}
 								{% if  type == 1 %}
 
-									<td class="black_border font_size_10px"><span>{{ master.next_starts[count]|date('H:i') }}<br>{{ master.next_ends[count]|date('H:i') }}</span></td>
+									<td class="black_border font_size_10px">
+										<div class="poster">
+											<span>{{ master.next_starts[count]|date('H:i') }}<br>{{ master.next_ends[count]|date('H:i') }}</span>
+											<div class="descr">
+												{% for time in master.next_times[count] %}
+													<p>{{ time }}</p>
+												{% endfor %}
+											</div>
+										</div>
+									</td>
 
 
 								{% elseif type ==3 %}
-									<td class="black_border"><i
-												class="material-icons green_">add_circle</i></td>
+									<td class="black_border">
+										<div class="poster">
+											<i class="material-icons green_">add_circle</i>
+											<div class="descr">
+												{% for time in master.next_times[count] %}
+													<p>{{ time }}</p>
+												{% endfor %}
+											</div>
+										</div>
+									</td>
 								{% elseif type ==0 %}
 									<td class="black_border"><i
 												class="material-icons red_">remove_circle_outline</i></td>
 								{% elseif  type == 11 %}
 
-									<td class="black_border chosen font_size_10px"><span>{{ master.next_starts[count]|date('H:i') }}<br>{{ master.next_ends[count]|date('H:i') }}</span></td>
+									<td class="black_border chosen font_size_10px">
+										<div class="poster">
+											<span>{{ master.next_starts[count]|date('H:i') }}<br>{{ master.next_ends[count]|date('H:i') }}</span>
+											<div class="descr">
+												{% for time in master.next_times[count] %}
+													<p>{{ time }}</p>
+												{% endfor %}
+											</div>
+										</div>
+									</td>
 
 								{% elseif type == 13 %}
-									<td class="black_border chosen"><i
-												class="material-icons green_">add_circle</i></td>
+									<td class="black_border chosen">
+										<div class="poster">
+											<i class="material-icons green_">add_circle</i>
+											<div class="descr">
+												{% for time in master.next_times[count] %}
+													<p>{{ time }}</p>
+												{% endfor %}
+											</div>
+										</div>
+									</td>
 								{% elseif type == 10 %}
 									<td class="black_border  chosen"><i
 												class="material-icons red_">remove_circle_outline</i></td>
