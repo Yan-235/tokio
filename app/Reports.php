@@ -16,6 +16,6 @@ class Reports extends Model
 	 * @var array
 	 */
 	protected $fillable = [
-		'master_id', 'date', 'money'
+		'master_id', 'date', 'money', 'text'
 	];
 }

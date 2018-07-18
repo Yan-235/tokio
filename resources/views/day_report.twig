@@ -83,31 +83,38 @@
 </div>
 
 <div class="row">
-	<div class="col offset-s4 col s4">
+	<div class="col offset-s3 col s6">
 		<table class="highlight centered">
 			<thead>
 			<tr>
 				<th>Мастер</th>
 				<th>Доход</th>
 				<th>Расходы</th>
+				<th>Описание</th>
+				<th></th>
 			</tr>
 			</thead>
 
 			<tbody>
-			{% for i in 0..size-1%}
+			{% for i in 0..size-1 %}
 				<tr>
 					<td>{{ today_masters[i].name }}</td>
 					<td>{{ today_money[i] }}</td>
-					<td>
-						<form action="{{ route('add-report') }}">
+					<form action="{{ route('add-report') }}">
+						<td>
 							<input value="{{ today_masters[i].id }}" placeholder="ID" name="master_id" type="hidden">
 							<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
 							<input name="report_id" value="{{ today_reports[i].id }}" hidden>
 							<input name="date" value="{{ today }}" hidden>
-							<input placeholder="Расходы" value="{{ today_reports[i].money }}" name="money" type="number" min="0" step="0.01" required>
+							<input placeholder="Расходы" value="{{ today_reports[i].money }}" name="money" type="number" min="0" step="0.01">
+						</td>
+						<td>
+							<input placeholder="Опиание" value="{{ today_reports[i].text }}" name="text" type="text" maxlength="255">
+						</td>
+						<td>
 							<button class="btn waves-effect waves-light green">Добавить</button>
-						</form>
-					</td>
+						</td>
+					</form>
 				</tr>
 			{% endfor %}
 			</tbody>

@@ -50,10 +50,10 @@ class TokioController extends Controller {
 						if($today_master->id == $sale->users_user_id) {
 							$checker = 1;
 						}
-						if($checker == 0) {
-							$today_masters[$i] = $master;
-							$i = $i + 1;
-						}
+					}
+					if($checker == 0) {
+						$today_masters[$i] = $master;
+						$i = $i + 1;
 					}
 				}
 			}
@@ -70,6 +70,9 @@ class TokioController extends Controller {
 				else {
 					$result = $result + $today_money[$i];
 				}
+			}
+			else {
+				$result = $result + $today_money[$i];
 			}
 		}
 		$size = sizeof($today_masters);
@@ -90,11 +93,12 @@ class TokioController extends Controller {
 		$report_id = request('report_id');
 		$master_id = request('master_id');
 		$money = request('money');
+		$text = request('text');
 		if(Reports::where('id', '=', $report_id)->first() != null) {
-			Reports::where('master_id', '=', $master_id)->where('date', '=', $date)->update(['money' => $money]);
+			Reports::where('master_id', '=', $master_id)->where('date', '=', $date)->update(['money' => $money, 'text' => $text]);
 		}
 		else {
-			Reports::insert(['date' => $date, 'master_id' => $master_id, 'money' => $money]);
+			Reports::insert(['date' => $date, 'master_id' => $master_id, 'money' => $money, 'text' => $text]);
 		}
 		return redirect('/show-day-report');
 	}
