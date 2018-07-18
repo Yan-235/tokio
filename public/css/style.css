@@ -48,15 +48,49 @@
 	background-color: silver;
 }
 
-.green_{
+.green_ {
 	color: green;
 }
 
-.red_{
+.red_ {
 	color: red;
 }
 
-.black_border{
+.black_border {
 	border-left: 1px solid black;
 	border-right: 1px solid black;
+}
+
+.padding_left_right_50px {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+
+.font_size_10px {
+	font-size: 10px;
+}
+
+.poster {
+	position: relative;
+}
+
+.descr {
+	display: none;
+	padding: 5px;
+	font-family: "Times New Roman";
+	font-size: 12px;
+	background: white;
+	border: 2px solid silver;
+	-moz-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+.poster:hover .descr {
+	display: block;
+	position: absolute;
+	bottom: 25px;
+	right: 10px;
+	z-index: 9999;
+	width: 120px;
 }
