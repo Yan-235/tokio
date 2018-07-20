@@ -227,12 +227,26 @@ class TokioController extends Controller {
 			//	dd($master->cur_hours);
 		}
 		$result = 0;
+		$result_zp = 0;
+		$result_services_money = 0;
+		$result_sales_money = 0;
+		$result_current_zp = 0;
+		$result_current_feedback = 0;
 		foreach($masters as $master) {
 			$id = $master->id;
 
 			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) + $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
 			$master->current_feedback = $this->masterFeedback($this->currentTotalCount($id, $new_filter_date2, $new_filter_date1), $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1));
+			$master->current_zp = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) * $master->zp / 100;
+
+			$master->current_services_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1);
+			$master->current_sales_money = $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
 			$result = $result + $master->current_money;
+			$result_zp = $result_zp + $master->current_zp + $master->current_feedback;
+			$result_services_money = $result_services_money + $master->current_services_money;
+			$result_sales_money = $result_sales_money + $master->current_sales_money;
+			$result_current_zp = $result_current_zp + $master->current_zp;
+			$result_current_feedback = $result_current_feedback + $master->current_feedback;
 		}
 
 		$first_day_of_this_month = new DateTime('first day of this month');
@@ -242,7 +256,7 @@ class TokioController extends Controller {
 			$id = $master->id;
 			//	$master->count = $this->currentTotalCount($id,$last_day_of_this_month,$first_day_of_this_month);
 			$master->money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month) + $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
-
+			$master->month_zp = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month) * $master->zp / 100;
 			$master->feedback = $this->masterFeedback($this->currentTotalCount($id, $last_day_of_this_month, $first_day_of_this_month), $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month));
 			//dd($this->currentTotalCount($id, $last_day_of_this_month, $first_day_of_this_month));
 		}
@@ -257,6 +271,11 @@ class TokioController extends Controller {
 			'cur_days' => $cur_days,
 			'admin' => $auth_user['admin'],
 			'result' => $result,
+			'result_zp' => $result_zp,
+			'result_sales_money' => $result_sales_money,
+			'result_services_money' => $result_services_money,
+			'result_current_feedback' => $result_current_feedback,
+			'result_current_zp' => $result_current_zp,
 		]);
 	}
 
@@ -700,6 +719,11 @@ class TokioController extends Controller {
 		$first_day_of_this_month = new DateTime('first day of this month');
 		$last_day_of_this_month = new DateTime('last day of this month');
 		$result = 0;
+		$result_zp = 0;
+		$result_services_money = 0;
+		$result_sales_money = 0;
+		$result_current_zp = 0;
+		$result_current_feedback = 0;
 		foreach($masters as $master) {
 			$shifts_today = 0;
 			$shifts_ts = DB::table('shifts')->select('shift_type')->where('date', '=', $new_filter_date)->where('master_id', '=', $master->id)->get();
@@ -771,10 +795,19 @@ class TokioController extends Controller {
 			//dd($master->work_days);
 			$id = $master->id;
 			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) + $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
-			$result = $result + $master->current_money;
 			$master->current_feedback = $this->masterFeedback($this->currentTotalCount($id, $new_filter_date2, $new_filter_date1), $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1));
+			$master->month_zp = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month) * $master->zp / 100;
+			$master->current_zp = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) * $master->zp / 100;
 			$master->feedback = $this->masterFeedback($this->currentTotalCount($id, $last_day_of_this_month, $first_day_of_this_month), $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month));
+			$master->current_services_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1);
+			$master->current_sales_money = $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
 			$master->money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month) + $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
+			$result = $result + $master->current_money;
+			$result_zp = $result_zp + $master->current_zp + $master->current_feedback;
+			$result_services_money = $result_services_money + $master->current_services_money;
+			$result_sales_money = $result_sales_money + $master->current_sales_money;
+			$result_current_zp = $result_current_zp + $master->current_zp;
+			$result_current_feedback = $result_current_feedback + $master->current_feedback;
 		}
 
 		return view('info_tables', [
@@ -788,6 +821,11 @@ class TokioController extends Controller {
 			'cur_days' => $cur_days,
 			'admin' => $auth_user['admin'],
 			'result' => $result,
+			'result_zp' => $result_zp,
+			'result_sales_money' => $result_sales_money,
+			'result_services_money' => $result_services_money,
+			'result_current_feedback' => $result_current_feedback,
+			'result_current_zp' => $result_current_zp,
 		]);
 	}
 
@@ -1789,7 +1827,8 @@ class TokioController extends Controller {
 		$name = request('name');
 		$range = request('range');
 		$plan = request('plan');
-		Master::insert(['name' => $name, 'salon' => $user['salon'], 'range' => $range, 'plan' => $plan]);
+		$zp = request('zp');
+		Master::insert(['name' => $name, 'salon' => $user['salon'], 'range' => $range, 'plan' => $plan, 'zp' => $zp]);
 
 		return redirect('/');
 	}

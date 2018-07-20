@@ -16,7 +16,7 @@ class Master extends Authenticatable {
 	 * @var array
 	 */
 	protected $fillable = [
-		'id', 'name', 'salon', 'range', 'plan'
+		'id', 'name', 'salon', 'range', 'plan', 'zp'
 	];
 
 }
