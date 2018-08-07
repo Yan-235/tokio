@@ -55,7 +55,7 @@ class SearchController extends Controller {
 		 * Длинные фразы, функция mb_substr() обрезает на 1-3 символа.
 		 */
 		$query = [];
-		foreach($arr as $word) {
+	/*	foreach($arr as $word) {
 			$len = mb_strlen($word, 'UTF-8');
 			switch(true) {
 				case ($len <= 3):
@@ -83,12 +83,17 @@ class SearchController extends Controller {
 						break;
 					}
 			}
+		}*/
+		foreach($arr as $word) {
+			$len = mb_strlen($word, 'UTF-8');
+			$query[] = $word . "*";
+
 		}
 		$query = array_unique($query, SORT_STRING);
 		$qQeury = implode(" ", $query); //объединяет массив в строку
 		// Таблица для поиска
 		$results = Client::whereRaw(
-			"MATCH(name) AGAINST(? IN BOOLEAN MODE)", // name - поля, по которым нужно искать
+			"MATCH(name,tel) AGAINST(? IN BOOLEAN MODE)", // name - поля, по которым нужно искать
 			$qQeury)->paginate($count);
 		return $results;
 	}
