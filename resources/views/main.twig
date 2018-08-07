@@ -263,6 +263,12 @@
 							{% endif %}
 						{% endif %}
 					</tr>
+					<tr>
+						<th></th>
+						{% for name_of_days_in_month in names_of_days_in_month  %}
+							<th>{{ name_of_days_in_month }}</th>
+						{% endfor %}
+					</tr>
 					</thead>
 
 					<tbody>
@@ -378,6 +384,12 @@
 								{% endif %}
 							{% endif %}
 						{% endif %}
+					</tr>
+					<tr>
+						<th></th>
+						{% for name_of_days_in_prev_month in names_of_days_in_prev_month  %}
+							<th>{{ name_of_days_in_prev_month }}</th>
+						{% endfor %}
 					</tr>
 					</thead>
 
@@ -495,6 +507,12 @@
 								{% endif %}
 							{% endif %}
 						{% endif %}
+					</tr>
+					<tr>
+						<th></th>
+						{% for name_of_days_in_next_month in names_of_days_in_next_month  %}
+							<th>{{ name_of_days_in_next_month }}</th>
+						{% endfor %}
 					</tr>
 					</thead>
 

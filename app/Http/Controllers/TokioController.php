@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use DateInterval;
 use DB;
 use Illuminate\Support\Facades\Auth;
 use DateTime;
@@ -339,14 +340,95 @@ class TokioController extends Controller {
 		$last_day_of_month = $last_day_of_month->format('Y-m-d');
 		$first_day_of_month = new DateTime('first day of this month');
 		$first_day_of_month = $first_day_of_month->format('Y-m-d');
+		$names_of_days_in_month = [];
+		$d = new DateTime('last day of previous month');
+		for($i = 0; $i < $days_in_month; $i++) {
+			date_add($d, date_interval_create_from_date_string('1 day'));
+			$strd = $d->format('Y-m-d');
+			if(strftime("%u,", strtotime($strd)) == 1) {
+				$names_of_days_in_month[$i] = 'Пн';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 2) {
+				$names_of_days_in_month[$i] = 'Вт';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 3) {
+				$names_of_days_in_month[$i] = 'Ср';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 4) {
+				$names_of_days_in_month[$i] = 'Чт';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 5) {
+				$names_of_days_in_month[$i] = 'Пт';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 6) {
+				$names_of_days_in_month[$i] = 'Сб';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 7) {
+				$names_of_days_in_month[$i] = 'Вс';
+			}
+		}
 		$last_day_of_next_month = new DateTime('last day of next month');
 		$last_day_of_next_month = $last_day_of_next_month->format('Y-m-d');
 		$first_day_of_next_month = new DateTime('first day of next month');
 		$first_day_of_next_month = $first_day_of_next_month->format('Y-m-d');
+		$names_of_days_in_next_month = [];
+		$d = new DateTime('last day of this month');
+		for($i = 0; $i < $days_in_next_month; $i++) {
+			date_add($d, date_interval_create_from_date_string('1 day'));
+			$strd = $d->format('Y-m-d');
+			if(strftime("%u,", strtotime($strd)) == 1) {
+				$names_of_days_in_next_month[$i] = 'Пн';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 2) {
+				$names_of_days_in_next_month[$i] = 'Вт';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 3) {
+				$names_of_days_in_next_month[$i] = 'Ср';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 4) {
+				$names_of_days_in_next_month[$i] = 'Чт';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 5) {
+				$names_of_days_in_next_month[$i] = 'Пт';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 6) {
+				$names_of_days_in_next_month[$i] = 'Сб';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 7) {
+				$names_of_days_in_next_month[$i] = 'Вс';
+			}
+		}
 		$last_day_of_prev_month = new DateTime('last day of previous month');
 		$last_day_of_prev_month = $last_day_of_prev_month->format('Y-m-d');
 		$first_day_of_prev_month = new DateTime('first day of previous month');
 		$first_day_of_prev_month = $first_day_of_prev_month->format('Y-m-d');
+		$names_of_days_in_prev_month = [];
+		$d = new DateTime('first day of previous month');
+		for($i = 0; $i < $days_in_prev_month; $i++) {
+			$strd = $d->format('Y-m-d');
+			date_add($d, date_interval_create_from_date_string('1 day'));
+			if(strftime("%u,", strtotime($strd)) == 1) {
+				$names_of_days_in_prev_month[$i] = 'Пн';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 2) {
+				$names_of_days_in_prev_month[$i] = 'Вт';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 3) {
+				$names_of_days_in_prev_month[$i] = 'Ср';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 4) {
+				$names_of_days_in_prev_month[$i] = 'Чт';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 5) {
+				$names_of_days_in_prev_month[$i] = 'Пт';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 6) {
+				$names_of_days_in_prev_month[$i] = 'Сб';
+			}
+			elseif(strftime("%u,", strtotime($strd)) == 7) {
+				$names_of_days_in_prev_month[$i] = 'Вс';
+			}
+		}
 		$month_types = [];
 		$month_starts = [];
 		$month_ends = [];
@@ -657,7 +739,9 @@ class TokioController extends Controller {
 			'name_this_month' => $this_month,
 			'name_prev_month' => $prev_month,
 			'name_next_month' => $next_month,
-			//	'month_types' => $month_types
+			'names_of_days_in_month' => $names_of_days_in_month,
+			'names_of_days_in_next_month' => $names_of_days_in_next_month,
+			'names_of_days_in_prev_month' => $names_of_days_in_prev_month,
 		]);
 	}
 
@@ -1242,15 +1326,136 @@ class TokioController extends Controller {
 			$new_filter_date = new DateTime('today');
 			$new_filter_date = $new_filter_date->format('Y-m-d');
 			$days_in_month = date("t");
+			$days_in_next_month = date('t', mktime(0, 0, 0, date('m') + 1, 1, date('y')));
+			$days_in_prev_month = date('t', mktime(0, 0, 0, date('m') - 1, 1, date('y')));
+			$_monthsList = array(
+				"1" => "Январь", "2" => "Февраль", "3" => "Март",
+				"4" => "Апрель", "5" => "Май", "6" => "Июнь",
+				"7" => "Июль", "8" => "Август", "9" => "Сентябрь",
+				"10" => "Октябрь", "11" => "Ноябрь", "12" => "Декабрь");
+
+			$this_month = $_monthsList[date("n")];
+			if(date("n") == 1) {
+				$prev_month = $_monthsList[date("n") + 11];
+			}
+			else {
+				$prev_month = $_monthsList[date("n") - 1];
+			}
+			if(date("n") == 12) {
+				$next_month = $_monthsList[date("n") - 11];
+			}
+			else {
+				$next_month = $_monthsList[date("n") + 1];
+			}
+			//dd($next_month);
+
 			$last_day_of_month = new DateTime('last day of this month');
 			$last_day_of_month = $last_day_of_month->format('Y-m-d');
 			$first_day_of_month = new DateTime('first day of this month');
 			$first_day_of_month = $first_day_of_month->format('Y-m-d');
+			$names_of_days_in_month = [];
+			$d = new DateTime('last day of previous month');
+			for($i = 0; $i < $days_in_month; $i++) {
+				date_add($d, date_interval_create_from_date_string('1 day'));
+				$strd = $d->format('Y-m-d');
+				if(strftime("%u,", strtotime($strd)) == 1) {
+					$names_of_days_in_month[$i] = 'Пн';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 2) {
+					$names_of_days_in_month[$i] = 'Вт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 3) {
+					$names_of_days_in_month[$i] = 'Ср';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 4) {
+					$names_of_days_in_month[$i] = 'Чт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 5) {
+					$names_of_days_in_month[$i] = 'Пт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 6) {
+					$names_of_days_in_month[$i] = 'Сб';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 7) {
+					$names_of_days_in_month[$i] = 'Вс';
+				}
+			}
+			$last_day_of_next_month = new DateTime('last day of next month');
+			$last_day_of_next_month = $last_day_of_next_month->format('Y-m-d');
+			$first_day_of_next_month = new DateTime('first day of next month');
+			$first_day_of_next_month = $first_day_of_next_month->format('Y-m-d');
+			$names_of_days_in_next_month = [];
+			$d = new DateTime('last day of this month');
+			for($i = 0; $i < $days_in_next_month; $i++) {
+				date_add($d, date_interval_create_from_date_string('1 day'));
+				$strd = $d->format('Y-m-d');
+				if(strftime("%u,", strtotime($strd)) == 1) {
+					$names_of_days_in_next_month[$i] = 'Пн';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 2) {
+					$names_of_days_in_next_month[$i] = 'Вт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 3) {
+					$names_of_days_in_next_month[$i] = 'Ср';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 4) {
+					$names_of_days_in_next_month[$i] = 'Чт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 5) {
+					$names_of_days_in_next_month[$i] = 'Пт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 6) {
+					$names_of_days_in_next_month[$i] = 'Сб';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 7) {
+					$names_of_days_in_next_month[$i] = 'Вс';
+				}
+			}
+			$last_day_of_prev_month = new DateTime('last day of previous month');
+			$last_day_of_prev_month = $last_day_of_prev_month->format('Y-m-d');
+			$first_day_of_prev_month = new DateTime('first day of previous month');
+			$first_day_of_prev_month = $first_day_of_prev_month->format('Y-m-d');
+			$names_of_days_in_prev_month = [];
+			$d = new DateTime('first day of previous month');
+			for($i = 0; $i < $days_in_prev_month; $i++) {
+				$strd = $d->format('Y-m-d');
+				date_add($d, date_interval_create_from_date_string('1 day'));
+				if(strftime("%u,", strtotime($strd)) == 1) {
+					$names_of_days_in_prev_month[$i] = 'Пн';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 2) {
+					$names_of_days_in_prev_month[$i] = 'Вт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 3) {
+					$names_of_days_in_prev_month[$i] = 'Ср';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 4) {
+					$names_of_days_in_prev_month[$i] = 'Чт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 5) {
+					$names_of_days_in_prev_month[$i] = 'Пт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 6) {
+					$names_of_days_in_prev_month[$i] = 'Сб';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 7) {
+					$names_of_days_in_prev_month[$i] = 'Вс';
+				}
+			}
 			$month_types = [];
 			$month_starts = [];
 			$month_ends = [];
-			foreach($masters as $master) {
+			$next_month_types = [];
+			$next_month_starts = [];
+			$next_month_ends = [];
+			$prev_month_types = [];
+			$prev_month_starts = [];
+			$prev_month_ends = [];
 
+			foreach($masters as $master) {
+				$times = [];
+				$next_times = [];
+				$prev_times = [];
 				$shifts_today = 0;
 				$shifts_ts = DB::table('shifts')->select('shift_type')->where('date', '=', $new_filter_date)->where('master_id', '=', $master->id)->get();
 				foreach($shifts_ts as $shifts_t) {
@@ -1297,19 +1502,79 @@ class TokioController extends Controller {
 					$master->shifts_today = "нету смен";
 				}
 				$shifts_of_month = DB::table('shifts')->where('date', '>=', $first_day_of_month)->where('date', '<=', $last_day_of_month)->where('master_id', '=', $master->id)->get();
+				$shifts_of_next_month = DB::table('shifts')->where('date', '>=', $first_day_of_next_month)->where('date', '<=', $last_day_of_next_month)->where('master_id', '=', $master->id)->get();
+				$shifts_of_prev_month = DB::table('shifts')->where('date', '>=', $first_day_of_prev_month)->where('date', '<=', $last_day_of_prev_month)->where('master_id', '=', $master->id)->get();
 				$tmp_day = new DateTime($first_day_of_month);
+				$next_tmp_day = new DateTime($first_day_of_next_month);
+				$prev_tmp_day = new DateTime($first_day_of_prev_month);
 				//$tmp_day = $tmp_day->format('Y-m-d');
 				for($i = 0; $i <= $days_in_month - 1; $i++) {
 					//dd($tmp_day);
 					$checker = 0;
 					foreach($shifts_of_month as $shift_of_month) {
-						//dd($shift_of_month->date);
-						//	dd($tmp_day->format('Y-m-d'));
 						if(strtotime($shift_of_month->date) == strtotime($tmp_day->format('Y-m-d'))) {
 							$month_types[$i] = $shift_of_month->shift_type;
 							$month_starts[$i] = $shift_of_month->start_shift;
 							$month_ends[$i] = $shift_of_month->end_shift;
 							$checker = 1;
+
+							$orders = Shift::where('shifts.date', '>=', $first_day_of_month)
+								->where('shifts.date', '<=', $last_day_of_month)
+								->where('shifts.master_id', '=', $master->id)
+								->leftJoin('services', 'services.date', '=', 'shifts.date')
+								->where('services.users_user_id', '=', $master->id)
+								->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+								->get();
+							$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+							//	$i = 0;
+							//	$check = 0;
+							$tmp_array = [];
+							if($shift_of_month->shift_type == 1) {
+								$tmp_array = $shift_type3;
+								foreach($tmp_array as $tmp_ar) {
+									if(strtotime($shift_of_month->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+									}
+									if(strtotime($shift_of_month->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+									}
+								}
+								$times[$i] = $tmp_array;
+							}
+							elseif($shift_of_month->shift_type == 3) {
+								$tmp_array = $shift_type3;
+								$times[$i] = $tmp_array;
+							}
+							else {
+								$times[$i] = 0;
+							}
+							//	$i = $i + 1;
+							//dd($times);
+							//$check = 0;
+							foreach($orders as $order) {
+								if($shift_of_month->id == $order->id) {
+									//$check = 1;
+									$tmp_array = $times[$i];
+									$start = strtotime($order->time) - strtotime("00:00:00");
+									$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+									//	$j = 0;
+									foreach($tmp_array as $tmp_ar) {
+										//		dd($start);
+										//		dd($end);
+										$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+										//		dd($tmp);
+										if($tmp >= $start && $tmp < $end) {
+											//	dd($tmp);
+											unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+										}
+										//	$j = $j + 1;
+									}
+									//	dd($tmp_array);
+									$times[$i] = $tmp_array;
+									//$i = $i + 1;
+								}
+							}
+							//dd($times);
 						}
 					}
 					if($checker == 0) {
@@ -1319,21 +1584,177 @@ class TokioController extends Controller {
 						$month_types[$i] = $month_types[$i] + 10;
 					}
 					$tmp_day->modify('+1 day');
-					//	$tmp_day = $tmp_day->format('Y-m-d');
+				}
+
+				for($i = 0; $i <= $days_in_next_month - 1; $i++) {
 					//dd($tmp_day);
+					$next_checker = 0;
+					foreach($shifts_of_next_month as $shift_of_next_month) {
+						if(strtotime($shift_of_next_month->date) == strtotime($next_tmp_day->format('Y-m-d'))) {
+							$next_month_types[$i] = $shift_of_next_month->shift_type;
+							$next_month_starts[$i] = $shift_of_next_month->start_shift;
+							$next_month_ends[$i] = $shift_of_next_month->end_shift;
+							$next_checker = 1;
+
+							$next_orders = Shift::where('shifts.date', '>=', $first_day_of_next_month)
+								->where('shifts.date', '<=', $last_day_of_next_month)
+								->where('shifts.master_id', '=', $master->id)
+								->leftJoin('services', 'services.date', '=', 'shifts.date')
+								->where('services.users_user_id', '=', $master->id)
+								->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+								->get();
+							$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+							$next_tmp_array = [];
+							if($shift_of_next_month->shift_type == 1) {
+								$next_tmp_array = $shift_type3;
+								foreach($next_tmp_array as $tmp_ar) {
+									if(strtotime($shift_of_next_month->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($next_tmp_array[array_search($tmp_ar, $next_tmp_array)]);
+									}
+									if(strtotime($shift_of_next_month->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($next_tmp_array[array_search($tmp_ar, $next_tmp_array)]);
+									}
+								}
+								$next_times[$i] = $next_tmp_array;
+							}
+							elseif($shift_of_next_month->shift_type == 3) {
+								$next_tmp_array = $shift_type3;
+								$next_times[$i] = $next_tmp_array;
+							}
+							else {
+								$next_times[$i] = 0;
+							}
+							//	$i = $i + 1;
+							//dd($times);
+							//$check = 0;
+							foreach($next_orders as $next_order) {
+								if($shift_of_next_month->id == $next_order->id) {
+									//$check = 1;
+									$next_tmp_array = $next_times[$i];
+									$start = strtotime($next_order->time) - strtotime("00:00:00");
+									$end = strtotime($next_order->time) - strtotime("00:00:00") + strtotime($next_order->duration) - strtotime("00:00:00");
+									//	$j = 0;
+									foreach($next_tmp_array as $tmp_ar) {
+										//		dd($start);
+										//		dd($end);
+										$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+										//		dd($tmp);
+										if($tmp >= $start && $tmp < $end) {
+											//	dd($tmp);
+											unset($next_tmp_array[array_search($tmp_ar, $next_tmp_array)]);
+										}
+										//	$j = $j + 1;
+									}
+									//	dd($tmp_array);
+									$next_times[$i] = $next_tmp_array;
+									//$i = $i + 1;
+								}
+							}
+						}
+					}
+					if($next_checker == 0) {
+						$next_month_types[$i] = 0;
+					}
+
+					$next_tmp_day->modify('+1 day');
+				}
+				for($i = 0; $i <= $days_in_prev_month - 1; $i++) {
+					$prev_checker = 0;
+					foreach($shifts_of_prev_month as $shift_of_prev_month) {
+						if(strtotime($shift_of_prev_month->date) == strtotime($prev_tmp_day->format('Y-m-d'))) {
+							$prev_month_types[$i] = $shift_of_prev_month->shift_type;
+							$prev_month_starts[$i] = $shift_of_prev_month->start_shift;
+							$prev_month_ends[$i] = $shift_of_prev_month->end_shift;
+							$prev_checker = 1;
+
+							$prev_orders = Shift::where('shifts.date', '>=', $first_day_of_prev_month)
+								->where('shifts.date', '<=', $last_day_of_prev_month)
+								->where('shifts.master_id', '=', $master->id)
+								->leftJoin('services', 'services.date', '=', 'shifts.date')
+								->where('services.users_user_id', '=', $master->id)
+								->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+								->get();
+							$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+							$prev_tmp_array = [];
+							if($shift_of_prev_month->shift_type == 1) {
+								$prev_tmp_array = $shift_type3;
+								foreach($prev_tmp_array as $tmp_ar) {
+									if(strtotime($shift_of_prev_month->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($prev_tmp_array[array_search($tmp_ar, $prev_tmp_array)]);
+									}
+									if(strtotime($shift_of_prev_month->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($prev_tmp_array[array_search($tmp_ar, $prev_tmp_array)]);
+									}
+								}
+								$prev_times[$i] = $prev_tmp_array;
+							}
+							elseif($shift_of_prev_month->shift_type == 3) {
+								$prev_tmp_array = $shift_type3;
+								$prev_times[$i] = $prev_tmp_array;
+							}
+							else {
+								$prev_times[$i] = 0;
+							}
+
+							foreach($prev_orders as $prev_order) {
+								if($shift_of_prev_month->id == $prev_order->id) {
+									//$check = 1;
+									$prev_tmp_array = $prev_times[$i];
+									$start = strtotime($prev_order->time) - strtotime("00:00:00");
+									$end = strtotime($prev_order->time) - strtotime("00:00:00") + strtotime($prev_order->duration) - strtotime("00:00:00");
+									//	$j = 0;
+									foreach($prev_tmp_array as $tmp_ar) {
+										//		dd($start);
+										//		dd($end);
+										$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+										//		dd($tmp);
+										if($tmp >= $start && $tmp < $end) {
+											//	dd($tmp);
+											unset($prev_tmp_array[array_search($tmp_ar, $prev_tmp_array)]);
+										}
+										//	$j = $j + 1;
+									}
+									//	dd($tmp_array);
+									$prev_times[$i] = $prev_tmp_array;
+									//$i = $i + 1;
+								}
+							}
+						}
+					}
+					if($prev_checker == 0) {
+						$prev_month_types[$i] = 0;
+					}
+					$prev_tmp_day->modify('+1 day');
 				}
 				$master->array = $month_types;
 				$master->starts = $month_starts;
 				$master->ends = $month_ends;
-				//	dd($master->array);
+				$master->next_array = $next_month_types;
+				$master->next_starts = $next_month_starts;
+				$master->next_ends = $next_month_ends;
+				$master->prev_array = $prev_month_types;
+				$master->prev_starts = $prev_month_starts;
+				$master->prev_ends = $prev_month_ends;
+				$master->times = $times;
+				$master->next_times = $next_times;
+				$master->prev_times = $prev_times;
 			}
+			//dd($times);
 			return view('main', [
 				'masters' => $masters,
 				'salon' => $auth_user['salon'],
 				'products' => $products,
 				'new_filter_date' => $new_filter_date,
 				'days_in_month' => $days_in_month,
+				'days_in_next_month' => $days_in_next_month,
+				'days_in_prev_month' => $days_in_prev_month,
 				'admin' => $auth_user['admin'],
+				'name_this_month' => $this_month,
+				'name_prev_month' => $prev_month,
+				'name_next_month' => $next_month,
+				'names_of_days_in_month' => $names_of_days_in_month,
+				'names_of_days_in_next_month' => $names_of_days_in_next_month,
+				'names_of_days_in_prev_month' => $names_of_days_in_prev_month,
 				'exception1' => 'Не была указана смена.'
 			]);
 		}
@@ -1344,15 +1765,136 @@ class TokioController extends Controller {
 			$new_filter_date = new DateTime('today');
 			$new_filter_date = $new_filter_date->format('Y-m-d');
 			$days_in_month = date("t");
+			$days_in_next_month = date('t', mktime(0, 0, 0, date('m') + 1, 1, date('y')));
+			$days_in_prev_month = date('t', mktime(0, 0, 0, date('m') - 1, 1, date('y')));
+			$_monthsList = array(
+				"1" => "Январь", "2" => "Февраль", "3" => "Март",
+				"4" => "Апрель", "5" => "Май", "6" => "Июнь",
+				"7" => "Июль", "8" => "Август", "9" => "Сентябрь",
+				"10" => "Октябрь", "11" => "Ноябрь", "12" => "Декабрь");
+
+			$this_month = $_monthsList[date("n")];
+			if(date("n") == 1) {
+				$prev_month = $_monthsList[date("n") + 11];
+			}
+			else {
+				$prev_month = $_monthsList[date("n") - 1];
+			}
+			if(date("n") == 12) {
+				$next_month = $_monthsList[date("n") - 11];
+			}
+			else {
+				$next_month = $_monthsList[date("n") + 1];
+			}
+			//dd($next_month);
+
 			$last_day_of_month = new DateTime('last day of this month');
 			$last_day_of_month = $last_day_of_month->format('Y-m-d');
 			$first_day_of_month = new DateTime('first day of this month');
 			$first_day_of_month = $first_day_of_month->format('Y-m-d');
+			$names_of_days_in_month = [];
+			$d = new DateTime('last day of previous month');
+			for($i = 0; $i < $days_in_month; $i++) {
+				date_add($d, date_interval_create_from_date_string('1 day'));
+				$strd = $d->format('Y-m-d');
+				if(strftime("%u,", strtotime($strd)) == 1) {
+					$names_of_days_in_month[$i] = 'Пн';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 2) {
+					$names_of_days_in_month[$i] = 'Вт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 3) {
+					$names_of_days_in_month[$i] = 'Ср';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 4) {
+					$names_of_days_in_month[$i] = 'Чт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 5) {
+					$names_of_days_in_month[$i] = 'Пт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 6) {
+					$names_of_days_in_month[$i] = 'Сб';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 7) {
+					$names_of_days_in_month[$i] = 'Вс';
+				}
+			}
+			$last_day_of_next_month = new DateTime('last day of next month');
+			$last_day_of_next_month = $last_day_of_next_month->format('Y-m-d');
+			$first_day_of_next_month = new DateTime('first day of next month');
+			$first_day_of_next_month = $first_day_of_next_month->format('Y-m-d');
+			$names_of_days_in_next_month = [];
+			$d = new DateTime('last day of this month');
+			for($i = 0; $i < $days_in_next_month; $i++) {
+				date_add($d, date_interval_create_from_date_string('1 day'));
+				$strd = $d->format('Y-m-d');
+				if(strftime("%u,", strtotime($strd)) == 1) {
+					$names_of_days_in_next_month[$i] = 'Пн';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 2) {
+					$names_of_days_in_next_month[$i] = 'Вт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 3) {
+					$names_of_days_in_next_month[$i] = 'Ср';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 4) {
+					$names_of_days_in_next_month[$i] = 'Чт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 5) {
+					$names_of_days_in_next_month[$i] = 'Пт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 6) {
+					$names_of_days_in_next_month[$i] = 'Сб';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 7) {
+					$names_of_days_in_next_month[$i] = 'Вс';
+				}
+			}
+			$last_day_of_prev_month = new DateTime('last day of previous month');
+			$last_day_of_prev_month = $last_day_of_prev_month->format('Y-m-d');
+			$first_day_of_prev_month = new DateTime('first day of previous month');
+			$first_day_of_prev_month = $first_day_of_prev_month->format('Y-m-d');
+			$names_of_days_in_prev_month = [];
+			$d = new DateTime('first day of previous month');
+			for($i = 0; $i < $days_in_prev_month; $i++) {
+				$strd = $d->format('Y-m-d');
+				date_add($d, date_interval_create_from_date_string('1 day'));
+				if(strftime("%u,", strtotime($strd)) == 1) {
+					$names_of_days_in_prev_month[$i] = 'Пн';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 2) {
+					$names_of_days_in_prev_month[$i] = 'Вт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 3) {
+					$names_of_days_in_prev_month[$i] = 'Ср';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 4) {
+					$names_of_days_in_prev_month[$i] = 'Чт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 5) {
+					$names_of_days_in_prev_month[$i] = 'Пт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 6) {
+					$names_of_days_in_prev_month[$i] = 'Сб';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 7) {
+					$names_of_days_in_prev_month[$i] = 'Вс';
+				}
+			}
 			$month_types = [];
 			$month_starts = [];
 			$month_ends = [];
-			foreach($masters as $master) {
+			$next_month_types = [];
+			$next_month_starts = [];
+			$next_month_ends = [];
+			$prev_month_types = [];
+			$prev_month_starts = [];
+			$prev_month_ends = [];
 
+			foreach($masters as $master) {
+				$times = [];
+				$next_times = [];
+				$prev_times = [];
 				$shifts_today = 0;
 				$shifts_ts = DB::table('shifts')->select('shift_type')->where('date', '=', $new_filter_date)->where('master_id', '=', $master->id)->get();
 				foreach($shifts_ts as $shifts_t) {
@@ -1399,19 +1941,79 @@ class TokioController extends Controller {
 					$master->shifts_today = "нету смен";
 				}
 				$shifts_of_month = DB::table('shifts')->where('date', '>=', $first_day_of_month)->where('date', '<=', $last_day_of_month)->where('master_id', '=', $master->id)->get();
+				$shifts_of_next_month = DB::table('shifts')->where('date', '>=', $first_day_of_next_month)->where('date', '<=', $last_day_of_next_month)->where('master_id', '=', $master->id)->get();
+				$shifts_of_prev_month = DB::table('shifts')->where('date', '>=', $first_day_of_prev_month)->where('date', '<=', $last_day_of_prev_month)->where('master_id', '=', $master->id)->get();
 				$tmp_day = new DateTime($first_day_of_month);
+				$next_tmp_day = new DateTime($first_day_of_next_month);
+				$prev_tmp_day = new DateTime($first_day_of_prev_month);
 				//$tmp_day = $tmp_day->format('Y-m-d');
 				for($i = 0; $i <= $days_in_month - 1; $i++) {
 					//dd($tmp_day);
 					$checker = 0;
 					foreach($shifts_of_month as $shift_of_month) {
-						//dd($shift_of_month->date);
-						//	dd($tmp_day->format('Y-m-d'));
 						if(strtotime($shift_of_month->date) == strtotime($tmp_day->format('Y-m-d'))) {
 							$month_types[$i] = $shift_of_month->shift_type;
 							$month_starts[$i] = $shift_of_month->start_shift;
 							$month_ends[$i] = $shift_of_month->end_shift;
 							$checker = 1;
+
+							$orders = Shift::where('shifts.date', '>=', $first_day_of_month)
+								->where('shifts.date', '<=', $last_day_of_month)
+								->where('shifts.master_id', '=', $master->id)
+								->leftJoin('services', 'services.date', '=', 'shifts.date')
+								->where('services.users_user_id', '=', $master->id)
+								->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+								->get();
+							$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+							//	$i = 0;
+							//	$check = 0;
+							$tmp_array = [];
+							if($shift_of_month->shift_type == 1) {
+								$tmp_array = $shift_type3;
+								foreach($tmp_array as $tmp_ar) {
+									if(strtotime($shift_of_month->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+									}
+									if(strtotime($shift_of_month->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+									}
+								}
+								$times[$i] = $tmp_array;
+							}
+							elseif($shift_of_month->shift_type == 3) {
+								$tmp_array = $shift_type3;
+								$times[$i] = $tmp_array;
+							}
+							else {
+								$times[$i] = 0;
+							}
+							//	$i = $i + 1;
+							//dd($times);
+							//$check = 0;
+							foreach($orders as $order) {
+								if($shift_of_month->id == $order->id) {
+									//$check = 1;
+									$tmp_array = $times[$i];
+									$start = strtotime($order->time) - strtotime("00:00:00");
+									$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+									//	$j = 0;
+									foreach($tmp_array as $tmp_ar) {
+										//		dd($start);
+										//		dd($end);
+										$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+										//		dd($tmp);
+										if($tmp >= $start && $tmp < $end) {
+											//	dd($tmp);
+											unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+										}
+										//	$j = $j + 1;
+									}
+									//	dd($tmp_array);
+									$times[$i] = $tmp_array;
+									//$i = $i + 1;
+								}
+							}
+							//dd($times);
 						}
 					}
 					if($checker == 0) {
@@ -1421,21 +2023,177 @@ class TokioController extends Controller {
 						$month_types[$i] = $month_types[$i] + 10;
 					}
 					$tmp_day->modify('+1 day');
-					//	$tmp_day = $tmp_day->format('Y-m-d');
+				}
+
+				for($i = 0; $i <= $days_in_next_month - 1; $i++) {
 					//dd($tmp_day);
+					$next_checker = 0;
+					foreach($shifts_of_next_month as $shift_of_next_month) {
+						if(strtotime($shift_of_next_month->date) == strtotime($next_tmp_day->format('Y-m-d'))) {
+							$next_month_types[$i] = $shift_of_next_month->shift_type;
+							$next_month_starts[$i] = $shift_of_next_month->start_shift;
+							$next_month_ends[$i] = $shift_of_next_month->end_shift;
+							$next_checker = 1;
+
+							$next_orders = Shift::where('shifts.date', '>=', $first_day_of_next_month)
+								->where('shifts.date', '<=', $last_day_of_next_month)
+								->where('shifts.master_id', '=', $master->id)
+								->leftJoin('services', 'services.date', '=', 'shifts.date')
+								->where('services.users_user_id', '=', $master->id)
+								->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+								->get();
+							$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+							$next_tmp_array = [];
+							if($shift_of_next_month->shift_type == 1) {
+								$next_tmp_array = $shift_type3;
+								foreach($next_tmp_array as $tmp_ar) {
+									if(strtotime($shift_of_next_month->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($next_tmp_array[array_search($tmp_ar, $next_tmp_array)]);
+									}
+									if(strtotime($shift_of_next_month->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($next_tmp_array[array_search($tmp_ar, $next_tmp_array)]);
+									}
+								}
+								$next_times[$i] = $next_tmp_array;
+							}
+							elseif($shift_of_next_month->shift_type == 3) {
+								$next_tmp_array = $shift_type3;
+								$next_times[$i] = $next_tmp_array;
+							}
+							else {
+								$next_times[$i] = 0;
+							}
+							//	$i = $i + 1;
+							//dd($times);
+							//$check = 0;
+							foreach($next_orders as $next_order) {
+								if($shift_of_next_month->id == $next_order->id) {
+									//$check = 1;
+									$next_tmp_array = $next_times[$i];
+									$start = strtotime($next_order->time) - strtotime("00:00:00");
+									$end = strtotime($next_order->time) - strtotime("00:00:00") + strtotime($next_order->duration) - strtotime("00:00:00");
+									//	$j = 0;
+									foreach($next_tmp_array as $tmp_ar) {
+										//		dd($start);
+										//		dd($end);
+										$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+										//		dd($tmp);
+										if($tmp >= $start && $tmp < $end) {
+											//	dd($tmp);
+											unset($next_tmp_array[array_search($tmp_ar, $next_tmp_array)]);
+										}
+										//	$j = $j + 1;
+									}
+									//	dd($tmp_array);
+									$next_times[$i] = $next_tmp_array;
+									//$i = $i + 1;
+								}
+							}
+						}
+					}
+					if($next_checker == 0) {
+						$next_month_types[$i] = 0;
+					}
+
+					$next_tmp_day->modify('+1 day');
+				}
+				for($i = 0; $i <= $days_in_prev_month - 1; $i++) {
+					$prev_checker = 0;
+					foreach($shifts_of_prev_month as $shift_of_prev_month) {
+						if(strtotime($shift_of_prev_month->date) == strtotime($prev_tmp_day->format('Y-m-d'))) {
+							$prev_month_types[$i] = $shift_of_prev_month->shift_type;
+							$prev_month_starts[$i] = $shift_of_prev_month->start_shift;
+							$prev_month_ends[$i] = $shift_of_prev_month->end_shift;
+							$prev_checker = 1;
+
+							$prev_orders = Shift::where('shifts.date', '>=', $first_day_of_prev_month)
+								->where('shifts.date', '<=', $last_day_of_prev_month)
+								->where('shifts.master_id', '=', $master->id)
+								->leftJoin('services', 'services.date', '=', 'shifts.date')
+								->where('services.users_user_id', '=', $master->id)
+								->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+								->get();
+							$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+							$prev_tmp_array = [];
+							if($shift_of_prev_month->shift_type == 1) {
+								$prev_tmp_array = $shift_type3;
+								foreach($prev_tmp_array as $tmp_ar) {
+									if(strtotime($shift_of_prev_month->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($prev_tmp_array[array_search($tmp_ar, $prev_tmp_array)]);
+									}
+									if(strtotime($shift_of_prev_month->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($prev_tmp_array[array_search($tmp_ar, $prev_tmp_array)]);
+									}
+								}
+								$prev_times[$i] = $prev_tmp_array;
+							}
+							elseif($shift_of_prev_month->shift_type == 3) {
+								$prev_tmp_array = $shift_type3;
+								$prev_times[$i] = $prev_tmp_array;
+							}
+							else {
+								$prev_times[$i] = 0;
+							}
+
+							foreach($prev_orders as $prev_order) {
+								if($shift_of_prev_month->id == $prev_order->id) {
+									//$check = 1;
+									$prev_tmp_array = $prev_times[$i];
+									$start = strtotime($prev_order->time) - strtotime("00:00:00");
+									$end = strtotime($prev_order->time) - strtotime("00:00:00") + strtotime($prev_order->duration) - strtotime("00:00:00");
+									//	$j = 0;
+									foreach($prev_tmp_array as $tmp_ar) {
+										//		dd($start);
+										//		dd($end);
+										$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+										//		dd($tmp);
+										if($tmp >= $start && $tmp < $end) {
+											//	dd($tmp);
+											unset($prev_tmp_array[array_search($tmp_ar, $prev_tmp_array)]);
+										}
+										//	$j = $j + 1;
+									}
+									//	dd($tmp_array);
+									$prev_times[$i] = $prev_tmp_array;
+									//$i = $i + 1;
+								}
+							}
+						}
+					}
+					if($prev_checker == 0) {
+						$prev_month_types[$i] = 0;
+					}
+					$prev_tmp_day->modify('+1 day');
 				}
 				$master->array = $month_types;
 				$master->starts = $month_starts;
 				$master->ends = $month_ends;
-				//	dd($master->array);
+				$master->next_array = $next_month_types;
+				$master->next_starts = $next_month_starts;
+				$master->next_ends = $next_month_ends;
+				$master->prev_array = $prev_month_types;
+				$master->prev_starts = $prev_month_starts;
+				$master->prev_ends = $prev_month_ends;
+				$master->times = $times;
+				$master->next_times = $next_times;
+				$master->prev_times = $prev_times;
 			}
+			//dd($times);
 			return view('main', [
 				'masters' => $masters,
 				'salon' => $auth_user['salon'],
 				'products' => $products,
 				'new_filter_date' => $new_filter_date,
 				'days_in_month' => $days_in_month,
+				'days_in_next_month' => $days_in_next_month,
+				'days_in_prev_month' => $days_in_prev_month,
 				'admin' => $auth_user['admin'],
+				'name_this_month' => $this_month,
+				'name_prev_month' => $prev_month,
+				'name_next_month' => $next_month,
+				'names_of_days_in_month' => $names_of_days_in_month,
+				'names_of_days_in_next_month' => $names_of_days_in_next_month,
+				'names_of_days_in_prev_month' => $names_of_days_in_prev_month,
 				'exception1' => 'Не было указано начало смены.'
 			]);
 		}
@@ -1446,15 +2204,136 @@ class TokioController extends Controller {
 			$new_filter_date = new DateTime('today');
 			$new_filter_date = $new_filter_date->format('Y-m-d');
 			$days_in_month = date("t");
+			$days_in_next_month = date('t', mktime(0, 0, 0, date('m') + 1, 1, date('y')));
+			$days_in_prev_month = date('t', mktime(0, 0, 0, date('m') - 1, 1, date('y')));
+			$_monthsList = array(
+				"1" => "Январь", "2" => "Февраль", "3" => "Март",
+				"4" => "Апрель", "5" => "Май", "6" => "Июнь",
+				"7" => "Июль", "8" => "Август", "9" => "Сентябрь",
+				"10" => "Октябрь", "11" => "Ноябрь", "12" => "Декабрь");
+
+			$this_month = $_monthsList[date("n")];
+			if(date("n") == 1) {
+				$prev_month = $_monthsList[date("n") + 11];
+			}
+			else {
+				$prev_month = $_monthsList[date("n") - 1];
+			}
+			if(date("n") == 12) {
+				$next_month = $_monthsList[date("n") - 11];
+			}
+			else {
+				$next_month = $_monthsList[date("n") + 1];
+			}
+			//dd($next_month);
+
 			$last_day_of_month = new DateTime('last day of this month');
 			$last_day_of_month = $last_day_of_month->format('Y-m-d');
 			$first_day_of_month = new DateTime('first day of this month');
 			$first_day_of_month = $first_day_of_month->format('Y-m-d');
+			$names_of_days_in_month = [];
+			$d = new DateTime('last day of previous month');
+			for($i = 0; $i < $days_in_month; $i++) {
+				date_add($d, date_interval_create_from_date_string('1 day'));
+				$strd = $d->format('Y-m-d');
+				if(strftime("%u,", strtotime($strd)) == 1) {
+					$names_of_days_in_month[$i] = 'Пн';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 2) {
+					$names_of_days_in_month[$i] = 'Вт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 3) {
+					$names_of_days_in_month[$i] = 'Ср';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 4) {
+					$names_of_days_in_month[$i] = 'Чт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 5) {
+					$names_of_days_in_month[$i] = 'Пт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 6) {
+					$names_of_days_in_month[$i] = 'Сб';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 7) {
+					$names_of_days_in_month[$i] = 'Вс';
+				}
+			}
+			$last_day_of_next_month = new DateTime('last day of next month');
+			$last_day_of_next_month = $last_day_of_next_month->format('Y-m-d');
+			$first_day_of_next_month = new DateTime('first day of next month');
+			$first_day_of_next_month = $first_day_of_next_month->format('Y-m-d');
+			$names_of_days_in_next_month = [];
+			$d = new DateTime('last day of this month');
+			for($i = 0; $i < $days_in_next_month; $i++) {
+				date_add($d, date_interval_create_from_date_string('1 day'));
+				$strd = $d->format('Y-m-d');
+				if(strftime("%u,", strtotime($strd)) == 1) {
+					$names_of_days_in_next_month[$i] = 'Пн';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 2) {
+					$names_of_days_in_next_month[$i] = 'Вт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 3) {
+					$names_of_days_in_next_month[$i] = 'Ср';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 4) {
+					$names_of_days_in_next_month[$i] = 'Чт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 5) {
+					$names_of_days_in_next_month[$i] = 'Пт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 6) {
+					$names_of_days_in_next_month[$i] = 'Сб';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 7) {
+					$names_of_days_in_next_month[$i] = 'Вс';
+				}
+			}
+			$last_day_of_prev_month = new DateTime('last day of previous month');
+			$last_day_of_prev_month = $last_day_of_prev_month->format('Y-m-d');
+			$first_day_of_prev_month = new DateTime('first day of previous month');
+			$first_day_of_prev_month = $first_day_of_prev_month->format('Y-m-d');
+			$names_of_days_in_prev_month = [];
+			$d = new DateTime('first day of previous month');
+			for($i = 0; $i < $days_in_prev_month; $i++) {
+				$strd = $d->format('Y-m-d');
+				date_add($d, date_interval_create_from_date_string('1 day'));
+				if(strftime("%u,", strtotime($strd)) == 1) {
+					$names_of_days_in_prev_month[$i] = 'Пн';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 2) {
+					$names_of_days_in_prev_month[$i] = 'Вт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 3) {
+					$names_of_days_in_prev_month[$i] = 'Ср';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 4) {
+					$names_of_days_in_prev_month[$i] = 'Чт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 5) {
+					$names_of_days_in_prev_month[$i] = 'Пт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 6) {
+					$names_of_days_in_prev_month[$i] = 'Сб';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 7) {
+					$names_of_days_in_prev_month[$i] = 'Вс';
+				}
+			}
 			$month_types = [];
 			$month_starts = [];
 			$month_ends = [];
-			foreach($masters as $master) {
+			$next_month_types = [];
+			$next_month_starts = [];
+			$next_month_ends = [];
+			$prev_month_types = [];
+			$prev_month_starts = [];
+			$prev_month_ends = [];
 
+			foreach($masters as $master) {
+				$times = [];
+				$next_times = [];
+				$prev_times = [];
 				$shifts_today = 0;
 				$shifts_ts = DB::table('shifts')->select('shift_type')->where('date', '=', $new_filter_date)->where('master_id', '=', $master->id)->get();
 				foreach($shifts_ts as $shifts_t) {
@@ -1501,19 +2380,79 @@ class TokioController extends Controller {
 					$master->shifts_today = "нету смен";
 				}
 				$shifts_of_month = DB::table('shifts')->where('date', '>=', $first_day_of_month)->where('date', '<=', $last_day_of_month)->where('master_id', '=', $master->id)->get();
+				$shifts_of_next_month = DB::table('shifts')->where('date', '>=', $first_day_of_next_month)->where('date', '<=', $last_day_of_next_month)->where('master_id', '=', $master->id)->get();
+				$shifts_of_prev_month = DB::table('shifts')->where('date', '>=', $first_day_of_prev_month)->where('date', '<=', $last_day_of_prev_month)->where('master_id', '=', $master->id)->get();
 				$tmp_day = new DateTime($first_day_of_month);
+				$next_tmp_day = new DateTime($first_day_of_next_month);
+				$prev_tmp_day = new DateTime($first_day_of_prev_month);
 				//$tmp_day = $tmp_day->format('Y-m-d');
 				for($i = 0; $i <= $days_in_month - 1; $i++) {
 					//dd($tmp_day);
 					$checker = 0;
 					foreach($shifts_of_month as $shift_of_month) {
-						//dd($shift_of_month->date);
-						//	dd($tmp_day->format('Y-m-d'));
 						if(strtotime($shift_of_month->date) == strtotime($tmp_day->format('Y-m-d'))) {
 							$month_types[$i] = $shift_of_month->shift_type;
 							$month_starts[$i] = $shift_of_month->start_shift;
 							$month_ends[$i] = $shift_of_month->end_shift;
 							$checker = 1;
+
+							$orders = Shift::where('shifts.date', '>=', $first_day_of_month)
+								->where('shifts.date', '<=', $last_day_of_month)
+								->where('shifts.master_id', '=', $master->id)
+								->leftJoin('services', 'services.date', '=', 'shifts.date')
+								->where('services.users_user_id', '=', $master->id)
+								->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+								->get();
+							$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+							//	$i = 0;
+							//	$check = 0;
+							$tmp_array = [];
+							if($shift_of_month->shift_type == 1) {
+								$tmp_array = $shift_type3;
+								foreach($tmp_array as $tmp_ar) {
+									if(strtotime($shift_of_month->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+									}
+									if(strtotime($shift_of_month->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+									}
+								}
+								$times[$i] = $tmp_array;
+							}
+							elseif($shift_of_month->shift_type == 3) {
+								$tmp_array = $shift_type3;
+								$times[$i] = $tmp_array;
+							}
+							else {
+								$times[$i] = 0;
+							}
+							//	$i = $i + 1;
+							//dd($times);
+							//$check = 0;
+							foreach($orders as $order) {
+								if($shift_of_month->id == $order->id) {
+									//$check = 1;
+									$tmp_array = $times[$i];
+									$start = strtotime($order->time) - strtotime("00:00:00");
+									$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+									//	$j = 0;
+									foreach($tmp_array as $tmp_ar) {
+										//		dd($start);
+										//		dd($end);
+										$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+										//		dd($tmp);
+										if($tmp >= $start && $tmp < $end) {
+											//	dd($tmp);
+											unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+										}
+										//	$j = $j + 1;
+									}
+									//	dd($tmp_array);
+									$times[$i] = $tmp_array;
+									//$i = $i + 1;
+								}
+							}
+							//dd($times);
 						}
 					}
 					if($checker == 0) {
@@ -1523,21 +2462,177 @@ class TokioController extends Controller {
 						$month_types[$i] = $month_types[$i] + 10;
 					}
 					$tmp_day->modify('+1 day');
-					//	$tmp_day = $tmp_day->format('Y-m-d');
+				}
+
+				for($i = 0; $i <= $days_in_next_month - 1; $i++) {
 					//dd($tmp_day);
+					$next_checker = 0;
+					foreach($shifts_of_next_month as $shift_of_next_month) {
+						if(strtotime($shift_of_next_month->date) == strtotime($next_tmp_day->format('Y-m-d'))) {
+							$next_month_types[$i] = $shift_of_next_month->shift_type;
+							$next_month_starts[$i] = $shift_of_next_month->start_shift;
+							$next_month_ends[$i] = $shift_of_next_month->end_shift;
+							$next_checker = 1;
+
+							$next_orders = Shift::where('shifts.date', '>=', $first_day_of_next_month)
+								->where('shifts.date', '<=', $last_day_of_next_month)
+								->where('shifts.master_id', '=', $master->id)
+								->leftJoin('services', 'services.date', '=', 'shifts.date')
+								->where('services.users_user_id', '=', $master->id)
+								->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+								->get();
+							$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+							$next_tmp_array = [];
+							if($shift_of_next_month->shift_type == 1) {
+								$next_tmp_array = $shift_type3;
+								foreach($next_tmp_array as $tmp_ar) {
+									if(strtotime($shift_of_next_month->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($next_tmp_array[array_search($tmp_ar, $next_tmp_array)]);
+									}
+									if(strtotime($shift_of_next_month->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($next_tmp_array[array_search($tmp_ar, $next_tmp_array)]);
+									}
+								}
+								$next_times[$i] = $next_tmp_array;
+							}
+							elseif($shift_of_next_month->shift_type == 3) {
+								$next_tmp_array = $shift_type3;
+								$next_times[$i] = $next_tmp_array;
+							}
+							else {
+								$next_times[$i] = 0;
+							}
+							//	$i = $i + 1;
+							//dd($times);
+							//$check = 0;
+							foreach($next_orders as $next_order) {
+								if($shift_of_next_month->id == $next_order->id) {
+									//$check = 1;
+									$next_tmp_array = $next_times[$i];
+									$start = strtotime($next_order->time) - strtotime("00:00:00");
+									$end = strtotime($next_order->time) - strtotime("00:00:00") + strtotime($next_order->duration) - strtotime("00:00:00");
+									//	$j = 0;
+									foreach($next_tmp_array as $tmp_ar) {
+										//		dd($start);
+										//		dd($end);
+										$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+										//		dd($tmp);
+										if($tmp >= $start && $tmp < $end) {
+											//	dd($tmp);
+											unset($next_tmp_array[array_search($tmp_ar, $next_tmp_array)]);
+										}
+										//	$j = $j + 1;
+									}
+									//	dd($tmp_array);
+									$next_times[$i] = $next_tmp_array;
+									//$i = $i + 1;
+								}
+							}
+						}
+					}
+					if($next_checker == 0) {
+						$next_month_types[$i] = 0;
+					}
+
+					$next_tmp_day->modify('+1 day');
+				}
+				for($i = 0; $i <= $days_in_prev_month - 1; $i++) {
+					$prev_checker = 0;
+					foreach($shifts_of_prev_month as $shift_of_prev_month) {
+						if(strtotime($shift_of_prev_month->date) == strtotime($prev_tmp_day->format('Y-m-d'))) {
+							$prev_month_types[$i] = $shift_of_prev_month->shift_type;
+							$prev_month_starts[$i] = $shift_of_prev_month->start_shift;
+							$prev_month_ends[$i] = $shift_of_prev_month->end_shift;
+							$prev_checker = 1;
+
+							$prev_orders = Shift::where('shifts.date', '>=', $first_day_of_prev_month)
+								->where('shifts.date', '<=', $last_day_of_prev_month)
+								->where('shifts.master_id', '=', $master->id)
+								->leftJoin('services', 'services.date', '=', 'shifts.date')
+								->where('services.users_user_id', '=', $master->id)
+								->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+								->get();
+							$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+							$prev_tmp_array = [];
+							if($shift_of_prev_month->shift_type == 1) {
+								$prev_tmp_array = $shift_type3;
+								foreach($prev_tmp_array as $tmp_ar) {
+									if(strtotime($shift_of_prev_month->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($prev_tmp_array[array_search($tmp_ar, $prev_tmp_array)]);
+									}
+									if(strtotime($shift_of_prev_month->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($prev_tmp_array[array_search($tmp_ar, $prev_tmp_array)]);
+									}
+								}
+								$prev_times[$i] = $prev_tmp_array;
+							}
+							elseif($shift_of_prev_month->shift_type == 3) {
+								$prev_tmp_array = $shift_type3;
+								$prev_times[$i] = $prev_tmp_array;
+							}
+							else {
+								$prev_times[$i] = 0;
+							}
+
+							foreach($prev_orders as $prev_order) {
+								if($shift_of_prev_month->id == $prev_order->id) {
+									//$check = 1;
+									$prev_tmp_array = $prev_times[$i];
+									$start = strtotime($prev_order->time) - strtotime("00:00:00");
+									$end = strtotime($prev_order->time) - strtotime("00:00:00") + strtotime($prev_order->duration) - strtotime("00:00:00");
+									//	$j = 0;
+									foreach($prev_tmp_array as $tmp_ar) {
+										//		dd($start);
+										//		dd($end);
+										$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+										//		dd($tmp);
+										if($tmp >= $start && $tmp < $end) {
+											//	dd($tmp);
+											unset($prev_tmp_array[array_search($tmp_ar, $prev_tmp_array)]);
+										}
+										//	$j = $j + 1;
+									}
+									//	dd($tmp_array);
+									$prev_times[$i] = $prev_tmp_array;
+									//$i = $i + 1;
+								}
+							}
+						}
+					}
+					if($prev_checker == 0) {
+						$prev_month_types[$i] = 0;
+					}
+					$prev_tmp_day->modify('+1 day');
 				}
 				$master->array = $month_types;
 				$master->starts = $month_starts;
 				$master->ends = $month_ends;
-				//	dd($master->array);
+				$master->next_array = $next_month_types;
+				$master->next_starts = $next_month_starts;
+				$master->next_ends = $next_month_ends;
+				$master->prev_array = $prev_month_types;
+				$master->prev_starts = $prev_month_starts;
+				$master->prev_ends = $prev_month_ends;
+				$master->times = $times;
+				$master->next_times = $next_times;
+				$master->prev_times = $prev_times;
 			}
+			//dd($times);
 			return view('main', [
 				'masters' => $masters,
 				'salon' => $auth_user['salon'],
 				'products' => $products,
 				'new_filter_date' => $new_filter_date,
 				'days_in_month' => $days_in_month,
+				'days_in_next_month' => $days_in_next_month,
+				'days_in_prev_month' => $days_in_prev_month,
 				'admin' => $auth_user['admin'],
+				'name_this_month' => $this_month,
+				'name_prev_month' => $prev_month,
+				'name_next_month' => $next_month,
+				'names_of_days_in_month' => $names_of_days_in_month,
+				'names_of_days_in_next_month' => $names_of_days_in_next_month,
+				'names_of_days_in_prev_month' => $names_of_days_in_prev_month,
 				'exception1' => 'Не был указан конец смены.'
 			]);
 		}
@@ -1548,15 +2643,136 @@ class TokioController extends Controller {
 			$new_filter_date = new DateTime('today');
 			$new_filter_date = $new_filter_date->format('Y-m-d');
 			$days_in_month = date("t");
+			$days_in_next_month = date('t', mktime(0, 0, 0, date('m') + 1, 1, date('y')));
+			$days_in_prev_month = date('t', mktime(0, 0, 0, date('m') - 1, 1, date('y')));
+			$_monthsList = array(
+				"1" => "Январь", "2" => "Февраль", "3" => "Март",
+				"4" => "Апрель", "5" => "Май", "6" => "Июнь",
+				"7" => "Июль", "8" => "Август", "9" => "Сентябрь",
+				"10" => "Октябрь", "11" => "Ноябрь", "12" => "Декабрь");
+
+			$this_month = $_monthsList[date("n")];
+			if(date("n") == 1) {
+				$prev_month = $_monthsList[date("n") + 11];
+			}
+			else {
+				$prev_month = $_monthsList[date("n") - 1];
+			}
+			if(date("n") == 12) {
+				$next_month = $_monthsList[date("n") - 11];
+			}
+			else {
+				$next_month = $_monthsList[date("n") + 1];
+			}
+			//dd($next_month);
+
 			$last_day_of_month = new DateTime('last day of this month');
 			$last_day_of_month = $last_day_of_month->format('Y-m-d');
 			$first_day_of_month = new DateTime('first day of this month');
 			$first_day_of_month = $first_day_of_month->format('Y-m-d');
+			$names_of_days_in_month = [];
+			$d = new DateTime('last day of previous month');
+			for($i = 0; $i < $days_in_month; $i++) {
+				date_add($d, date_interval_create_from_date_string('1 day'));
+				$strd = $d->format('Y-m-d');
+				if(strftime("%u,", strtotime($strd)) == 1) {
+					$names_of_days_in_month[$i] = 'Пн';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 2) {
+					$names_of_days_in_month[$i] = 'Вт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 3) {
+					$names_of_days_in_month[$i] = 'Ср';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 4) {
+					$names_of_days_in_month[$i] = 'Чт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 5) {
+					$names_of_days_in_month[$i] = 'Пт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 6) {
+					$names_of_days_in_month[$i] = 'Сб';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 7) {
+					$names_of_days_in_month[$i] = 'Вс';
+				}
+			}
+			$last_day_of_next_month = new DateTime('last day of next month');
+			$last_day_of_next_month = $last_day_of_next_month->format('Y-m-d');
+			$first_day_of_next_month = new DateTime('first day of next month');
+			$first_day_of_next_month = $first_day_of_next_month->format('Y-m-d');
+			$names_of_days_in_next_month = [];
+			$d = new DateTime('last day of this month');
+			for($i = 0; $i < $days_in_next_month; $i++) {
+				date_add($d, date_interval_create_from_date_string('1 day'));
+				$strd = $d->format('Y-m-d');
+				if(strftime("%u,", strtotime($strd)) == 1) {
+					$names_of_days_in_next_month[$i] = 'Пн';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 2) {
+					$names_of_days_in_next_month[$i] = 'Вт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 3) {
+					$names_of_days_in_next_month[$i] = 'Ср';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 4) {
+					$names_of_days_in_next_month[$i] = 'Чт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 5) {
+					$names_of_days_in_next_month[$i] = 'Пт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 6) {
+					$names_of_days_in_next_month[$i] = 'Сб';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 7) {
+					$names_of_days_in_next_month[$i] = 'Вс';
+				}
+			}
+			$last_day_of_prev_month = new DateTime('last day of previous month');
+			$last_day_of_prev_month = $last_day_of_prev_month->format('Y-m-d');
+			$first_day_of_prev_month = new DateTime('first day of previous month');
+			$first_day_of_prev_month = $first_day_of_prev_month->format('Y-m-d');
+			$names_of_days_in_prev_month = [];
+			$d = new DateTime('first day of previous month');
+			for($i = 0; $i < $days_in_prev_month; $i++) {
+				$strd = $d->format('Y-m-d');
+				date_add($d, date_interval_create_from_date_string('1 day'));
+				if(strftime("%u,", strtotime($strd)) == 1) {
+					$names_of_days_in_prev_month[$i] = 'Пн';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 2) {
+					$names_of_days_in_prev_month[$i] = 'Вт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 3) {
+					$names_of_days_in_prev_month[$i] = 'Ср';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 4) {
+					$names_of_days_in_prev_month[$i] = 'Чт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 5) {
+					$names_of_days_in_prev_month[$i] = 'Пт';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 6) {
+					$names_of_days_in_prev_month[$i] = 'Сб';
+				}
+				elseif(strftime("%u,", strtotime($strd)) == 7) {
+					$names_of_days_in_prev_month[$i] = 'Вс';
+				}
+			}
 			$month_types = [];
 			$month_starts = [];
 			$month_ends = [];
-			foreach($masters as $master) {
+			$next_month_types = [];
+			$next_month_starts = [];
+			$next_month_ends = [];
+			$prev_month_types = [];
+			$prev_month_starts = [];
+			$prev_month_ends = [];
 
+			foreach($masters as $master) {
+				$times = [];
+				$next_times = [];
+				$prev_times = [];
 				$shifts_today = 0;
 				$shifts_ts = DB::table('shifts')->select('shift_type')->where('date', '=', $new_filter_date)->where('master_id', '=', $master->id)->get();
 				foreach($shifts_ts as $shifts_t) {
@@ -1603,19 +2819,79 @@ class TokioController extends Controller {
 					$master->shifts_today = "нету смен";
 				}
 				$shifts_of_month = DB::table('shifts')->where('date', '>=', $first_day_of_month)->where('date', '<=', $last_day_of_month)->where('master_id', '=', $master->id)->get();
+				$shifts_of_next_month = DB::table('shifts')->where('date', '>=', $first_day_of_next_month)->where('date', '<=', $last_day_of_next_month)->where('master_id', '=', $master->id)->get();
+				$shifts_of_prev_month = DB::table('shifts')->where('date', '>=', $first_day_of_prev_month)->where('date', '<=', $last_day_of_prev_month)->where('master_id', '=', $master->id)->get();
 				$tmp_day = new DateTime($first_day_of_month);
+				$next_tmp_day = new DateTime($first_day_of_next_month);
+				$prev_tmp_day = new DateTime($first_day_of_prev_month);
 				//$tmp_day = $tmp_day->format('Y-m-d');
 				for($i = 0; $i <= $days_in_month - 1; $i++) {
 					//dd($tmp_day);
 					$checker = 0;
 					foreach($shifts_of_month as $shift_of_month) {
-						//dd($shift_of_month->date);
-						//	dd($tmp_day->format('Y-m-d'));
 						if(strtotime($shift_of_month->date) == strtotime($tmp_day->format('Y-m-d'))) {
 							$month_types[$i] = $shift_of_month->shift_type;
 							$month_starts[$i] = $shift_of_month->start_shift;
 							$month_ends[$i] = $shift_of_month->end_shift;
 							$checker = 1;
+
+							$orders = Shift::where('shifts.date', '>=', $first_day_of_month)
+								->where('shifts.date', '<=', $last_day_of_month)
+								->where('shifts.master_id', '=', $master->id)
+								->leftJoin('services', 'services.date', '=', 'shifts.date')
+								->where('services.users_user_id', '=', $master->id)
+								->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+								->get();
+							$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+							//	$i = 0;
+							//	$check = 0;
+							$tmp_array = [];
+							if($shift_of_month->shift_type == 1) {
+								$tmp_array = $shift_type3;
+								foreach($tmp_array as $tmp_ar) {
+									if(strtotime($shift_of_month->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+									}
+									if(strtotime($shift_of_month->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+									}
+								}
+								$times[$i] = $tmp_array;
+							}
+							elseif($shift_of_month->shift_type == 3) {
+								$tmp_array = $shift_type3;
+								$times[$i] = $tmp_array;
+							}
+							else {
+								$times[$i] = 0;
+							}
+							//	$i = $i + 1;
+							//dd($times);
+							//$check = 0;
+							foreach($orders as $order) {
+								if($shift_of_month->id == $order->id) {
+									//$check = 1;
+									$tmp_array = $times[$i];
+									$start = strtotime($order->time) - strtotime("00:00:00");
+									$end = strtotime($order->time) - strtotime("00:00:00") + strtotime($order->duration) - strtotime("00:00:00");
+									//	$j = 0;
+									foreach($tmp_array as $tmp_ar) {
+										//		dd($start);
+										//		dd($end);
+										$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+										//		dd($tmp);
+										if($tmp >= $start && $tmp < $end) {
+											//	dd($tmp);
+											unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
+										}
+										//	$j = $j + 1;
+									}
+									//	dd($tmp_array);
+									$times[$i] = $tmp_array;
+									//$i = $i + 1;
+								}
+							}
+							//dd($times);
 						}
 					}
 					if($checker == 0) {
@@ -1625,21 +2901,177 @@ class TokioController extends Controller {
 						$month_types[$i] = $month_types[$i] + 10;
 					}
 					$tmp_day->modify('+1 day');
-					//	$tmp_day = $tmp_day->format('Y-m-d');
+				}
+
+				for($i = 0; $i <= $days_in_next_month - 1; $i++) {
 					//dd($tmp_day);
+					$next_checker = 0;
+					foreach($shifts_of_next_month as $shift_of_next_month) {
+						if(strtotime($shift_of_next_month->date) == strtotime($next_tmp_day->format('Y-m-d'))) {
+							$next_month_types[$i] = $shift_of_next_month->shift_type;
+							$next_month_starts[$i] = $shift_of_next_month->start_shift;
+							$next_month_ends[$i] = $shift_of_next_month->end_shift;
+							$next_checker = 1;
+
+							$next_orders = Shift::where('shifts.date', '>=', $first_day_of_next_month)
+								->where('shifts.date', '<=', $last_day_of_next_month)
+								->where('shifts.master_id', '=', $master->id)
+								->leftJoin('services', 'services.date', '=', 'shifts.date')
+								->where('services.users_user_id', '=', $master->id)
+								->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+								->get();
+							$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+							$next_tmp_array = [];
+							if($shift_of_next_month->shift_type == 1) {
+								$next_tmp_array = $shift_type3;
+								foreach($next_tmp_array as $tmp_ar) {
+									if(strtotime($shift_of_next_month->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($next_tmp_array[array_search($tmp_ar, $next_tmp_array)]);
+									}
+									if(strtotime($shift_of_next_month->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($next_tmp_array[array_search($tmp_ar, $next_tmp_array)]);
+									}
+								}
+								$next_times[$i] = $next_tmp_array;
+							}
+							elseif($shift_of_next_month->shift_type == 3) {
+								$next_tmp_array = $shift_type3;
+								$next_times[$i] = $next_tmp_array;
+							}
+							else {
+								$next_times[$i] = 0;
+							}
+							//	$i = $i + 1;
+							//dd($times);
+							//$check = 0;
+							foreach($next_orders as $next_order) {
+								if($shift_of_next_month->id == $next_order->id) {
+									//$check = 1;
+									$next_tmp_array = $next_times[$i];
+									$start = strtotime($next_order->time) - strtotime("00:00:00");
+									$end = strtotime($next_order->time) - strtotime("00:00:00") + strtotime($next_order->duration) - strtotime("00:00:00");
+									//	$j = 0;
+									foreach($next_tmp_array as $tmp_ar) {
+										//		dd($start);
+										//		dd($end);
+										$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+										//		dd($tmp);
+										if($tmp >= $start && $tmp < $end) {
+											//	dd($tmp);
+											unset($next_tmp_array[array_search($tmp_ar, $next_tmp_array)]);
+										}
+										//	$j = $j + 1;
+									}
+									//	dd($tmp_array);
+									$next_times[$i] = $next_tmp_array;
+									//$i = $i + 1;
+								}
+							}
+						}
+					}
+					if($next_checker == 0) {
+						$next_month_types[$i] = 0;
+					}
+
+					$next_tmp_day->modify('+1 day');
+				}
+				for($i = 0; $i <= $days_in_prev_month - 1; $i++) {
+					$prev_checker = 0;
+					foreach($shifts_of_prev_month as $shift_of_prev_month) {
+						if(strtotime($shift_of_prev_month->date) == strtotime($prev_tmp_day->format('Y-m-d'))) {
+							$prev_month_types[$i] = $shift_of_prev_month->shift_type;
+							$prev_month_starts[$i] = $shift_of_prev_month->start_shift;
+							$prev_month_ends[$i] = $shift_of_prev_month->end_shift;
+							$prev_checker = 1;
+
+							$prev_orders = Shift::where('shifts.date', '>=', $first_day_of_prev_month)
+								->where('shifts.date', '<=', $last_day_of_prev_month)
+								->where('shifts.master_id', '=', $master->id)
+								->leftJoin('services', 'services.date', '=', 'shifts.date')
+								->where('services.users_user_id', '=', $master->id)
+								->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+								->get();
+							$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+							$prev_tmp_array = [];
+							if($shift_of_prev_month->shift_type == 1) {
+								$prev_tmp_array = $shift_type3;
+								foreach($prev_tmp_array as $tmp_ar) {
+									if(strtotime($shift_of_prev_month->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($prev_tmp_array[array_search($tmp_ar, $prev_tmp_array)]);
+									}
+									if(strtotime($shift_of_prev_month->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
+										unset($prev_tmp_array[array_search($tmp_ar, $prev_tmp_array)]);
+									}
+								}
+								$prev_times[$i] = $prev_tmp_array;
+							}
+							elseif($shift_of_prev_month->shift_type == 3) {
+								$prev_tmp_array = $shift_type3;
+								$prev_times[$i] = $prev_tmp_array;
+							}
+							else {
+								$prev_times[$i] = 0;
+							}
+
+							foreach($prev_orders as $prev_order) {
+								if($shift_of_prev_month->id == $prev_order->id) {
+									//$check = 1;
+									$prev_tmp_array = $prev_times[$i];
+									$start = strtotime($prev_order->time) - strtotime("00:00:00");
+									$end = strtotime($prev_order->time) - strtotime("00:00:00") + strtotime($prev_order->duration) - strtotime("00:00:00");
+									//	$j = 0;
+									foreach($prev_tmp_array as $tmp_ar) {
+										//		dd($start);
+										//		dd($end);
+										$tmp = strtotime($tmp_ar) - strtotime("00:00:00");
+										//		dd($tmp);
+										if($tmp >= $start && $tmp < $end) {
+											//	dd($tmp);
+											unset($prev_tmp_array[array_search($tmp_ar, $prev_tmp_array)]);
+										}
+										//	$j = $j + 1;
+									}
+									//	dd($tmp_array);
+									$prev_times[$i] = $prev_tmp_array;
+									//$i = $i + 1;
+								}
+							}
+						}
+					}
+					if($prev_checker == 0) {
+						$prev_month_types[$i] = 0;
+					}
+					$prev_tmp_day->modify('+1 day');
 				}
 				$master->array = $month_types;
 				$master->starts = $month_starts;
 				$master->ends = $month_ends;
-				//	dd($master->array);
+				$master->next_array = $next_month_types;
+				$master->next_starts = $next_month_starts;
+				$master->next_ends = $next_month_ends;
+				$master->prev_array = $prev_month_types;
+				$master->prev_starts = $prev_month_starts;
+				$master->prev_ends = $prev_month_ends;
+				$master->times = $times;
+				$master->next_times = $next_times;
+				$master->prev_times = $prev_times;
 			}
+			//dd($times);
 			return view('main', [
 				'masters' => $masters,
 				'salon' => $auth_user['salon'],
 				'products' => $products,
 				'new_filter_date' => $new_filter_date,
 				'days_in_month' => $days_in_month,
+				'days_in_next_month' => $days_in_next_month,
+				'days_in_prev_month' => $days_in_prev_month,
 				'admin' => $auth_user['admin'],
+				'name_this_month' => $this_month,
+				'name_prev_month' => $prev_month,
+				'name_next_month' => $next_month,
+				'names_of_days_in_month' => $names_of_days_in_month,
+				'names_of_days_in_next_month' => $names_of_days_in_next_month,
+				'names_of_days_in_prev_month' => $names_of_days_in_prev_month,
 				'exception1' => 'Некорректный ввод временных рамок смены.'
 			]);
 		}
@@ -1694,7 +3126,7 @@ class TokioController extends Controller {
 							'products' => $products,
 							'salon' => $auth_user['salon'],
 							'new_filter_date' => $new_filter_date,
-							'exception1' => 'Смена изменена, но мастера в этот день есть заказы заканчивающиеся после конца новой смены.',
+							'exception1' => 'Смена изменена, но у мастера в этот день есть заказы заканчивающиеся после конца новой смены.',
 							'days_in_month' => $days_in_month,
 							'start_times' => $start_times,
 							'end_times' => $end_times,
