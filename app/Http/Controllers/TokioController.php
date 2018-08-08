@@ -308,7 +308,8 @@ class TokioController extends Controller {
 
 	public function index() {
 		$auth_user = Auth::user();
-		$products = Products::orderBy('id')->get();
+		$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
+		$goods = Goods::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 		$masters = Master::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 		$new_filter_date = new DateTime('today');
 		$new_filter_date = $new_filter_date->format('Y-m-d');
@@ -731,6 +732,7 @@ class TokioController extends Controller {
 			'masters' => $masters,
 			'salon' => $auth_user['salon'],
 			'products' => $products,
+			'goods' => $goods,
 			'new_filter_date' => $new_filter_date,
 			'days_in_month' => $days_in_month,
 			'days_in_next_month' => $days_in_next_month,
@@ -1048,7 +1050,7 @@ class TokioController extends Controller {
 		$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
 			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
 		//	dd($sales);
-		$products = Products::where('salon','=',$auth_user['salon'])->orderBy('id', 'asc')->get();
+		$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id', 'asc')->get();
 		$goods = Goods::orderBy('id', 'asc')->get();
 		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 		//	dd($shifts);
@@ -1082,7 +1084,6 @@ class TokioController extends Controller {
 
 			$times[$i] = $tmp_array;
 			$i = $i + 1;
-
 		}
 		//dd($times);
 		$i = 0;
@@ -1301,7 +1302,8 @@ class TokioController extends Controller {
 		}
 		if($shift_type == null) {
 			$auth_user = Auth::user();
-			$products = Products::orderBy('id')->get();
+			$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
+			$goods = Goods::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 			$masters = Master::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 			$new_filter_date = new DateTime('today');
 			$new_filter_date = $new_filter_date->format('Y-m-d');
@@ -1724,6 +1726,7 @@ class TokioController extends Controller {
 				'masters' => $masters,
 				'salon' => $auth_user['salon'],
 				'products' => $products,
+				'goods' => $goods,
 				'new_filter_date' => $new_filter_date,
 				'days_in_month' => $days_in_month,
 				'days_in_next_month' => $days_in_next_month,
@@ -1740,7 +1743,8 @@ class TokioController extends Controller {
 		}
 		if($shift_type == 1 && request('start_shift') == null) {
 			$auth_user = Auth::user();
-			$products = Products::orderBy('id')->get();
+			$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
+			$goods = Goods::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 			$masters = Master::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 			$new_filter_date = new DateTime('today');
 			$new_filter_date = $new_filter_date->format('Y-m-d');
@@ -2163,6 +2167,7 @@ class TokioController extends Controller {
 				'masters' => $masters,
 				'salon' => $auth_user['salon'],
 				'products' => $products,
+				'goods' => $goods,
 				'new_filter_date' => $new_filter_date,
 				'days_in_month' => $days_in_month,
 				'days_in_next_month' => $days_in_next_month,
@@ -2179,7 +2184,8 @@ class TokioController extends Controller {
 		}
 		if($shift_type == 1 && request('end_shift') == null) {
 			$auth_user = Auth::user();
-			$products = Products::orderBy('id')->get();
+			$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
+			$goods = Goods::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 			$masters = Master::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 			$new_filter_date = new DateTime('today');
 			$new_filter_date = $new_filter_date->format('Y-m-d');
@@ -2602,6 +2608,7 @@ class TokioController extends Controller {
 				'masters' => $masters,
 				'salon' => $auth_user['salon'],
 				'products' => $products,
+				'goods' => $goods,
 				'new_filter_date' => $new_filter_date,
 				'days_in_month' => $days_in_month,
 				'days_in_next_month' => $days_in_next_month,
@@ -2618,7 +2625,8 @@ class TokioController extends Controller {
 		}
 		if($shift_start >= $shift_end && $shift_type == 1) {
 			$auth_user = Auth::user();
-			$products = Products::orderBy('id')->get();
+			$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
+			$goods = Goods::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 			$masters = Master::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 			$new_filter_date = new DateTime('today');
 			$new_filter_date = $new_filter_date->format('Y-m-d');
@@ -3041,6 +3049,7 @@ class TokioController extends Controller {
 				'masters' => $masters,
 				'salon' => $auth_user['salon'],
 				'products' => $products,
+				'goods' => $goods,
 				'new_filter_date' => $new_filter_date,
 				'days_in_month' => $days_in_month,
 				'days_in_next_month' => $days_in_next_month,
@@ -4779,7 +4788,7 @@ class TokioController extends Controller {
 		//dd($sales);
 		//	dd($client_services);
 		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
-		$products = Products::orderBy('id')->get();
+		$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 		$goods = Goods::orderBy('id')->get();
 		return view('client_card', [
 			'admin' => $auth_user['admin'],
@@ -4864,11 +4873,8 @@ class TokioController extends Controller {
 		$orders = Services::where('services.users_user_id', '=', $master_id)
 			->where('date', '=', $shift->date)
 			->get();
-		//	$times = [];
 		$tmp_array = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
-		//	dd($master_id);
-		//	dd($shift_id);
-		//dd(sizeof($orders));
+
 		if(sizeof($orders) > 0) {
 			foreach($orders as $order) {
 				if($shift->shift_type == 1) {
@@ -4927,7 +4933,7 @@ class TokioController extends Controller {
 			->get();
 		$shift = Shift::where('id', '=', $shift_id)->first();
 		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
-		$products = Products::orderBy('id')->get();
+		$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 		return view('client_card', [
 			'admin' => $auth_user['admin'],
 			'salon' => $auth_user['salon'],
@@ -5861,7 +5867,20 @@ class TokioController extends Controller {
 	public function addGoodToSalon() {
 		$good_name = request('good_name');
 		$good_cost = request('good_cost');
-		Goods::insert(['good_name' => $good_name, 'good_cost' => $good_cost]);
+		$salon = request('salon');
+		Goods::insert(['good_name' => $good_name, 'good_cost' => $good_cost, 'salon' => $salon]);
+		return redirect('/');
+	}
+
+	public function deleteGood() {
+		$id = request('id');
+		Goods::where('id', '=', $id)->delete();
+		return redirect('/');
+	}
+
+	public function deleteProduct() {
+		$id = request('id');
+		Products::where('id', '=', $id)->delete();
 		return redirect('/');
 	}
 

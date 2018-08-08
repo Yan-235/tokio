@@ -268,27 +268,6 @@
 </section>
 <section id="services">
 	<div class="container is-margin-top-50">
-		{#
-		<div class="row">
-			<div class="col s12 text-center">
-				<form action="{{ route('client-date-filter') }}" method="get">
-					<input name="id" value="{{ client.id }}" hidden>
-					{% if new_filter_date == null %}
-						<div class="input-field col offset-s4 col s2">
-							<input value="{{ theme.getDateEnd|date("Y-m-d") }}" type="date" name="filter_date">
-						</div>
-					{% else %}
-						<div class="input-field col offset-s4 col s2">
-							<input placeholder="Дата" value="{{ new_filter_date }}" name="filter_date" type="date" required>
-						</div>
-					{% endif %}
-					<div class="col s3">
-						<button type="submit" class="waves-effect waves-light btn" href="#">Изменить</button>
-					</div>
-				</form>
-			</div>
-		</div>
-			#}
 		<div class="row">
 			<div class="input-field col s3">
 				<form action="{{ route('choose-master') }}">
