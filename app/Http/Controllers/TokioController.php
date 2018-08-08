@@ -1048,7 +1048,7 @@ class TokioController extends Controller {
 		$sales = DB::table('sales')->join('goods', 'goods.id', '=', 'sales.product')
 			->where('users_user_id', '=', $id)->where('date', '>=', $first_day_of_this_month)->select('sales.*', 'goods.good_name')->orderBy('date', 'desc')->get();
 		//	dd($sales);
-		$products = Products::orderBy('id', 'asc')->get();
+		$products = Products::where('salon','=',$auth_user['salon'])->orderBy('id', 'asc')->get();
 		$goods = Goods::orderBy('id', 'asc')->get();
 		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 		//	dd($shifts);
@@ -1082,27 +1082,7 @@ class TokioController extends Controller {
 
 			$times[$i] = $tmp_array;
 			$i = $i + 1;
-			/*	if($check == 0) {
-					if($shift->shift_type == 1) {
-						$tmp_array = $shift_type3;
-						//dd(strtotime($shift->start_shift) - strtotime("00:00:00"));
-						foreach($tmp_array as $tmp_ar) {
-							//	dd(strtotime($tmp_ar) - strtotime("00:00:00"));
-							if(strtotime($shift->start_shift) - strtotime("00:00:00") > strtotime($tmp_ar) - strtotime("00:00:00")) {
-								unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
-							}
-							if(strtotime($shift->end_shift) - strtotime("00:00:00") <= strtotime($tmp_ar) - strtotime("00:00:00")) {
-								unset($tmp_array[array_search($tmp_ar, $tmp_array)]);
-							}
-						}
-						//		dd($tmp_array);
-					}
-					elseif($shift->shift_type == 3) {
-						$tmp_array = $shift_type3;
-					}
-					$times[$i] = $tmp_array;
-					$i = $i + 1;
-				}*/
+
 		}
 		//dd($times);
 		$i = 0;
@@ -5873,7 +5853,8 @@ class TokioController extends Controller {
 
 	public function addServiceToSalon() {
 		$name = request('name');
-		Products::insert(['name' => $name]);
+		$salon = request('salon');
+		Products::insert(['name' => $name, 'salon' => $salon]);
 		return redirect('/');
 	}
 

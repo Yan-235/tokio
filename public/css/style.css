@@ -76,20 +76,21 @@
 
 .descr {
 	display: none;
-	padding: 5px;
+	padding: 2px;
 	font-family: "Times New Roman";
-	font-size: 12px;
+	line-height: 60%;
+	font-size: 16px;
 	background: white;
 	border: 2px solid silver;
 	-moz-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
 	-webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
-	box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
 }
 
 .poster:hover .descr {
 	display: block;
 	position: absolute;
-	bottom: 25px;
+	bottom: 20px;
 	right: 10px;
 	z-index: 9999;
 	width: 120px;
