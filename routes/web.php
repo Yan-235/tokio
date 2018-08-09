@@ -63,6 +63,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/add-report', 'TokioController@addReport')->name('add-report');
 	Route::get('/delete-product/{id}', 'TokioController@deleteProduct')->name('delete-product');
 	Route::get('/delete-good/{id}', 'TokioController@deleteGood')->name('delete-good');
+	Route::get('/update-feedbacks', 'TokioController@updateFeedbacks')->name('update-feedbacks');
 
 	Route::get('/search-client', 'SearchController@searchClient')->name('search-client');
 });

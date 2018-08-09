@@ -95,16 +95,19 @@
 								<div class="input-field">
 									<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 								</div>
-								<div class="col s8">
+								<div class="col s5">
 									<label for="plan">Мастер</label>
 								</div>
 								<div class="col s2">
 									<label for="plan">План</label>
 								</div>
+								<div class="col s3">
+									<label for="plan">Процент с услуг</label>
+								</div>
 								<div class="col s2">
 									<label for="range">Разряд</label>
 								</div>
-								<div class="input-field col s8">
+								<div class="input-field col s5">
 									<input placeholder="Введите имя и фамилию мастера" id="last_name" name="name" type="text"
 									       class="validate" value="{{ name }}"
 									       required>
@@ -112,6 +115,12 @@
 								<div class="input-field col s2">
 									<input placeholder="План" id="plan" name="plan" type="number" min="1"
 									       class="validate" value="{{ plan }}"
+									       required>
+								</div>
+								<div class="input-field col s3">
+									<input placeholder="Процент с услуг" id="zp" name="zp" type="number" min="0.01" max="100"
+									       step='0.01'
+									       class="validate" value="{{ zp }}"
 									       required>
 								</div>
 								<div class="input-field col s2">
@@ -131,24 +140,51 @@
 				</div>
 			</div>
 		</li>
+		<li>
+			<div class="collapsible-header"><i class="material-icons">add_circle</i>Feedback за услуги</div>
+			<div class="collapsible-body">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col offset-s2 col s8">
+
+							<table>
+								<thead>
+								<tr>
+									<th class="text-center">Услуга</th>
+									<th class="text-center">Feedback</th>
+								</tr>
+								</thead>
+								{% for product_feedback in product_feedbacks %}
+									<form action="{{ route('update-feedbacks') }}" method="get">
+										<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+										<div class="input-field">
+											<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+										</div>
+										<tbody>
+										<tr>
+											<input type="number" name="product_id" value="{{ product_feedback.product_id }}" hidden>
+											<td class="text-center">{{ product_feedback.name }}</td>
+											<td>
+												<input type="number" max="100" min="0.01" step="0.01" value="{{ product_feedback.feedback }}" name="feedback">
+											</td>
+											<td>
+												<div class="input-field text-center">
+													<button type="submit" class="waves-effect waves-light btn" href="#">Изменить</button>
+												</div>
+											</td>
+										</tr>
+										</tbody>
+									</form>
+								{% endfor %}
+							</table>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</li>
 	</ul>
 </div>
-{#
-<div class="container is-margin-top-50">
-	<div class="row">
-		<div class="col s12 text-center">
-			<div class="switch">
-			    <input type="checkbox" id="switch" class="switch-check">
-			    <label for="switch" class="switch-label">
-			        Опция
-			        <span class="switch-slider switch-slider-on"></span>
-			        <span class="switch-slider switch-slider-off"></span>
-			    </label>
-			</div>
-		</div>
-	</div>
-</div>
-#}
 <div class="container is-margin-top-50">
 	<div class="row">
 		<div class="col s12 text-center">
@@ -204,17 +240,6 @@
 					</div>
 					<input value="{{ id }}" placeholder="ID" id="master_id" name="master_id" hidden>
 					<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-					{#
-						<div class="input-field col s4">
-							<select name="date" required>
-								<option value="" disabled selected>Дата</option>
-								{% for shift in shifts %}
-									<option type="radio" id="{{ i }}" value="{{ shift.id }}" onClick="show();">{{ shift.date|date("d-m-Y") }}</option>
-								{% endfor %}
-								<input id="refresher" type="button" value="{{ i }}" hidden>
-							</select>
-						</div>
-					#}
 					<div class="input-field col offset-s2 col s2">
 						<input type="date" name="date" required>
 					</div>
@@ -231,13 +256,6 @@
 					<div class="input-field col s2">
 						<input type="number" name="count" min="1" placeholder="Количество" required>
 					</div>
-
-
-				{#
-					<div class="input-field col s4">
-						<input placeholder="Цена" value="" name="cost" type="number" min="0" step="0.01">
-					</div>
-				#}
 
 					<div class="input-field col s12 text-center">
 						<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>

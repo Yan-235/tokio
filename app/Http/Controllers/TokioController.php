@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Feedbacks;
 use Illuminate\Http\Request;
 use DateInterval;
 use DB;
@@ -238,7 +239,8 @@ class TokioController extends Controller {
 
 			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) + $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
 			$master->current_feedback = $this->masterFeedback($this->currentTotalCount($id, $new_filter_date2, $new_filter_date1), $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1));
-			$master->current_zp = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) * $master->zp / 100;
+
+			$master->current_zp = $this->currentTotalFeedback($id, $new_filter_date2, $new_filter_date1, $master->zp);
 
 			$master->current_services_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1);
 			$master->current_sales_money = $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
@@ -257,7 +259,7 @@ class TokioController extends Controller {
 			$id = $master->id;
 			//	$master->count = $this->currentTotalCount($id,$last_day_of_this_month,$first_day_of_this_month);
 			$master->money = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month) + $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month);
-			$master->month_zp = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month) * $master->zp / 100;
+			$master->month_zp = $this->currentTotalFeedback($id, $last_day_of_month, $first_day_of_month, $master->zp);
 			$master->feedback = $this->masterFeedback($this->currentTotalCount($id, $last_day_of_this_month, $first_day_of_this_month), $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month));
 			//dd($this->currentTotalCount($id, $last_day_of_this_month, $first_day_of_this_month));
 		}
@@ -882,8 +884,8 @@ class TokioController extends Controller {
 			$id = $master->id;
 			$master->current_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) + $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
 			$master->current_feedback = $this->masterFeedback($this->currentTotalCount($id, $new_filter_date2, $new_filter_date1), $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1));
-			$master->month_zp = $this->currentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month) * $master->zp / 100;
-			$master->current_zp = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1) * $master->zp / 100;
+			$master->month_zp = $this->currentTotalFeedback($id, $last_day_of_month, $first_day_of_month, $master->zp);
+			$master->current_zp = $this->currentTotalFeedback($id, $new_filter_date2, $new_filter_date1, $master->zp);
 			$master->feedback = $this->masterFeedback($this->currentTotalCount($id, $last_day_of_this_month, $first_day_of_this_month), $this->goodsCurrentTotalMoney($id, $last_day_of_this_month, $first_day_of_this_month));
 			$master->current_services_money = $this->currentTotalMoney($id, $new_filter_date2, $new_filter_date1);
 			$master->current_sales_money = $this->goodsCurrentTotalMoney($id, $new_filter_date2, $new_filter_date1);
@@ -1036,8 +1038,38 @@ class TokioController extends Controller {
 
 		$auth_user = Auth::user();
 		$id = request('id');
-
 		$user = Master::where('id', '=', $id)->get();
+		$product_feedbacks = Products::where('salon', '=', $auth_user['salon'])->leftJoin('feedbacks', 'feedbacks.product_id', '=', 'products.id')->get();
+		$product_feedbacks1 = [];
+		$salon_products = Products::where('salon', '=', $auth_user['salon'])->get();
+		$pr_counter = 0;
+		foreach($product_feedbacks as $product_feedback) {
+			if($product_feedback->master_id == $id) {
+				$product_feedbacks1[$pr_counter] = $product_feedback;
+				$pr_counter = $pr_counter + 1;
+			}
+		}
+		foreach($salon_products as $salon_product) {
+			$check1 = 0;
+			for($i = 0; $i < $pr_counter; $i++) {
+				if($product_feedbacks1[$i]["product_id"] == $salon_product->id) {
+					$check1 = 1;
+					$i = $pr_counter;
+				}
+			}
+			if($check1 == 0) {
+				$product_feedbacks1[$pr_counter]["id"] = null;
+				$product_feedbacks1[$pr_counter]["name"] = $salon_product->name;
+				$product_feedbacks1[$pr_counter]["salon"] = $salon_product->salon;
+				$product_feedbacks1[$pr_counter]["master_id"] = $id;
+				$product_feedbacks1[$pr_counter]["product_id"] = $salon_product->id;
+				$product_feedbacks1[$pr_counter]["feedback"] = $user[0]["zp"];
+				$pr_counter = $pr_counter + 1;
+			}
+		}
+		//dd($product_with_not_default_feedbacks);
+		//dd($salon_products);
+		//	$product_feedbacks = Products::where('salon','=', $auth_user['salon'])->leftJoin('feedbacks','feedbacks.product_id','=','products.id')->where('feedbacks.master_id', '=', $id)->select('feedbacks.*','products.name')->get();
 		$first_day_of_this_month = new DateTime('first day of this month');
 		$this_day = new DateTime('today');
 		//$first_day_of_this_month = $first_day_of_this_month->for+mat('Y-m-d');
@@ -1163,9 +1195,11 @@ class TokioController extends Controller {
 			'times' => $times,
 			'range' => $user[0]['range'],
 			'plan' => $user[0]['plan'],
+			'zp' => $user[0]['zp'],
 			'durs' => $durs,
 			'admin' => $auth_user['admin'],
 			'goods' => $goods,
+			'product_feedbacks' => $product_feedbacks1,
 			'check_goods' => '0'
 		]);
 	}
@@ -3260,9 +3294,10 @@ class TokioController extends Controller {
 		$name = request('name');
 		$range = request('range');
 		$plan = request('plan');
+		$zp = request('zp');
 		//dd($id);
 		//Master::update(['name' => $name, 'salon' => $user['salon'], 'range' => $range, 'plan' => $plan]);
-		DB::table('masters')->where('id', '=', $id)->update(['name' => $name, 'range' => $range, 'plan' => $plan]);
+		DB::table('masters')->where('id', '=', $id)->update(['name' => $name, 'range' => $range, 'plan' => $plan, 'zp' => $zp]);
 		return redirect('/info-tables');
 	}
 
@@ -5881,7 +5916,21 @@ class TokioController extends Controller {
 	public function deleteProduct() {
 		$id = request('id');
 		Products::where('id', '=', $id)->delete();
+		Feedbacks::where('product_id', '=', $id)->delete();
 		return redirect('/');
+	}
+
+	public function updateFeedbacks() {
+		$master_id = request('id');
+		$product_id = request('product_id');
+		$feedback = request('feedback');
+		if(Feedbacks::where('master_id', '=', $master_id)->where('product_id', '=', $product_id)->first() != null) {
+			Feedbacks::where('master_id', '=', $master_id)->where('product_id', '=', $product_id)->update(['feedback' => $feedback]);
+		}
+		else {
+			Feedbacks::insert(['product_id' => $product_id, 'master_id' => $master_id, 'feedback' => $feedback]);
+		}
+		return redirect('/master/' . $master_id);
 	}
 
 	public function logout() {
@@ -5922,5 +5971,26 @@ class TokioController extends Controller {
 
 	public function goodsCurrentTotalMoney($id, $cur_day, $first_day) {
 		return Sales::where('users_user_id', '=', $id)->where('date', '<=', $cur_day)->where('date', '>=', $first_day)->sum('cost');
+	}
+
+	public function currentTotalFeedback($master_id, $cur_day, $first_day, $zp) {
+		$services = Services::where('users_user_id', '=', $master_id)->where('date', '<=', $cur_day)->where('date', '>=', $first_day)->get();
+		$feedbacks = Feedbacks::where('master_id', '=', $master_id)->get();
+		$total_feedback = 0;
+		foreach($services as $service) {
+			$checker = 0;
+			foreach($feedbacks as $feedback) {
+				//dd($service->product);
+				if($service->product == $feedback->product_id) {
+					//	dd($checker);
+					$total_feedback = $total_feedback + $service->cost * $feedback->feedback / 100;
+					$checker = 1;
+				}
+			}
+			if($checker == 0) {
+				$total_feedback = $total_feedback + $service->cost * $zp / 100;
+			}
+		}
+		return $total_feedback;
 	}
 }

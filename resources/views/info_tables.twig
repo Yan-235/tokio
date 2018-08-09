@@ -159,7 +159,7 @@
 						<td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
 						full-width text-center is-capitalize">{{ master.name }}</a></td>
 						<td class="border-0">{{ master.current_services_money }}</td>
-						<td class="border-0">{{ master.current_services_money * master.zp /100 }}</td>
+						<td class="border-0">{{ master.current_zp }}</td>
 						<td class="border-0">{{ master.current_sales_money }}</td>
 						<td class="border-0">{{ master.current_feedback }}</td>
 						<td class="border-0">{{ master.current_money }}</td>
@@ -211,71 +211,6 @@
 		</div>
 	</div>
 </div>
-{#<div class="container-fluid is-margin-top-50">
-	<div class="row">
-		<div class="col s12 text-center">
-			<form action="{{ route('shift-date-filter') }}" method="get">
-				{% if new_filter_date == null %}
-					<div class="input-field col offset-s4 col s2">
-						<input value="{{ theme.getDateEnd|date("Y-m-d") }}" type="date" name="filter_date">
-					</div>
-				{% else %}
-					<div class="input-field col offset-s4 col s2">
-						<input value="{{ new_filter_date }}" type="date" name="filter_date">
-					</div>
-				{% endif %}
-				<div class="col s3">
-					<button type="submit" class="waves-effect waves-light btn" href="#">Перейти</button>
-				</div>
-			</form>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col offset-s4 col s4">
-			<table class="highlight centered">
-				<thead>
-				<tr>
-					<th>Мастер</th>
-					<th>Смена</th>
-				</tr>
-				</thead>
-
-				<tbody>
-				{% for master in masters %}
-					<tr class="border-0">
-						<td class="border-0">{{ master.name }}</td>
-						<td class="border-0">
-							<form method="get" action="{{ route('add-shift') }}">
-								{{ csrf_field() }}
-								<input name="master_id" value="{{ master.id }}" hidden>
-								<input name="new_filter_date" value="{{ new_filter_date }}" hidden>
-								{% if new_filter_date == null %}
-									<select name="shift_type" disabled>
-										<option value="" disabled selected>{{ master.shifts_today }}</option>
-										<option value=0>нету смен</option>
-										<option value=1>1-ая смена</option>
-										<option value=2>2-ая смена</option>
-										<option value=3>целый день</option>
-									</select>
-								{% else %}
-									<select name="shift_type">
-										<option value="" disabled selected>{{ master.shifts_today }}</option>
-										<option value=0>нету смен</option>
-										<option value=1>1-ая смена</option>
-										<option value=2>2-ая смена</option>
-										<option value=3>целый день</option>
-									</select>
-								{% endif %}
-								<button type="submit" class="waves-effect waves-light btn" href="#">Сохранить</button>
-							</form>
-						</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
-</div>#}
 
 <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="/js/materialize.min.js"></script>
