@@ -4812,7 +4812,8 @@ class TokioController extends Controller {
 		$masters = Master::where('salon', '=', $auth_user['salon'])->get();
 		$this_day = new DateTime('today');
 		$shifts = [];
-		$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		$shifts = Shift::where('master_id', '=', $master_id)->orderBy('date', "asc")->get();
+	//	$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 		$client_services = Services::where('client_id', '=', $id)
 			->leftJoin('masters', 'masters.id', '=', 'services.users_user_id')
 			->leftJoin('products', 'services.product', '=', 'products.id')
