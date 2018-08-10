@@ -1084,14 +1084,19 @@ class TokioController extends Controller {
 		//	dd($sales);
 		$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id', 'asc')->get();
 		$goods = Goods::orderBy('id', 'asc')->get();
-		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
-		//	dd($shifts);
-		$orders = Shift::where('shifts.date', '>=', $this_day)
-			->where('shifts.master_id', '=', $id)
+		$shifts = Shift::where('master_id', '=', $id)->orderBy('date', "asc")->get();
+		//$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		$orders = Shift::where('shifts.master_id', '=', $id)
 			->leftJoin('services', 'services.date', '=', 'shifts.date')
 			->where('services.users_user_id', '=', $id)
 			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
 			->get();
+	/*	$orders = Shift::where('shifts.date', '>=', $this_day)
+			->where('shifts.master_id', '=', $id)
+			->leftJoin('services', 'services.date', '=', 'shifts.date')
+			->where('services.users_user_id', '=', $id)
+			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+			->get();*/
 		$times = [];
 		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
 		$i = 0;
