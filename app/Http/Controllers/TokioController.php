@@ -18,6 +18,8 @@ use App\Goods;
 use App\Sales;
 use App\Reports;
 
+use App\Post;
+
 class TokioController extends Controller {
 
 	public function showDayReport() {
@@ -1091,12 +1093,12 @@ class TokioController extends Controller {
 			->where('services.users_user_id', '=', $id)
 			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
 			->get();
-	/*	$orders = Shift::where('shifts.date', '>=', $this_day)
-			->where('shifts.master_id', '=', $id)
-			->leftJoin('services', 'services.date', '=', 'shifts.date')
-			->where('services.users_user_id', '=', $id)
-			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
-			->get();*/
+		/*	$orders = Shift::where('shifts.date', '>=', $this_day)
+				->where('shifts.master_id', '=', $id)
+				->leftJoin('services', 'services.date', '=', 'shifts.date')
+				->where('services.users_user_id', '=', $id)
+				->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+				->get();*/
 		$times = [];
 		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
 		$i = 0;
@@ -4813,7 +4815,7 @@ class TokioController extends Controller {
 		$this_day = new DateTime('today');
 		$shifts = [];
 		$shifts = Shift::where('master_id', '=', $master_id)->orderBy('date', "asc")->get();
-	//	$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		//	$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 		$client_services = Services::where('client_id', '=', $id)
 			->leftJoin('masters', 'masters.id', '=', 'services.users_user_id')
 			->leftJoin('products', 'services.product', '=', 'products.id')
@@ -5998,5 +6000,20 @@ class TokioController extends Controller {
 			}
 		}
 		return $total_feedback;
+	}
+
+	public function liveSearch(Request $request) {
+		dd("aa1");
+	/*	$search = $request->str;
+		dd($search);
+		if(is_null($search)) {
+			return view('master/1');
+		}
+		else {
+			$posts = Master::where('name', 'LIKE', "%{$search}%")->get();
+			dd($posts);
+			return view('master/1')->withPosts($posts);
+		}
+	*/
 	}
 }

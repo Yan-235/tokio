@@ -9,7 +9,8 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" href="/css/materialize.min.css">
 	<link rel="stylesheet" href="/css/style.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 </head>
 <body>
 {% if salon == 1 %}
@@ -33,6 +34,100 @@
 	</div>
 {% endif %}
 <div class="container-fluid">
+	{#
+	<div style="background:#ccc; padding:15px;">
+	<form action="search.php" method="post" name="form" onsubmit="return false;">
+	<input type='text' name='search' value='' id="search"><br />
+	<input type='submit' value='Найти' />
+	</form>
+	</div>
+	<div id="resSearch">Начните вводить запрос</div>
+	<script type="text/javascript">
+	$(function(){
+	  $("#search").keyup(function(){
+	     var search = $("#search").val();
+	     $.ajax({
+	       type: "POST",
+	       url: "search.php",
+	       data: {"search": search},
+	       cache: false,
+	       success: function(response){
+	          $("#resSearch").html(response);
+	       }
+	     });
+	     return false;
+	   });
+	});
+	</script>
+#}
+
+	<div class="row">
+		<div class="search">
+			<div class="row">
+				<div class="col-lg-10 col-lg-offset-1">
+					<div class="input-group">
+						<span class="input-group-addon" style="color: white; background-color: rgb(124,77,255);">BLOG SEARCH</span>
+						<input type="text" autocomplete="off" id="search" class="form-control input-lg" placeholder="Enter Blog Title Here" oninput="smartSearch()">
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- search box container ends  -->
+		<div id="txtHint" class="title-color" style="padding-top:50px; text-align:center;"><b>Blogs information will be listed here...</b></div>
+<form action="{{ route('live-search') }}" method="get">
+	<input name="abcd" value="abcd" hidden>
+	<button type="submit">ABCD</button>
+</form>
+
+		<script>
+			function smartSearch() {
+				//	$(document).ready(function() {
+				//		$("#search").keyup(function() {
+				var str = $("#search").val();
+				//var str = document.getElementById('search').value;
+				if(str.trim() == '') {
+					//alert('null');
+					$("#txtHint").html("<b>Blogs information will be listed here...</b>");
+				}
+				else {
+
+					$.get("/live-search?str=" + str, function(data) {
+						$("#txtHint").html(data);
+					});
+
+
+
+				}
+				//	});
+				//});
+			}
+		</script>
+
+		{% if( posts != null) %}
+			<div class="table-responsive">
+				<table class="table table-bordered">
+					<thead>
+					<tr>
+						<th>id</th>
+						<th>Name</th>
+					</tr>
+					</thead>
+					<tbody>
+					{% for post in posts %}
+						<tr>
+							<td>{{ post.id }}</td>
+							<td>{{ post.name }}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% else %}
+			<p>AAAAAAAAAAAAA</p>
+		{% endif %}
+	</div>
+
+
 	<div class="row">
 		<div class="col s1 left-align">
 			<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
