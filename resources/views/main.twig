@@ -1,602 +1,572 @@
 <!doctype html>
 <html lang="ru">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Главная</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Главная</title>
 
-	<link rel="stylesheet" href="/css/materialize.min.css">
-	<link rel="stylesheet" href="/css/style.css">
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/materialize.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-	<script type="text/javascript" src="/js/materialize.min.js"></script>
-	<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
-	<meta name="csrf-token" content="{{ csrf_token() }}" />
+    <script type="text/javascript" src="/js/materialize.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}"/>
 </head>
 <body>
 {% if salon == 1 %}
-	<div align="center">
-		<img src="img/logo.png" alt="logo">
-	</div>
+    <div align="center">
+        <img src="img/logo.png" alt="logo">
+    </div>
 {% endif %}
 {% if salon == 2 %}
-	<div align="center">
-		<img src="img/city-logo-1.jpg" alt="city-logo-1">
-	</div>
+    <div align="center">
+        <img src="img/city-logo-1.jpg" alt="city-logo-1">
+    </div>
 {% endif %}
 {% if salon == 3 %}
-	<div align="center">
-		<img src="img/city-logo-2.jpg" alt="city-logo-2">
-	</div>
+    <div align="center">
+        <img src="img/city-logo-2.jpg" alt="city-logo-2">
+    </div>
 {% endif %}
 {% if salon == 4 %}
-	<div align="center">
-		<img src="" alt="city-logo-3">
-	</div>
+    <div align="center">
+        <img src="" alt="city-logo-3">
+    </div>
 {% endif %}
 {% if admin == 1 %}
-	<div class="container-fluid is-margin-top-50">
-		<div class="row">
-			<div class="col s5 left-align">
-				<form action="{{ route('change-salon') }}" method="get">
-					<div class="col s4 ">
-						<select name="new_salon" required>
-							<option value="" disabled selected>Салон</option>
-							<option value="1">Токио</option>
-							<option value="2">Сити 1</option>
-							<option value="3">Сити 2</option>
-							<option value="4">Бьюти зона</option>
-						</select>
-					</div>
-					<button type="submit" class="btn waves-effect waves-light green"><i
-								class="material-icons">swap_horiz</i></button>
-				</form>
-			</div>
-			<div class="col s2 right-align">
-				<form action="{{ route('show-day-report') }}" method="get">
-					<button type="submit" class="btn waves-effect waves-light blue">Отчёт за день</button>
-				</form>
-			</div>
-			<div class="col s1 center-align">
-				<form action="{{ route('show-client-list') }}" method="get">
-					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
-				</form>
-			</div>
-			<div class="col s2 left-align">
-				<form action="{{ route('info-tables') }}" method="get">
-					<button type="submit" class="btn waves-effect waves-light blue">Информация</button>
-				</form>
-			</div>
-			<div class="col s1 right-align">
-				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
-							class="material-icons">exit_to_app</i></a>
-			</div>
-		</div>
-	</div>
+    <div class="container-fluid is-margin-top-50">
+        <div class="row">
+            <div class="col s5 left-align">
+                <form action="{{ route('change-salon') }}" method="get">
+                    <div class="col s4 ">
+                        <select name="new_salon" required>
+                            <option value="" disabled selected>Салон</option>
+                            <option value="1">Токио</option>
+                            <option value="2">Сити 1</option>
+                            <option value="3">Сити 2</option>
+                            <option value="4">Бьюти зона</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn waves-effect waves-light green"><i
+                                class="material-icons">swap_horiz</i></button>
+                </form>
+            </div>
+            <div class="col s2 right-align">
+                <form action="{{ route('show-day-report') }}" method="get">
+                    <button type="submit" class="btn waves-effect waves-light blue">Отчёт за день</button>
+                </form>
+            </div>
+            <div class="col s1 center-align">
+                <form action="{{ route('show-client-list') }}" method="get">
+                    <button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+                </form>
+            </div>
+            <div class="col s2 left-align">
+                <form action="{{ route('info-tables') }}" method="get">
+                    <button type="submit" class="btn waves-effect waves-light blue">Информация</button>
+                </form>
+            </div>
+            <div class="col s1 right-align">
+                <a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+                            class="material-icons">exit_to_app</i></a>
+            </div>
+        </div>
+    </div>
 {% else %}
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col s10 right-align">
-				<form action="{{ route('show-day-report') }}" method="get">
-					<button type="submit" class="btn waves-effect waves-light blue">Отчет за день</button>
-				</form>
-			</div>
-			<div class="col s1 right-align">
-				<form action="{{ route('show-client-list') }}" method="get">
-					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
-				</form>
-			</div>
-			<div class="col s1 right-align">
-				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
-							class="material-icons">exit_to_app</i></a>
-			</div>
-		</div>
-	</div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col s9 right-align">
+                <form action="{{ route('products-gods-list') }}" method="get">
+                    <button type="submit" class="btn waves-effect waves-light blue">Список товаров и услуг</button>
+                </form>
+            </div>
+            <div class="col s1 right-align">
+                <form action="{{ route('show-day-report') }}" method="get">
+                    <button type="submit" class="btn waves-effect waves-light blue">Отчет за день</button>
+                </form>
+            </div>
+            <div class="col s1 right-align">
+                <form action="{{ route('show-client-list') }}" method="get">
+                    <button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+                </form>
+            </div>
+            <div class="col s1 right-align">
+                <a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+                            class="material-icons">exit_to_app</i></a>
+            </div>
+        </div>
+    </div>
 {% endif %}
 <div class="container is-margin-top-50">
-	<ul class="collapsible">
-		<li>
-			<div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить мастера</div>
-			<div class="collapsible-body">
-				<div class="container-fluid">
-					<div class="row">
-						<div class="col s12">
-							<form action="{{ route('add-master') }}" method="get">
-								<div class="input-field">
-									<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-								</div>
-								<div class="input-field col s5">
-									<input placeholder="Введите имя и фамилию мастера" id="last_name" name="name" type="text"
-									       class="validate"
-									       required>
-								</div>
-								<div class="input-field col s2">
-									<input placeholder="План" id="plan" name="plan" type="number" min="1"
-									       class="validate"
-									       required>
-								</div>
-								<div class="input-field col s2">
-									<select name="range" required>
-										<option value="" disabled selected>Разряд</option>
-										<option value="1">1</option>
-										<option value="2">2</option>
-										<option value="3">3</option>
-										<option value="4">4</option>
-										<option value="5">5</option>
-										<option value="6">6</option>
-									</select>
-								</div>
-								<div class="input-field col s3">
-									<input placeholder="Процент с услуг" id="zp" name="zp" type="number" min="0.01" max="100"
-									       step='0.01' class="validate"
-									       required>
-								</div>
-								<div class="input-field col s12 text-center">
-									<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</li>
-		<li>
-			<div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить услугу</div>
-			<div class="collapsible-body">
-				<div class="container-fluid">
-					<div class="row">
-						<div class="col s12">
-							<form action="{{ route('add-service-to-salon') }}" method="get">
-								<div class="input-field col">
-									<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-								</div>
-								<div class="input-field col s12 text-center">
-									<input placeholder="Название услуги" id="last_name" name="name" type="text" required>
-								</div>
-								<input name="salon" type="text" value="{{ salon }}" hidden>
-								<div class="input-field col s12 text-center">
-									<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</li>
-		<li>
-			<div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить товар</div>
-			<div class="collapsible-body">
-				<div class="container-fluid">
-					<div class="row">
-						<div class="col s12">
-							<form action="{{ route('add-good-to-salon') }}" method="get">
-								<div class="input-field col">
-									<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-								</div>
-								<input type="text" name="salon" value="{{ salon }}" hidden>
-								<div class="input-field col s9 text-center">
-									<input placeholder="Название товара" id="last_name" name="good_name" type="text" required>
-								</div>
-								<div class="input-field col s2 text-center">
-									<input placeholder="Цена" name="good_cost" type="number" min="0" step="0.01" required>
-								</div>
-								<div class="input-field col s12 text-center">
-									<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</li>
-		<li>
+    <ul class="collapsible">
+        <li>
+            <div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить мастера</div>
+            <div class="collapsible-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col s12">
+                            <form action="{{ route('add-master') }}" method="get">
+                                <div class="input-field">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                </div>
+                                <div class="input-field col s5">
+                                    <input placeholder="Введите имя и фамилию мастера" id="last_name" name="name" type="text"
+                                           class="validate"
+                                           required>
+                                </div>
+                                <div class="input-field col s2">
+                                    <input placeholder="План" id="plan" name="plan" type="number" min="1"
+                                           class="validate"
+                                           required>
+                                </div>
+                                <div class="input-field col s2">
+                                    <select name="range" required>
+                                        <option value="" disabled selected>Разряд</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                    </select>
+                                </div>
+                                <div class="input-field col s3">
+                                    <input placeholder="Процент с услуг" id="zp" name="zp" type="number" min="0.01" max="100"
+                                           step='0.01' class="validate"
+                                           required>
+                                </div>
+                                <div class="input-field col s12 text-center">
+                                    <button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li>
+            <div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить услугу</div>
+            <div class="collapsible-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col s12">
+                            <form action="{{ route('add-service-to-salon') }}" method="get">
+                                <div class="input-field col">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                </div>
+                                <div class="input-field col s12 text-center">
+                                    <input placeholder="Название услуги" id="last_name" name="name" type="text" required>
+                                </div>
+                                <input name="salon" type="text" value="{{ salon }}" hidden>
+                                <div class="input-field col s12 text-center">
+                                    <button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li>
+            <div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить товар</div>
+            <div class="collapsible-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col s12">
+                            <form action="{{ route('add-good-to-salon') }}" method="get">
+                                <div class="input-field col">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                </div>
+                                <input type="text" name="salon" value="{{ salon }}" hidden>
+                                <div class="input-field col s9 text-center">
+                                    <input placeholder="Название товара" id="last_name" name="good_name" type="text" required>
+                                </div>
+                                <div class="input-field col s2 text-center">
+                                    <input placeholder="Цена" name="good_cost" type="number" min="0" step="0.01" required>
+                                </div>
+                                <div class="input-field col s12 text-center">
+                                    <button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li>
 
 
-			<div class="col s12">
-				<form action="{{ route('show-add-shift') }}">
-					<button type="submit" class="collapsible-header" style="width: 100%;"><i class="material-icons is-simple">add</i><i class="material-icons">assignment</i>Добавить
-						смену мастеру
-					</button>
-				</form>
-			</div>
-		</li>
-	</ul>
+            <div class="col s12">
+                <form action="{{ route('show-add-shift') }}">
+                    <button type="submit" class="collapsible-header" style="width: 100%;"><i class="material-icons is-simple">add</i><i
+                                class="material-icons">assignment</i>Добавить
+                        смену мастеру
+                    </button>
+                </form>
+            </div>
+        </li>
+    </ul>
 </div>
 
 
 <div class="container-fluid">
-	<div class="row">
-		<div class=" col s12">
-			<div class="col offset-s8 col s1">
-				<button class="btn  waves-light" id="show_this_month" onclick="show_prev_month()">{{ name_prev_month }}</button>
-			</div>
-			<div class="col s1">
-				<button class="btn  waves-light" id="show_this_month" onclick="show_this_month()">{{ name_this_month }}</button>
-			</div>
-			<div class="col s2 left-align">
-				<button class="btn waves-light" id="show_next_month" onclick="show_next_month()">{{ name_next_month }}</button>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class=" col s12">
-			<section id="this_month">
-				<h5>{{ name_this_month }}</h5>
-				<table class="highlight centered">
-					<thead>
-					<tr>
-						<th>Мастер</th>
-						{% for i in 1..days_in_month %}
-							<th>{{ i }}</th>
-						{% endfor %}
-					</tr>
-					<tr>
-						<th></th>
-						{% for name_of_days_in_month in names_of_days_in_month %}
-							<th>{{ name_of_days_in_month }}</th>
-						{% endfor %}
-					</tr>
-					</thead>
+    <div class="row">
+        <div class=" col s12">
+            <div class="col offset-s8 col s1">
+                <button class="btn  waves-light" id="show_this_month" onclick="show_prev_month()">{{ name_prev_month }}</button>
+            </div>
+            <div class="col s1">
+                <button class="btn  waves-light" id="show_this_month" onclick="show_this_month()">{{ name_this_month }}</button>
+            </div>
+            <div class="col s2 left-align">
+                <button class="btn waves-light" id="show_next_month" onclick="show_next_month()">{{ name_next_month }}</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class=" col s12">
+            <section id="this_month">
+                <h5>{{ name_this_month }}</h5>
+                <table class="highlight centered">
+                    <thead>
+                    <tr>
+                        <th>Мастер</th>
+                        {% for i in 1..days_in_month %}
+                            <th>{{ i }}</th>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th></th>
+                        {% for name_of_days_in_month in names_of_days_in_month %}
+                            <th>{{ name_of_days_in_month }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
 
-					<tbody>
-					{% for master in masters %}
-						<tr class="border-0">
-							<td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
+                    <tbody>
+                    {% for master in masters %}
+                        <tr class="border-0">
+                            <td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
 												full-width text-center is-capitalize">{{ master.name }}</a></td>
 
-							{% set count = 0 %}
-							{% for type in master.array %}
-								{% if  type == 1 %}
-									<td class="black_border font_size_10px">
-										<div class="poster">
-											<span>{{ master.starts[count]|date('H:i') }}<br>{{ master.ends[count]|date('H:i') }}</span>
-											<div class="descr">
-												{% for time in master.times[count] %}
-													<p>{{ time }}</p>
-												{% endfor %}
-											</div>
-										</div>
-									</td>
+                            {% set count = 0 %}
+                            {% for type in master.array %}
+                                {% if  type == 1 %}
+                                    <td class="black_border font_size_10px">
+                                        <div class="poster">
+                                            <span>{{ master.starts[count]|date('H:i') }}<br>{{ master.ends[count]|date('H:i') }}</span>
+                                            <div class="descr">
+                                                {% for time in master.times[count] %}
+                                                    <p>{{ time }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
 
 
-								{% elseif type ==3 %}
-									<td class="black_border">
-										<div class="poster">
-											<i class="material-icons green_">add_circle</i>
-											<div class="descr">
-												{% for time in master.times[count] %}
-													<p>{{ time }}</p>
-												{% endfor %}
-											</div>
-										</div>
-									</td>
-								{% elseif type ==0 %}
-									<td class="black_border">
-										<i class="material-icons red_">remove_circle_outline</i></td>
-								{% elseif  type == 11 %}
+                                {% elseif type ==3 %}
+                                    <td class="black_border">
+                                        <div class="poster">
+                                            <i class="material-icons green_">add_circle</i>
+                                            <div class="descr">
+                                                {% for time in master.times[count] %}
+                                                    <p>{{ time }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                {% elseif type ==0 %}
+                                    <td class="black_border">
+                                        <i class="material-icons red_">remove_circle_outline</i></td>
+                                {% elseif  type == 11 %}
 
-									<td class="black_border chosen font_size_10px">
-										<div class="poster">
-											<span>{{ master.starts[count]|date('H:i') }}<br>{{ master.ends[count]|date('H:i') }}</span>
-											<div class="descr">
-												{% for time in master.times[count] %}
-													<p>{{ time }}</p>
-												{% endfor %}
-											</div>
-										</div>
-									</td>
+                                    <td class="black_border chosen font_size_10px">
+                                        <div class="poster">
+                                            <span>{{ master.starts[count]|date('H:i') }}<br>{{ master.ends[count]|date('H:i') }}</span>
+                                            <div class="descr">
+                                                {% for time in master.times[count] %}
+                                                    <p>{{ time }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
 
-								{% elseif type == 13 %}
-									<td class="black_border chosen">
-										<div class="poster">
-											<i class="material-icons green_">add_circle</i>
-											<div class="descr">
-												{% for time in master.times[count] %}
-													<p>{{ time }}</p>
-												{% endfor %}
-											</div>
-										</div>
-									</td>
-								{% elseif type == 10 %}
-									<td class="black_border  chosen"><i
-												class="material-icons red_">remove_circle_outline</i></td>
-								{% endif %}
-								{% set count = count + 1 %}
-							{% endfor %}
-						</tr>
-					{% endfor %}
-					</tbody>
-				</table>
-			</section>
-			<section id="prev_month" hidden>
-				<h5>{{ name_prev_month }}</h5>
-				<table class="highlight centered">
-					<thead>
-					<tr>
-						<th>Мастер</th>
-						<th> 1</th>
-						<th> 2</th>
-						<th> 3</th>
-						<th> 4</th>
-						<th> 5</th>
-						<th> 6</th>
-						<th> 7</th>
-						<th> 8</th>
-						<th> 9</th>
-						<th>10</th>
-						<th>11</th>
-						<th>12</th>
-						<th>13</th>
-						<th>14</th>
-						<th>15</th>
-						<th>16</th>
-						<th>17</th>
-						<th>18</th>
-						<th>19</th>
-						<th>20</th>
-						<th>21</th>
-						<th>22</th>
-						<th>23</th>
-						<th>24</th>
-						<th>25</th>
-						<th>26</th>
-						<th>27</th>
-						<th>28</th>
-						{% if  days_in_prev_month > 28 %}
-							<th>29</th>
-							{% if days_in_prev_month > 29 %}
-								<th>30</th>
-								{% if days_in_prev_month > 30 %}
-									<th>31</th>
-								{% endif %}
-							{% endif %}
-						{% endif %}
-					</tr>
-					<tr>
-						<th></th>
-						{% for name_of_days_in_prev_month in names_of_days_in_prev_month %}
-							<th>{{ name_of_days_in_prev_month }}</th>
-						{% endfor %}
-					</tr>
-					</thead>
+                                {% elseif type == 13 %}
+                                    <td class="black_border chosen">
+                                        <div class="poster">
+                                            <i class="material-icons green_">add_circle</i>
+                                            <div class="descr">
+                                                {% for time in master.times[count] %}
+                                                    <p>{{ time }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                {% elseif type == 10 %}
+                                    <td class="black_border  chosen"><i
+                                                class="material-icons red_">remove_circle_outline</i></td>
+                                {% endif %}
+                                {% set count = count + 1 %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            <section id="prev_month" hidden>
+                <h5>{{ name_prev_month }}</h5>
+                <table class="highlight centered">
+                    <thead>
+                    <tr>
+                        <th>Мастер</th>
+                        <th> 1</th>
+                        <th> 2</th>
+                        <th> 3</th>
+                        <th> 4</th>
+                        <th> 5</th>
+                        <th> 6</th>
+                        <th> 7</th>
+                        <th> 8</th>
+                        <th> 9</th>
+                        <th>10</th>
+                        <th>11</th>
+                        <th>12</th>
+                        <th>13</th>
+                        <th>14</th>
+                        <th>15</th>
+                        <th>16</th>
+                        <th>17</th>
+                        <th>18</th>
+                        <th>19</th>
+                        <th>20</th>
+                        <th>21</th>
+                        <th>22</th>
+                        <th>23</th>
+                        <th>24</th>
+                        <th>25</th>
+                        <th>26</th>
+                        <th>27</th>
+                        <th>28</th>
+                        {% if  days_in_prev_month > 28 %}
+                            <th>29</th>
+                            {% if days_in_prev_month > 29 %}
+                                <th>30</th>
+                                {% if days_in_prev_month > 30 %}
+                                    <th>31</th>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th></th>
+                        {% for name_of_days_in_prev_month in names_of_days_in_prev_month %}
+                            <th>{{ name_of_days_in_prev_month }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
 
-					<tbody>
-					{% for master in masters %}
-						<tr class="border-0">
-							<td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
+                    <tbody>
+                    {% for master in masters %}
+                        <tr class="border-0">
+                            <td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
 												full-width text-center is-capitalize">{{ master.name }}</a></td>
 
-							{% set count = 0 %}
-							{% for type in master.prev_array %}
-								{% if  type == 1 %}
+                            {% set count = 0 %}
+                            {% for type in master.prev_array %}
+                                {% if  type == 1 %}
 
-									<td class="black_border font_size_10px">
-										<div class="poster">
-											<span>{{ master.prev_starts[count]|date('H:i') }}<br>{{ master.prev_ends[count]|date('H:i') }}</span>
-											<div class="descr">
-												{% for time in master.prev_times[count] %}
-													<p>{{ time }}</p>
-												{% endfor %}
-											</div>
-										</div>
-									</td>
+                                    <td class="black_border font_size_10px">
+                                        <div class="poster">
+                                            <span>{{ master.prev_starts[count]|date('H:i') }}
+                                                <br>{{ master.prev_ends[count]|date('H:i') }}</span>
+                                            <div class="descr">
+                                                {% for time in master.prev_times[count] %}
+                                                    <p>{{ time }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
 
 
-								{% elseif type ==3 %}
-									<td class="black_border">
-										<div class="poster">
-											<i class="material-icons green_">add_circle</i>
-											<div class="descr">
-												{% for time in master.prev_times[count] %}
-													<p>{{ time }}</p>
-												{% endfor %}
-											</div>
-										</div>
-									</td>
-								{% elseif type ==0 %}
-									<td class="black_border"><i
-												class="material-icons red_">remove_circle_outline</i></td>
-								{% elseif  type == 11 %}
+                                {% elseif type ==3 %}
+                                    <td class="black_border">
+                                        <div class="poster">
+                                            <i class="material-icons green_">add_circle</i>
+                                            <div class="descr">
+                                                {% for time in master.prev_times[count] %}
+                                                    <p>{{ time }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                {% elseif type ==0 %}
+                                    <td class="black_border"><i
+                                                class="material-icons red_">remove_circle_outline</i></td>
+                                {% elseif  type == 11 %}
 
-									<td class="black_border chosen font_size_10px">
-										<div class="poster">
-											<span>{{ master.prev_starts[count]|date('H:i') }}<br>{{ master.prev_ends[count]|date('H:i') }}</span>
-											<div class="descr">
-												{% for time in master.prev_times[count] %}
-													<p>{{ time }}</p>
-												{% endfor %}
-											</div>
-										</div>
-									</td>
+                                    <td class="black_border chosen font_size_10px">
+                                        <div class="poster">
+                                            <span>{{ master.prev_starts[count]|date('H:i') }}
+                                                <br>{{ master.prev_ends[count]|date('H:i') }}</span>
+                                            <div class="descr">
+                                                {% for time in master.prev_times[count] %}
+                                                    <p>{{ time }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
 
-								{% elseif type == 13 %}
-									<td class="black_border chosen">
-										<div class="poster">
-											<i class="material-icons green_">add_circle</i>
-											<div class="descr">
-												{% for time in master.prev_times[count] %}
-													<p>{{ time }}</p>
-												{% endfor %}
-											</div>
-										</div>
-									</td>
-								{% elseif type == 10 %}
-									<td class="black_border  chosen"><i
-												class="material-icons red_">remove_circle_outline</i></td>
-								{% endif %}
-								{% set count = count + 1 %}
-							{% endfor %}
-						</tr>
-					{% endfor %}
-					</tbody>
-				</table>
-			</section>
-			<section id="next_month" hidden>
-				<h5>{{ name_next_month }}</h5>
-				<table class="highlight centered">
-					<thead>
-					<tr>
-						<th>Мастер</th>
-						<th> 1</th>
-						<th> 2</th>
-						<th> 3</th>
-						<th> 4</th>
-						<th> 5</th>
-						<th> 6</th>
-						<th> 7</th>
-						<th> 8</th>
-						<th> 9</th>
-						<th>10</th>
-						<th>11</th>
-						<th>12</th>
-						<th>13</th>
-						<th>14</th>
-						<th>15</th>
-						<th>16</th>
-						<th>17</th>
-						<th>18</th>
-						<th>19</th>
-						<th>20</th>
-						<th>21</th>
-						<th>22</th>
-						<th>23</th>
-						<th>24</th>
-						<th>25</th>
-						<th>26</th>
-						<th>27</th>
-						<th>28</th>
-						{% if  days_in_next_month > 28 %}
-							<th>29</th>
-							{% if days_in_next_month > 29 %}
-								<th>30</th>
-								{% if days_in_next_month > 30 %}
-									<th>31</th>
-								{% endif %}
-							{% endif %}
-						{% endif %}
-					</tr>
-					<tr>
-						<th></th>
-						{% for name_of_days_in_next_month in names_of_days_in_next_month %}
-							<th>{{ name_of_days_in_next_month }}</th>
-						{% endfor %}
-					</tr>
-					</thead>
+                                {% elseif type == 13 %}
+                                    <td class="black_border chosen">
+                                        <div class="poster">
+                                            <i class="material-icons green_">add_circle</i>
+                                            <div class="descr">
+                                                {% for time in master.prev_times[count] %}
+                                                    <p>{{ time }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                {% elseif type == 10 %}
+                                    <td class="black_border  chosen"><i
+                                                class="material-icons red_">remove_circle_outline</i></td>
+                                {% endif %}
+                                {% set count = count + 1 %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            <section id="next_month" hidden>
+                <h5>{{ name_next_month }}</h5>
+                <table class="highlight centered">
+                    <thead>
+                    <tr>
+                        <th>Мастер</th>
+                        <th> 1</th>
+                        <th> 2</th>
+                        <th> 3</th>
+                        <th> 4</th>
+                        <th> 5</th>
+                        <th> 6</th>
+                        <th> 7</th>
+                        <th> 8</th>
+                        <th> 9</th>
+                        <th>10</th>
+                        <th>11</th>
+                        <th>12</th>
+                        <th>13</th>
+                        <th>14</th>
+                        <th>15</th>
+                        <th>16</th>
+                        <th>17</th>
+                        <th>18</th>
+                        <th>19</th>
+                        <th>20</th>
+                        <th>21</th>
+                        <th>22</th>
+                        <th>23</th>
+                        <th>24</th>
+                        <th>25</th>
+                        <th>26</th>
+                        <th>27</th>
+                        <th>28</th>
+                        {% if  days_in_next_month > 28 %}
+                            <th>29</th>
+                            {% if days_in_next_month > 29 %}
+                                <th>30</th>
+                                {% if days_in_next_month > 30 %}
+                                    <th>31</th>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th></th>
+                        {% for name_of_days_in_next_month in names_of_days_in_next_month %}
+                            <th>{{ name_of_days_in_next_month }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
 
-					<tbody>
-					{% for master in masters %}
-						<tr class="border-0">
-							<td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
+                    <tbody>
+                    {% for master in masters %}
+                        <tr class="border-0">
+                            <td class="border-0"><a href="{{ route('master-service',[master.id]) }}" class="waves-effect waves-teal btn-flat
 												full-width text-center is-capitalize">{{ master.name }}</a></td>
 
-							{% set count = 0 %}
-							{% for type in master.next_array %}
-								{% if  type == 1 %}
+                            {% set count = 0 %}
+                            {% for type in master.next_array %}
+                                {% if  type == 1 %}
 
-									<td class="black_border font_size_10px">
-										<div class="poster">
-											<span>{{ master.next_starts[count]|date('H:i') }}<br>{{ master.next_ends[count]|date('H:i') }}</span>
-											<div class="descr">
-												{% for time in master.next_times[count] %}
-													<p>{{ time }}</p>
-												{% endfor %}
-											</div>
-										</div>
-									</td>
+                                    <td class="black_border font_size_10px">
+                                        <div class="poster">
+                                            <span>{{ master.next_starts[count]|date('H:i') }}
+                                                <br>{{ master.next_ends[count]|date('H:i') }}</span>
+                                            <div class="descr">
+                                                {% for time in master.next_times[count] %}
+                                                    <p>{{ time }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
 
 
-								{% elseif type ==3 %}
-									<td class="black_border">
-										<div class="poster">
-											<i class="material-icons green_">add_circle</i>
-											<div class="descr">
-												{% for time in master.next_times[count] %}
-													<p>{{ time }}</p>
-												{% endfor %}
-											</div>
-										</div>
-									</td>
-								{% elseif type ==0 %}
-									<td class="black_border"><i
-												class="material-icons red_">remove_circle_outline</i></td>
-								{% elseif  type == 11 %}
+                                {% elseif type ==3 %}
+                                    <td class="black_border">
+                                        <div class="poster">
+                                            <i class="material-icons green_">add_circle</i>
+                                            <div class="descr">
+                                                {% for time in master.next_times[count] %}
+                                                    <p>{{ time }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                {% elseif type ==0 %}
+                                    <td class="black_border"><i
+                                                class="material-icons red_">remove_circle_outline</i></td>
+                                {% elseif  type == 11 %}
 
-									<td class="black_border chosen font_size_10px">
-										<div class="poster">
-											<span>{{ master.next_starts[count]|date('H:i') }}<br>{{ master.next_ends[count]|date('H:i') }}</span>
-											<div class="descr">
-												{% for time in master.next_times[count] %}
-													<p>{{ time }}</p>
-												{% endfor %}
-											</div>
-										</div>
-									</td>
+                                    <td class="black_border chosen font_size_10px">
+                                        <div class="poster">
+                                            <span>{{ master.next_starts[count]|date('H:i') }}
+                                                <br>{{ master.next_ends[count]|date('H:i') }}</span>
+                                            <div class="descr">
+                                                {% for time in master.next_times[count] %}
+                                                    <p>{{ time }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
 
-								{% elseif type == 13 %}
-									<td class="black_border chosen">
-										<div class="poster">
-											<i class="material-icons green_">add_circle</i>
-											<div class="descr">
-												{% for time in master.next_times[count] %}
-													<p>{{ time }}</p>
-												{% endfor %}
-											</div>
-										</div>
-									</td>
-								{% elseif type == 10 %}
-									<td class="black_border  chosen"><i
-												class="material-icons red_">remove_circle_outline</i></td>
-								{% endif %}
-								{% set count = count + 1 %}
-							{% endfor %}
-						</tr>
-					{% endfor %}
-					</tbody>
-				</table>
-			</section>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col s6">
-			<table class="highlight centered">
-				<thead>
-				<tr>
-					<th>Услуга</th>
-					<th></th>
-				</tr>
-				</thead>
-				<tbody>
-				{% for product in products %}
-					<tr>
-						<td class="border-0">{{ product.name }}</td>
-						<td class="border-0"><a href="{{ route('delete-product',[product.id]) }}" class="btn waves-effect waves-light red"><i
-										class="material-icons"></i>Удалить</a></td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
-		<div class="col s6">
-			<table class="highlight centered">
-				<thead>
-				<tr>
-					<th>Товар</th>
-					<th></th>
-				</tr>
-				</thead>
-				<tbody>
-				{% for good in goods %}
-					<tr>
-						<td class="border-0">{{ good.good_name }}</td>
-						<td class="border-0"><a href="{{ route('delete-good',[good.id]) }}" class="btn waves-effect waves-light red"><i
-										class="material-icons"></i>Удалить</a></td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
+                                {% elseif type == 13 %}
+                                    <td class="black_border chosen">
+                                        <div class="poster">
+                                            <i class="material-icons green_">add_circle</i>
+                                            <div class="descr">
+                                                {% for time in master.next_times[count] %}
+                                                    <p>{{ time }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                {% elseif type == 10 %}
+                                    <td class="black_border  chosen"><i
+                                                class="material-icons red_">remove_circle_outline</i></td>
+                                {% endif %}
+                                {% set count = count + 1 %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
 </div>
 
 <input id="exception1" value="{{ exception1 }}" hidden>
@@ -605,37 +575,37 @@
 <script type="text/javascript" src="/js/materialize.min.js"></script>
 
 <script>
-	if(document.getElementById("exception1").value != '') {
-		alert(document.getElementById("exception1").value);
-	}
+    if (document.getElementById('exception1').value != '') {
+        alert(document.getElementById('exception1').value);
+    }
 
-	$(document).ready(function() {
-		$('select').formSelect();
-	});
-	$(document).ready(function() {
-		$('.datepicker').datepicker();
-	});
-	$(document).ready(function() {
-		$('.collapsible').collapsible();
-	});
+    $(document).ready(function () {
+        $('select').formSelect();
+    });
+    $(document).ready(function () {
+        $('.datepicker').datepicker();
+    });
+    $(document).ready(function () {
+        $('.collapsible').collapsible();
+    });
 
-	function show_prev_month() {
-		document.getElementById('prev_month').style.display = 'block';
-		document.getElementById('next_month').style.display = 'none';
-		document.getElementById('this_month').style.display = 'none';
-	}
+    function show_prev_month() {
+        document.getElementById('prev_month').style.display = 'block';
+        document.getElementById('next_month').style.display = 'none';
+        document.getElementById('this_month').style.display = 'none';
+    }
 
-	function show_next_month() {
-		document.getElementById('next_month').style.display = 'block';
-		document.getElementById('this_month').style.display = 'none';
-		document.getElementById('prev_month').style.display = 'none';
-	}
+    function show_next_month() {
+        document.getElementById('next_month').style.display = 'block';
+        document.getElementById('this_month').style.display = 'none';
+        document.getElementById('prev_month').style.display = 'none';
+    }
 
-	function show_this_month() {
-		document.getElementById('next_month').style.display = 'none';
-		document.getElementById('prev_month').style.display = 'none';
-		document.getElementById('this_month').style.display = 'block';
-	}
+    function show_this_month() {
+        document.getElementById('next_month').style.display = 'none';
+        document.getElementById('prev_month').style.display = 'none';
+        document.getElementById('this_month').style.display = 'block';
+    }
 </script>
 
 </body>
