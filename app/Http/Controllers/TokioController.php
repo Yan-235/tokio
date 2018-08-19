@@ -6029,9 +6029,10 @@ class TokioController extends Controller {
 
 	public function liveSearch(Request $request) {
 		$search = $request->str;
-
+		$auth_user = Auth::user();
 		if(!is_null($search)) {
-			$posts = Master::where('name', 'LIKE', "%{$search}%")->get();
+		//	$posts = Master::where('name', 'LIKE', "%{$search}%")->get();
+			$posts = Products::where('name', 'LIKE', "%{$search}%")->where('salon','=',$auth_user['salon'])->get();
 			//			$posts = Master::where('name', 'LIKE', "%{$search}%")->first();
 			//			return response()->json(['posts' => $posts]);
 			return response()->json(['posts' => $posts, 'msg' => 'message']);
