@@ -266,7 +266,11 @@
 								<input name="sale_id" value="{{ sale.id }}" hidden>
 								<input value="{{ client.id }}" placeholder="ID" name="client_id" type="hidden">
 								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-								<button class="btn waves-effect waves-light red">Удалить</button>
+								{% if admin != 1 and this_day| date("d/m/Y") > sale.date| date("d/m/Y") %}
+									<button class="btn waves-effect waves-light red" disabled>Удалить</button>
+								{% else %}
+									<button class="btn waves-effect waves-light red">Удалить</button>
+								{% endif %}
 							</form>
 						</td>
 					</tr>

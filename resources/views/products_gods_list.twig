@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Добавление смены</title>
+
+    <link rel="stylesheet" href="/css/materialize.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script type="text/javascript" src="/js/materialize.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}"/>
+</head>
+<body>
+{% if salon == 1 %}
+    <div align="center">
+        <img src="img/logo.png" alt="logo">
+    </div>
+{% endif %}
+{% if salon == 2 %}
+    <div align="center">
+        <img src="img/city-logo-1.jpg" alt="city-logo-1">
+    </div>
+{% endif %}
+{% if salon == 3 %}
+    <div align="center">
+        <img src="img/city-logo-2.jpg" alt="city-logo-2">
+    </div>
+{% endif %}
+{% if salon == 4 %}
+    <div align="center">
+        <img src="" alt="city-logo-3">
+    </div>
+{% endif %}
+<div class="container-fluid is-margin-top-50">
+    <div class="container-fluid is-margin-top-50">
+        <div class="row">
+            <div class="col s1 left-align">
+                <a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
+                            class="material-icons">arrow_back</i></a>
+            </div>
+            {% if admin == 1 %}
+                <div class="col s6 left-align">
+                    <form action="{{ route('change-salon') }}" method="get">
+                        <div class="col s4 ">
+                            <select name="new_salon" required>
+                                <option value="" disabled selected>Салон</option>
+                                <option value="1">Токио</option>
+                                <option value="2">Сити 1</option>
+                                <option value="3">Сити 2</option>
+                                <option value="4">Бьюти зона</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn waves-effect waves-light green"><i
+                                    class="material-icons">swap_horiz</i></button>
+                    </form>
+                </div>
+                <div class="col s2 right-align">
+                    <form action="{{ route('show-client-list') }}" method="get">
+                        <button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+                    </form>
+                </div>
+                <div class="col s2 left-align">
+                    <form action="{{ route('info-tables') }}" method="get">
+                        <button type="submit" class="btn waves-effect waves-light blue">Информация</button>
+                    </form>
+                </div>
+                <div class="col s1 right-align">
+                    <a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+                                class="material-icons">exit_to_app</i></a>
+                </div>
+            {% else %}
+                <div class="col offset-col s10 col s1 right-align">
+                    <form action="{{ route('show-client-list') }}" method="get">
+                        <button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+                    </form>
+                </div>
+                <div class="col 1 right-align">
+                    <a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+                                class="material-icons">exit_to_app</i></a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col s6">
+            <table class="highlight centered">
+                <thead>
+                <tr>
+                    <th>Услуга</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td class="border-0">{{ product.name }}</td>
+                        <td class="border-0"><a href="{{ route('delete-product',[product.id]) }}"
+                                                class="btn waves-effect waves-light red"><i
+                                        class="material-icons"></i>Удалить</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col s6">
+            <table class="highlight centered">
+                <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for good in goods %}
+                    <tr>
+                        <td class="border-0">{{ good.good_name }}</td>
+                        <td class="border-0">{{ good.good_cost }}</td>
+                        <td class="border-0"><a href="{{ route('delete-good',[good.id]) }}" class="btn waves-effect waves-light red"><i
+                                        class="material-icons"></i>Удалить</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>

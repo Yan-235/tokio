@@ -64,10 +64,11 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/delete-product/{id}', 'TokioController@deleteProduct')->name('delete-product');
 	Route::get('/delete-good/{id}', 'TokioController@deleteGood')->name('delete-good');
 	Route::get('/update-feedbacks', 'TokioController@updateFeedbacks')->name('update-feedbacks');
+	Route::get('/products-gods-list', 'TokioController@productsGoodsList')->name('products-gods-list');
 
 	Route::get('/search-client', 'SearchController@searchClient')->name('search-client');
 
-	Route::get('/live-search','TokioController@liveSearch')->name('live-search');
+	Route::post('/live-search','TokioController@liveSearch')->name('live-search');
 });
 
 Auth::routes();

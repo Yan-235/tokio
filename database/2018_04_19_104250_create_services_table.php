@@ -23,7 +23,7 @@ class CreateServicesTable extends Migration
 	        $table->time('time');
 	        $table->time('duration');
 	        $table->integer('discount')->nullable();
-	        $table->string('text')->nullable();
+	   //     $table->string('text')->nullable();
         });
     }
 

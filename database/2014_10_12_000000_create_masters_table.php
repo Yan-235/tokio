@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateShiftsTable extends Migration
+class CreateMastersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateShiftsTable extends Migration
      */
     public function up()
     {
-        Schema::create('shifts', function (Blueprint $table) {
+        Schema::create('masters', function (Blueprint $table) {
             $table->increments('id');
-            $table->date('date')->nulladble();
-            $table->integer('master_id')->nullable();
-            $table->integer('shift_type')->nullable();
-            $table->time('start_shift')->nullable();
-            $table->time('end_shift')->nullable();
+            $table->string('name');
+            $table->string('salon');
+            $table->integer('range');
+            $table->integer('plan');
+           // $table->float('zp');
         });
     }
 
@@ -30,6 +30,6 @@ class CreateShiftsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('shifts');
+        Schema::dropIfExists('masters');
     }
 }

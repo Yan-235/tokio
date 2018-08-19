@@ -312,8 +312,6 @@ class TokioController extends Controller {
 
 	public function index() {
 		$auth_user = Auth::user();
-		$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
-		$goods = Goods::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 		$masters = Master::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 		$new_filter_date = new DateTime('today');
 		$new_filter_date = $new_filter_date->format('Y-m-d');
@@ -735,8 +733,6 @@ class TokioController extends Controller {
 		return view('main', [
 			'masters' => $masters,
 			'salon' => $auth_user['salon'],
-			'products' => $products,
-			'goods' => $goods,
 			'new_filter_date' => $new_filter_date,
 			'days_in_month' => $days_in_month,
 			'days_in_next_month' => $days_in_next_month,
@@ -1086,19 +1082,19 @@ class TokioController extends Controller {
 		//	dd($sales);
 		$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id', 'asc')->get();
 		$goods = Goods::orderBy('id', 'asc')->get();
-		$shifts = Shift::where('master_id', '=', $id)->orderBy('date', "asc")->get();
-		//$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
-		$orders = Shift::where('shifts.master_id', '=', $id)
+//		$shifts = Shift::where('master_id', '=', $id)->orderBy('date', "asc")->get();
+		$shifts = Shift::where('master_id', '=', $id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		//		$orders = Shift::where('shifts.master_id', '=', $id)
+		//			->leftJoin('services', 'services.date', '=', 'shifts.date')
+		//			->where('services.users_user_id', '=', $id)
+		//			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
+		//			->get();
+		$orders = Shift::where('shifts.date', '>=', $this_day)
+			->where('shifts.master_id', '=', $id)
 			->leftJoin('services', 'services.date', '=', 'shifts.date')
 			->where('services.users_user_id', '=', $id)
 			->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
 			->get();
-		/*	$orders = Shift::where('shifts.date', '>=', $this_day)
-				->where('shifts.master_id', '=', $id)
-				->leftJoin('services', 'services.date', '=', 'shifts.date')
-				->where('services.users_user_id', '=', $id)
-				->select('shifts.id', 'shifts.date', 'shifts.shift_type', 'services.time', 'services.duration', 'shifts.start_shift', 'shifts.end_shift')
-				->get();*/
 		$times = [];
 		$shift_type3 = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
 		$i = 0;
@@ -1207,7 +1203,8 @@ class TokioController extends Controller {
 			'admin' => $auth_user['admin'],
 			'goods' => $goods,
 			'product_feedbacks' => $product_feedbacks1,
-			'check_goods' => '0'
+			'check_goods' => '0',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -3177,7 +3174,6 @@ class TokioController extends Controller {
 					DB::table('shifts')->where('master_id', '=', $master_id)->where('date', '=', $new_filter_date)->update(['start_shift' => request('start_shift')]);
 					DB::table('shifts')->where('master_id', '=', $master_id)->where('date', '=', $new_filter_date)->update(['end_shift' => request('end_shift')]);
 				}
-
 				else {
 					$shift = new Shift();
 					$shift->master_id = $master_id;
@@ -3197,7 +3193,6 @@ class TokioController extends Controller {
 				DB::table('shifts')->where('master_id', '=', $master_id)->where('date', '=', $new_filter_date)->update(['start_shift' => $shift_start]);
 				DB::table('shifts')->where('master_id', '=', $master_id)->where('date', '=', $new_filter_date)->update(['end_shift' => $shift_end]);
 			}
-
 			else {
 				$shift = new Shift();
 				$shift->master_id = $master_id;
@@ -3498,7 +3493,8 @@ class TokioController extends Controller {
 			'durs' => $durs,
 			'admin' => $auth_user['admin'],
 			'goods' => $goods,
-			'check_goods' => '0'
+			'check_goods' => '0',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -3674,7 +3670,8 @@ class TokioController extends Controller {
 			'durs' => $durs,
 			'admin' => $auth_user['admin'],
 			'goods' => $goods,
-			'check_goods' => '1'
+			'check_goods' => '1',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -3848,7 +3845,8 @@ class TokioController extends Controller {
 			'durs' => $durs,
 			'admin' => $auth_user['admin'],
 			'goods' => $goods,
-			'check_goods' => '1'
+			'check_goods' => '1',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -4028,7 +4026,8 @@ class TokioController extends Controller {
 			'durs' => $durs,
 			'admin' => $auth_user['admin'],
 			'goods' => $goods,
-			'check_goods' => '1'
+			'check_goods' => '1',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -4202,7 +4201,8 @@ class TokioController extends Controller {
 			'durs' => $durs,
 			'admin' => $auth_user['admin'],
 			'goods' => $goods,
-			'check_goods' => '1'
+			'check_goods' => '1',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -4378,7 +4378,8 @@ class TokioController extends Controller {
 			'durs' => $durs,
 			'admin' => $auth_user['admin'],
 			'goods' => $goods,
-			'check_goods' => '0'
+			'check_goods' => '0',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -4559,7 +4560,8 @@ class TokioController extends Controller {
 			'durs' => $durs,
 			'admin' => $auth_user['admin'],
 			'goods' => $goods,
-			'check_goods' => '0'
+			'check_goods' => '0',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -4734,7 +4736,8 @@ class TokioController extends Controller {
 			'durs' => $durs,
 			'admin' => $auth_user['admin'],
 			'goods' => $goods,
-			'check_goods' => '0'
+			'check_goods' => '0',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -4814,8 +4817,8 @@ class TokioController extends Controller {
 		$masters = Master::where('salon', '=', $auth_user['salon'])->get();
 		$this_day = new DateTime('today');
 		$shifts = [];
-		$shifts = Shift::where('master_id', '=', $master_id)->orderBy('date', "asc")->get();
-		//	$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
+		//		$shifts = Shift::where('master_id', '=', $master_id)->orderBy('date', "asc")->get();
+		$shifts = Shift::where('master_id', '=', $master_id)->where('date', '>=', $this_day)->orderBy('date', "asc")->get();
 		$client_services = Services::where('client_id', '=', $id)
 			->leftJoin('masters', 'masters.id', '=', 'services.users_user_id')
 			->leftJoin('products', 'services.product', '=', 'products.id')
@@ -4833,6 +4836,7 @@ class TokioController extends Controller {
 		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
 		$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
 		$goods = Goods::orderBy('id')->get();
+		$this_day = new DateTime('today');
 		return view('client_card', [
 			'admin' => $auth_user['admin'],
 			'salon' => $auth_user['salon'],
@@ -4847,6 +4851,7 @@ class TokioController extends Controller {
 			'products' => $products,
 			'goods' => $goods,
 			'check_goods' => '0',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -4879,6 +4884,7 @@ class TokioController extends Controller {
 		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
 		$products = Products::orderBy('id')->get();
 		$goods = Goods::orderBy('id')->get();
+		$this_day = new DateTime('today');
 		return view('goods_client_card', [
 			'admin' => $auth_user['admin'],
 			'salon' => $auth_user['salon'],
@@ -4893,6 +4899,7 @@ class TokioController extends Controller {
 			'sales' => $sales,
 			'goods' => $goods,
 			'check_goods' => '1',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -4977,6 +4984,7 @@ class TokioController extends Controller {
 		$shift = Shift::where('id', '=', $shift_id)->first();
 		$durs = ['00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30', '04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00'];
 		$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
+		$this_day = new DateTime('today');
 		return view('client_card', [
 			'admin' => $auth_user['admin'],
 			'salon' => $auth_user['salon'],
@@ -4991,6 +4999,7 @@ class TokioController extends Controller {
 			'times' => $tmp_array,
 			'durs' => $durs,
 			'products' => $products,
+			'this_day' => $this_day
 		]);
 	}
 
@@ -5217,7 +5226,8 @@ class TokioController extends Controller {
 			'durs' => $durs,
 			'admin' => $auth_user['admin'],
 			'goods' => $goods,
-			'check_goods' => '1'
+			'check_goods' => '1',
+			'this_day' => $this_day
 		]);
 		//return redirect('/master/' . $master_id);
 	}
@@ -5337,6 +5347,11 @@ class TokioController extends Controller {
 		$duration = request('duration');
 		//	$cost = request('cost');
 		$product = request('product');
+		$product1 = request('product1');
+		$selectChecker = request('checker');
+		if($selectChecker == 1) {
+			$product = $product1;
+		}
 		//	dd($master_id);
 		$services = Services::where('users_user_id', '=', $master_id)->where('date', '=', $date->date)->get();
 		//	dd($date->date);
@@ -5511,7 +5526,8 @@ class TokioController extends Controller {
 				'durs' => $durs,
 				'goods' => $goods,
 				'check_goods' => '0',
-				'exception1' => 'Мастер в это время не работает.'
+				'exception1' => 'Мастер в это время не работает.',
+				'this_day' => $this_day
 			]);
 		}
 		elseif($shift->shift_type == 1) {
@@ -5732,7 +5748,8 @@ class TokioController extends Controller {
 				'durs' => $durs,
 				'goods' => $goods,
 				'check_goods' => '0',
-				'exception1' => 'Мастер в это время занят.'
+				'exception1' => 'Мастер в это время занят.',
+				'this_day' => $this_day
 			]);
 		}
 		else {
@@ -5781,11 +5798,13 @@ class TokioController extends Controller {
 				->select('services.*', 'masters.name', 'products.name as product_name')
 				->orderBy('services.date', 'desc')
 				->get();
+			$this_day = new DateTime('today');
 			return view('client_card', [
 				'admin' => $auth_user['admin'],
 				'salon' => $auth_user['salon'],
 				'client' => $client,
 				'client_services' => $client_services,
+				'this_day' => $this_day
 			]);
 		}
 		//dd($new_filter_date);
@@ -5795,11 +5814,13 @@ class TokioController extends Controller {
 		$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost');
 		$client->goods_spent_money = Sales::where('client_id', '=', $client->id)->sum('cost');
 		$auth_user = Auth::user();
+		$this_day = new DateTime('today');
 		return view('client_card', [
 			'admin' => $auth_user['admin'],
 			'salon' => $auth_user['salon'],
 			'client' => $client,
 			'new_filter_date' => $new_filter_date,
+			'this_day' =>$this_day
 		]);
 	}
 
@@ -5824,6 +5845,7 @@ class TokioController extends Controller {
 			->select('sales.*', 'masters.name', 'goods.good_name')
 			->orderBy('sales.date', 'desc')
 			->get();
+		$this_day = new DateTime('today');
 		return view('client_card', [
 			'admin' => $auth_user['admin'],
 			'salon' => $auth_user['salon'],
@@ -5832,6 +5854,7 @@ class TokioController extends Controller {
 			'sales' => $sales,
 			'masters' => $masters,
 			'check_goods' => '0',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -5856,6 +5879,7 @@ class TokioController extends Controller {
 			->select('sales.*', 'masters.name', 'goods.good_name')
 			->orderBy('sales.date', 'desc')
 			->get();
+		$this_day = new DateTime('today');
 		return view('goods_client_card', [
 			'admin' => $auth_user['admin'],
 			'salon' => $auth_user['salon'],
@@ -5864,6 +5888,7 @@ class TokioController extends Controller {
 			'sales' => $sales,
 			'masters' => $masters,
 			'check_goods' => '0',
+			'this_day' => $this_day
 		]);
 	}
 
@@ -5925,7 +5950,7 @@ class TokioController extends Controller {
 		$id = request('id');
 		Products::where('id', '=', $id)->delete();
 		Feedbacks::where('product_id', '=', $id)->delete();
-		return redirect('/');
+		return redirect('/products-gods-list');
 	}
 
 	public function updateFeedbacks() {
@@ -6003,17 +6028,28 @@ class TokioController extends Controller {
 	}
 
 	public function liveSearch(Request $request) {
-		dd("aa1");
-	/*	$search = $request->str;
-		dd($search);
-		if(is_null($search)) {
-			return view('master/1');
+		$search = $request->str;
+
+		if(!is_null($search)) {
+			$posts = Master::where('name', 'LIKE', "%{$search}%")->get();
+			//			$posts = Master::where('name', 'LIKE', "%{$search}%")->first();
+			//			return response()->json(['posts' => $posts]);
+			return response()->json(['posts' => $posts, 'msg' => 'message']);
 		}
 		else {
-			$posts = Master::where('name', 'LIKE', "%{$search}%")->get();
-			dd($posts);
-			return view('master/1')->withPosts($posts);
+			return response();
 		}
-	*/
 	}
+
+	public function productsGoodsList() {
+		$auth_user = Auth::user();
+		$products = Products::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
+		$goods = Goods::where('salon', '=', $auth_user['salon'])->orderBy('id')->get();
+		return view('products_gods_list', [
+			'products' => $products,
+			'goods' => $goods,
+			'salon' => $auth_user['salon']
+		]);
+	}
+
 }

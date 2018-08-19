@@ -416,7 +416,11 @@
 								<form action="{{ route('client-delete-service') }}">
 									<input name="service_id" value="{{ client_service.id }}" hidden>
 									<input value="{{ client.id }}" name="client_id" hidden>
-									<button class="btn waves-effect waves-light red">Удалить</button>
+									{% if admin != 1 and this_day| date("d/m/Y") > client_service.date| date("d/m/Y") %}
+										<button class="btn waves-effect waves-light red" disabled>Удалить</button>
+									{% else %}
+										<button class="btn waves-effect waves-light red">Удалить</button>
+									{% endif %}
 								</form>
 							</td>
 						</tr>
