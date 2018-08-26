@@ -88,7 +88,80 @@ class TokioController extends Controller {
 			'today_money' => $today_money,
 			'today_reports' => $today_reports,
 			'result' => $result,
-			'today' => $today,
+			'date' => $today,
+			'admin' => $auth_user['admin']
+		]);
+	}
+
+	public function reportDateFilter() {
+		$auth_user = Auth::user();
+		$new_filter_date = request('filter_date');
+		//dd($new_filter_date);
+		$masters = Master::where('salon', '=', $auth_user['salon'])
+			->orderBy('id')
+			->get();
+		//	$services = Services::where('date', '=', $today)->get();
+		$sales = Sales::where('date', '=', $new_filter_date)->get();
+		$shifts = Shift::where('date', '=', $new_filter_date)->get();
+		//dd($shifts);
+		$today_masters = [];
+		$today_money = [];
+		$today_reports = [];
+		$i = 0;
+		foreach($masters as $master) {
+			foreach($shifts as $shift) {
+				//dd($shift->master_id);
+				if($master->id == $shift->master_id) {
+					$today_masters[$i] = $master;
+					$i = $i + 1;
+				}
+			}
+		}
+		foreach($masters as $master) {
+			foreach($sales as $sale) {
+				if($master->id == $sale->users_user_id) {
+					$checker = 0;
+					foreach($today_masters as $today_master) {
+						if($today_master->id == $sale->users_user_id) {
+							$checker = 1;
+						}
+					}
+					if($checker == 0) {
+						$today_masters[$i] = $master;
+						$i = $i + 1;
+					}
+				}
+			}
+		}
+		$result = 0.01 - 0.01;
+		for($i = 0; $i < sizeof($today_masters); $i++) {
+			$today_money[$i] = Services::where('date', '=', $new_filter_date)->where('users_user_id', '=', $today_masters[$i]->id)->sum('cost');
+			$today_money[$i] = $today_money[$i] + Sales::where('date', '=', $new_filter_date)->where('users_user_id', '=', $today_masters[$i]->id)->sum('cost');
+			$today_reports[$i] = Reports::where('date', '=', $new_filter_date)->where('master_id', '=', $today_masters[$i]->id)->first();
+			if($today_reports[$i] != null) {
+				if($today_reports[$i]->money != null) {
+					$result = $result + $today_money[$i] + $today_reports[$i]->money;
+				}
+				else {
+					$result = $result + $today_money[$i];
+				}
+			}
+			else {
+				$result = $result + $today_money[$i];
+			}
+		}
+		$size = sizeof($today_masters);
+		//dd($today_reports);
+		return view('day_report', [
+			'salon' => $auth_user['salon'],
+			'size' => $size,
+			'today_masters' => $today_masters,
+			'today_money' => $today_money,
+			'today_reports' => $today_reports,
+			'result' => $result,
+			'date' => $new_filter_date,
+			'new_filter_date' => $new_filter_date,
+			'admin' => $auth_user['admin']
 		]);
 	}
 
@@ -6053,4 +6126,7 @@ class TokioController extends Controller {
 		]);
 	}
 
+	public function test(){
+		return view ('add_shift1');
+	}
 }
