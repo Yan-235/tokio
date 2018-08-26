@@ -1,226 +1,229 @@
 <!doctype html>
 <html lang="ru">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Список клиентов</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Список клиентов</title>
 
-	<link rel="stylesheet" href="/css/materialize.min.css">
-	<link rel="stylesheet" href="/css/style.css">
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/materialize.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-	<script type="text/javascript" src="/js/materialize.min.js"></script>
-	<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
-	<meta name="csrf-token" content="{{ csrf_token() }}" />
+    <script type="text/javascript" src="/js/materialize.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}"/>
 </head>
 <body>
 {% if salon == 1 %}
-	<div align="center">
-		<img src="img/logo.png" alt="logo">
-	</div>
+    <div align="center">
+        <img src="img/logo.png" alt="logo">
+    </div>
 {% endif %}
 {% if salon == 2 %}
-	<div align="center">
-		<img src="img/city-logo.jpg" alt="logo-city-1">
-	</div>
+    <div align="center">
+        <img src="img/city-logo.jpg" alt="logo-city-1">
+    </div>
 {% endif %}
 {% if salon == 3 %}
-	<div align="center">
-		<img src="img/city-logo.jpg" alt="logo-city-2">
-	</div>
+    <div align="center">
+        <img src="img/city-logo.jpg" alt="logo-city-2">
+    </div>
 {% endif %}
 {% if salon == 4 %}
-	<div align="center">
-		<img src="" alt="city-logo-3">
-	</div>
+    <div align="center">
+        <img src="" alt="city-logo-3">
+    </div>
 {% endif %}
 <div class="container-fluid is-margin-top-50">
-	<div class="row">
-		<div class="col s1 left-align">
-			<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
-						class="material-icons">arrow_back</i></a>
-		</div>
-		{% if admin == 1 %}
-			<div class="col s6 left-align">
-				<form action="{{ route('change-salon') }}" method="get">
-					<div class="col s4 ">
-						<select name="new_salon" required>
-							<option value="" disabled selected>Салон</option>
-							<option value="1">Токио</option>
-							<option value="2">Сити 1</option>
-							<option value="3">Сити 2</option>
-							<option value="4">Бьюти зона</option>
-						</select>
-					</div>
-					<button type="submit" class="btn waves-effect waves-light green"><i
-								class="material-icons">swap_horiz</i></button>
-				</form>
-			</div>
-			<div class="col s2 right-align">
-				<form action="{{ route('show-client-list') }}" method="get">
-					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
-				</form>
-			</div>
-			<div class="col s2 left-align">
-				<form action="{{ route('info-tables') }}" method="get">
-					<button type="submit" class="btn waves-effect waves-light blue">Информация</button>
-				</form>
-			</div>
-			<div class="col s1 right-align">
-				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
-							class="material-icons">exit_to_app</i></a>
-			</div>
-		{% else %}
-			<div class="col offset-col s10 col s1 right-align">
-				<form action="{{ route('show-client-list') }}" method="get">
-					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
-				</form>
-			</div>
-			<div class="col 1 right-align">
-				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
-							class="material-icons">exit_to_app</i></a>
-			</div>
-		{% endif %}
-	</div>
+    <div class="row">
+        <div class="col s1 left-align">
+            <a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
+                        class="material-icons">arrow_back</i></a>
+        </div>
+        {% if admin == 1 %}
+            <div class="col s6 left-align">
+                <form action="{{ route('change-salon') }}" method="get">
+                    <div class="col s4 ">
+                        <select name="new_salon" required>
+                            <option value="" disabled selected>Салон</option>
+                            <option value="1">Токио</option>
+                            <option value="2">Сити 1</option>
+                            <option value="3">Сити 2</option>
+                            <option value="4">Бьюти зона</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn waves-effect waves-light green"><i
+                                class="material-icons">swap_horiz</i></button>
+                </form>
+            </div>
+            <div class="col s2 right-align">
+                <form action="{{ route('show-client-list') }}" method="get">
+                    <button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+                </form>
+            </div>
+            <div class="col s2 left-align">
+                <form action="{{ route('info-tables') }}" method="get">
+                    <button type="submit" class="btn waves-effect waves-light blue">Информация</button>
+                </form>
+            </div>
+            <div class="col s1 right-align">
+                <a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+                            class="material-icons">exit_to_app</i></a>
+            </div>
+        {% else %}
+            <div class="col offset-col s10 col s1 right-align">
+                <form action="{{ route('show-client-list') }}" method="get">
+                    <button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+                </form>
+            </div>
+            <div class="col 1 right-align">
+                <a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+                            class="material-icons">exit_to_app</i></a>
+            </div>
+        {% endif %}
+    </div>
 </div>
 <div class="container is-margin-top-50">
-	<ul class="collapsible">
-		<li>
-			<div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить клиента</div>
-			<div class="collapsible-body">
-				<div class="container-fluid">
-					<div class="row">
-						<div class="col s12">
-							<form action="{{ route('add-client') }}" method="get">
+    <ul class="collapsible">
+        <li>
+            <div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить клиента</div>
+            <div class="collapsible-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col s12">
+                            <form action="{{ route('add-client') }}" method="get">
 
-								<div class="input-field">
-									<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-								</div>
-								<div class="col s4">
-									<label for="plan">ФИО</label>
-								</div>
-								<div class="col s3">
-									<label for="plan">Телефон</label>
-								</div>
-								<div class="col s5">
-									<label for="range">Адрес</label>
-								</div>
-								<div class="input-field col s4">
-									<input placeholder="Введите имя и фамилию клиента" id="name" name="name" type="text" maxlength="255" class="validate" required>
-								</div>
-								<div class="input-field col s3">
-									<input placeholder="Введите телефон клиента" id="tel" name="tel" type="text" maxlength="14"
-									       class="validate">
-								</div>
-								<div class="input-field col s5">
-									<input placeholder="Введите адрес клиента" id="address" name="address" type="text" maxlength="255" class="validate">
-								</div>
-								<div class="input-field col s12 text-center">
-									<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</li>
-	</ul>
+                                <div class="input-field">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                </div>
+                                <div class="col s4">
+                                    <label for="plan">ФИО</label>
+                                </div>
+                                <div class="col s3">
+                                    <label for="plan">Телефон</label>
+                                </div>
+                                <div class="col s5">
+                                    <label for="range">Адрес</label>
+                                </div>
+                                <div class="input-field col s4">
+                                    <input placeholder="Введите имя и фамилию клиента" id="name" name="name" type="text" maxlength="255"
+                                           class="validate" required>
+                                </div>
+                                <div class="input-field col s3">
+                                    <input placeholder="Введите телефон клиента" id="tel" name="tel" type="text" maxlength="14"
+                                           class="validate">
+                                </div>
+                                <div class="input-field col s5">
+                                    <input placeholder="Введите адрес клиента" id="address" name="address" type="text" maxlength="255"
+                                           class="validate">
+                                </div>
+                                <div class="input-field col s12 text-center">
+                                    <button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
 </div>
 
 <div class="container-fluid is-margin-top-50">
-	<div class="row">
-		<div class="col s12">
-			<form action="{{ route('search-client') }}" method="GET" class="search-simple">
-				<div class="row">
-					<div class="col offset-s2 col s7">
-						<div class="form-group">
-							<input type="text" class="form-control" name="q" value="{{ old('q') }}" required>
-						</div>
-					</div>
-					<div class="col s1 text-center">
-						<div class="form-group">
-							{#
-								<input class="btn waves-effect waves-light" type="submit" value="Искать">
-							#}
-							<button class="btn waves-effect waves-light" type="submit"><i class="material-icons">search</i></button>
-						</div>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col s12">
+            <form action="{{ route('search-client') }}" method="GET" class="search-simple">
+                <div class="row">
+                    <div class="col offset-s2 col s7">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="q" value="{{ old('q') }}" required>
+                        </div>
+                    </div>
+                    <div class="col s1 text-center">
+                        <div class="form-group">
+                            {#
+                                <input class="btn waves-effect waves-light" type="submit" value="Искать">
+                            #}
+                            <button class="btn waves-effect waves-light" type="submit"><i class="material-icons">search</i></button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 <div class="container-fluid is-margin-top-50">
-	<div class="row">
-		<div class="col s12">
-			{% if searched_clients %}
-				<table class="highlight centered">
-					<thead>
-					<tr>
-						<th>ФИО</th>
-						<th>Телефон</th>
-						<th>Адрес</th>
-						<th>Потраченные деньги</th>
-						<th></th>
-					</tr>
-					</thead>
+    <div class="row">
+        <div class="col s12">
+            {% if searched_clients %}
+                <table class="highlight centered">
+                    <thead>
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Телефон</th>
+                        <th>Адрес</th>
+                        <th>Потраченные деньги</th>
+                        <th></th>
+                    </tr>
+                    </thead>
 
-					<tbody>
-					{% for client in searched_clients %}
-						<tr class="border-0">
-							<td class="border-0"><a href="{{ route('show-client',[client.id]) }}" class="waves-effect waves-teal btn-flat
+                    <tbody>
+                    {% for client in searched_clients %}
+                        <tr class="border-0" {% if client.afk %} style="background-color: rgba(255,3,13,0.36);" {% endif %}>
+                            <td class="border-0"><a href="{{ route('show-client',[client.id]) }}" class="waves-effect waves-teal btn-flat
 						full-width text-center is-capitalize">{{ client.name }}</a></td>
-							<td class="border-0">{{ client.tel }}</td>
-							<td class="border-0">{{ client.address }}</td>
-							{% if client.spent_money == null %}
-								<td class="border-0">0</td>
-							{% else %}
-								<td class="border-0">{{ client.spent_money }}</td>
-							{% endif %}
-							<td class="border-0"><a href="{{ route('delete-client',[client.id]) }}" class="btn waves-effect waves-light red"><i class="material-icons"></i>Удалить</a></td>
-						</tr>
-					{% endfor %}
-					</tbody>
-				</table>
-			{% endif %}
-		</div>
-	</div>
+                            <td class="border-0">{{ client.tel }}</td>
+                            <td class="border-0">{{ client.address }}</td>
+                            {% if client.spent_money == null %}
+                                <td class="border-0">0</td>
+                            {% else %}
+                                <td class="border-0">{{ client.spent_money }}</td>
+                            {% endif %}
+                            {#<td class="border-0"><a href="{{ route('delete-client',[client.id]) }}"#}
+                                                    {#class="btn waves-effect waves-light red"><i class="material-icons"></i>Удалить</a></td>#}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
 <div class="container-fluid is-margin-top-50">
-	<div class="row">
-		<div class="col s12">
-			<table class="highlight centered">
-				<thead>
-				<tr>
-					<th>ФИО</th>
-					<th>Телефон</th>
-					<th>Адрес</th>
-					<th>Потраченные деньги</th>
-					<th></th>
-				</tr>
-				</thead>
+    <div class="row">
+        <div class="col s12">
+            <table class="highlight centered">
+                <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Телефон</th>
+                    <th>Адрес</th>
+                    <th>Потраченные деньги</th>
+                    <th></th>
+                </tr>
+                </thead>
 
-				<tbody>
-				{% for client in clients %}
-					<tr class="border-0">
-						<td class="border-0"><a href="{{ route('show-client',[client.id]) }}" class="waves-effect waves-teal btn-flat
+                <tbody>
+                {% for client in clients %}
+                    <tr class="border-0" {% if client.afk %} style="background-color: rgba(255,3,13,0.36);" {% endif %}>
+                        <td class="border-0"><a href="{{ route('show-client',[client.id]) }}" class="waves-effect waves-teal btn-flat
 						full-width text-center is-capitalize">{{ client.name }}</a></td>
-						<td class="border-0">{{ client.tel }}</td>
-						<td class="border-0">{{ client.address }}</td>
-						{% if client.spent_money == null %}
-							<td class="border-0">0</td>
-						{% else %}
-							<td class="border-0">{{ client.spent_money }}</td>
-						{% endif %}
-						{#<td class="border-0"><a href="{{ route('delete-client',[client.id]) }}" class="btn waves-effect waves-light red"><i class="material-icons"></i>Удалить</a></td>#}
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
+                        <td class="border-0">{{ client.tel }}</td>
+                        <td class="border-0">{{ client.address }}</td>
+                        {% if client.spent_money == null %}
+                            <td class="border-0">0</td>
+                        {% else %}
+                            <td class="border-0">{{ client.spent_money }}</td>
+                        {% endif %}
+                        {#<td class="border-0"><a href="{{ route('delete-client',[client.id]) }}" class="btn waves-effect waves-light red"><i class="material-icons"></i>Удалить</a></td>#}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <input id="exception1" value="{{ exception1 }}" hidden>
 
@@ -228,19 +231,19 @@
 <script type="text/javascript" src="/js/materialize.min.js"></script>
 
 <script>
-	if(document.getElementById("exception1").value != '') {
-		alert(document.getElementById("exception1").value);
-	}
+    if (document.getElementById('exception1').value != '') {
+        alert(document.getElementById('exception1').value);
+    }
 
-	$(document).ready(function() {
-		$('select').formSelect();
-	});
-	$(document).ready(function() {
-		$('.datepicker').datepicker();
-	});
-	$(document).ready(function() {
-		$('.collapsible').collapsible();
-	});
+    $(document).ready(function () {
+        $('select').formSelect();
+    });
+    $(document).ready(function () {
+        $('.datepicker').datepicker();
+    });
+    $(document).ready(function () {
+        $('.collapsible').collapsible();
+    });
 
 </script>
 
