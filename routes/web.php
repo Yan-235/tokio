@@ -66,6 +66,8 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/update-feedbacks', 'TokioController@updateFeedbacks')->name('update-feedbacks');
 	Route::get('/products-gods-list', 'TokioController@productsGoodsList')->name('products-gods-list');
 
+	Route::get('/add-administrator', 'AdministratorController@addAdministrator')->name('add-administrator');
+
 	Route::get('/search-client', 'SearchController@searchClient')->name('search-client');
 
 	Route::post('/live-search','TokioController@liveSearch')->name('live-search');

@@ -107,6 +107,35 @@
 <div class="container is-margin-top-50">
     <ul class="collapsible">
         <li>
+            <div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить администратора</div>
+            <div class="collapsible-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col s12">
+                            <form action="{{ route('add-administrator') }}" method="get">
+                                <div class="input-field">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                </div>
+                                <div class="input-field col s8">
+                                    <input placeholder="Введите имя и фамилию администратора" id="last_name" name="name" type="text"
+                                           class="validate"
+                                           required>
+                                </div>
+                                <div class="input-field col s4">
+                                    <input placeholder="Ставка в день" id="day_payment" name="day_payment" type="number" min="1"
+                                           class="validate"
+                                           required>
+                                </div>
+                                <div class="input-field col s12 text-center">
+                                    <button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li>
             <div class="collapsible-header"><i class="material-icons">add_circle</i>Добавить мастера</div>
             <div class="collapsible-body">
                 <div class="container-fluid">
