@@ -6126,7 +6126,4 @@ class TokioController extends Controller {
 		]);
 	}
 
-	public function test(){
-		return view ('add_shift1');
-	}
 }

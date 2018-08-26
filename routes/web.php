@@ -71,7 +71,6 @@ Route::group(['middleware' => ['auth']], function () {
 
 	Route::post('/live-search','TokioController@liveSearch')->name('live-search');
 
-	Route::get('/test', 'TokioController@test')->name('test');
 });
 
 Auth::routes();
