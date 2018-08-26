@@ -162,7 +162,7 @@
 						<th>Телефон</th>
 						<th>Адрес</th>
 						<th>Потраченные деньги</th>
-						<th></th>
+						{#<th></th>#}
 					</tr>
 					</thead>
 
@@ -173,12 +173,16 @@
 						full-width text-center is-capitalize">{{ client.name }}</a></td>
 							<td class="border-0">{{ client.tel }}</td>
 							<td class="border-0">{{ client.address }}</td>
-							{% if client.spent_money == null %}
-								<td class="border-0">0</td>
-							{% else %}
-								<td class="border-0">{{ client.spent_money }}</td>
-							{% endif %}
-							<td class="border-0"><a href="{{ route('delete-client',[client.id]) }}" class="btn waves-effect waves-light red"><i class="material-icons"></i>Удалить</a></td>
+							{% for cl in clients %}
+								{% if cl.id == client.id %}
+									{% if cl.spent_money == null %}
+										<td class="border-0">0</td>
+									{% else %}
+										<td class="border-0">{{ cl.spent_money }}</td>
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+							{#<td class="border-0"><a href="{{ route('delete-client',[client.id]) }}" class="btn waves-effect waves-light red"><i class="material-icons"></i>Удалить</a></td>#}
 						</tr>
 					{% endfor %}
 					</tbody>
@@ -198,7 +202,7 @@
 					<th>Телефон</th>
 					<th>Адрес</th>
 					<th>Потраченные деньги</th>
-					<th></th>
+					{#<th></th>#}
 				</tr>
 				</thead>
 
@@ -214,7 +218,7 @@
 						{% else %}
 							<td class="border-0">{{ client.spent_money }}</td>
 						{% endif %}
-						<td class="border-0"><a href="{{ route('delete-client',[client.id]) }}" class="btn waves-effect waves-light red"><i class="material-icons"></i>Удалить</a></td>
+						{#<td class="border-0"><a href="{{ route('delete-client',[client.id]) }}" class="btn waves-effect waves-light red"><i class="material-icons"></i>Удалить</a></td>#}
 					</tr>
 				{% endfor %}
 				</tbody>
