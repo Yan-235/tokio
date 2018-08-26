@@ -5767,7 +5767,7 @@ class TokioController extends Controller {
 	public
 	function showClientList() {
 		$auth_user = Auth::user();
-		$clients = Client::get();
+		$clients = Client::orderBy('id', 'desc')->get();
 		foreach($clients as $client) {
 			$client->spent_money = Services::where('client_id', '=', $client->id)->sum('cost') + Sales::where('client_id', '=', $client->id)->sum('cost');
 
