@@ -95,3 +95,14 @@
 	z-index: 9999;
 	width: 120px;
 }
+
+.limitedNumbChosen, .limitedNumbSelect2{
+  width: 400px;
+}
+
+.first_plan{
+	/*position: absolute!important;*/
+	position: relative!important;
+	z-index: 999!important;
+
+}

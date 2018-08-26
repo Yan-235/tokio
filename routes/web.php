@@ -30,6 +30,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/change-salon', 'TokioController@changeSalon')->name('change-salon');
 	Route::get('/date-filter', 'TokioController@dateFilter')->name('date-filter');
 	Route::get('/shift-date-filter', 'TokioController@shiftDateFilter')->name('shift-date-filter');
+	Route::get('/report-date-filter', 'TokioController@reportDateFilter')->name('report-date-filter');
 	Route::get('/shifts', 'TokioController@showAddShift')->name('show-add-shift');
 	Route::get('/add-shift', 'TokioController@addShift')->name('add-shift');
 	Route::get('/add-cost', 'TokioController@addCost')->name('add-cost');
@@ -71,6 +72,8 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/search-client', 'SearchController@searchClient')->name('search-client');
 
 	Route::post('/live-search','TokioController@liveSearch')->name('live-search');
+
+	Route::get('/test', 'TokioController@test')->name('test');
 });
 
 Auth::routes();
