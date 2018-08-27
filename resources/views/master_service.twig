@@ -12,14 +12,9 @@
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-
-    {#<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />#}
-    {#<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>#}
-
     <link href="/css/select2.css" rel="stylesheet"/>
     <script src="/js/select2.js"></script>
 
-    {#<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>#}
     <script type="text/javascript" src="/js/materialize.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
@@ -44,26 +39,10 @@
         <img src="" alt="city-logo-3">
     </div>
 {% endif %}
-
-{#<div class="container-fluid">#}
-{#<div class="row">#}
-{#<select class="limitedNumbSelect2">#}
-{#<option value="" selected disabled>Услуги</option>#}
-{#<option value="1">Monday</option>#}
-{#<option value="2">Tuesday</option>#}
-{#<option value="3">Wednesday</option>#}
-{#<option value="4">Thursday</option>#}
-{#<option value="5">Friday</option>#}
-{#<option value="6">Saturday</option>#}
-{#<option value="6">Sunday</option>#}
-{#</select>#}
-{#</div>#}
-{#</div>#}
 <script>
 
 
     $(document).ready(function () {
-        //Select2
         $(document).ready(function () {
             $('.service-select').select2();
         });
@@ -71,27 +50,9 @@
             $('.product-select').select2();
         });
 
-        $('.select2 .select2-container .select2-container--default').removeAttribute('style')
     });
 </script>
 <div class="container-fluid">
-    {#<div class="row">#}
-    {#<div class="search">#}
-    {#<div class="row">#}
-    {#<div class="col-lg-10 col-lg-offset-1">#}
-    {#<div class="input-group">#}
-    {#<span class="input-group-addon" style="color: white; background-color: rgb(124,77,255);">BLOG SEARCH</span>#}
-    {#<input type="text" autocomplete="off" id="search" class="form-control input-lg" placeholder="Enter Blog Title Here" oninput="smartSearch(event)">#}
-    {#</div>#}
-    {#</div>#}
-    {#</div>#}
-    {#</div>#}
-    {#<!-- search box container ends  -->#}
-    {#<div id="txtHint" class="title-color" style="padding-top:50px; text-align:center;"><b>Blogs information will be listed here...</b></div>#}
-
-
-    {#</div>#}
-
 
     <div class="row">
         <div class="col s1 left-align">
@@ -461,13 +422,8 @@
                             {% endfor %}
                             <input id="refresher" type="button" value="{{ i }}" hidden>
                         </select>
-                        {#	<input placeholder="Дата" id="id" name="date" type="date" required>
-                        #}
                     </div>
                     {% set j=1000 %}
-                    {#
-                        {% set k=10000 %}
-                    #}
                     <section id="dt">
                         <div class="input-field col s2 first_plan">
                             <select class="niceSelect" name="time">
@@ -478,9 +434,6 @@
                     {% for time in times %}
                         <section id="{{ j }}" hidden>
                             <div class="input-field col s2  first_plan">
-                                {#
-                                <select id="{{ k }}" name="time">
-                                #}
                                 <select class="niceSelect" name="time">
                                     <option value="" disabled selected>Время</option>
                                     {% set sr = p.value %}
@@ -494,15 +447,15 @@
                         {% set j = j + 1 %}
 
                     {% endfor %}
-                    <div class="input-field col s5">
-                        <select class="service-select" name="product">
+                    <div class="input-field col s4">
+                        <select class="service-select" name="product" style="width: 100%;">
                             <option disabled selected>Услуга</option>
                             {% for product in products %}
                                 <option value="{{ product.id }}">{{ product.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="input-field col s2">
+                    <div class="input-field col s3">
                         <select class="niceSelect" name="duration" required>
                             <option value="" disabled selected>Длительность</option>
                             {% for dur in durs %}
@@ -518,83 +471,6 @@
             </div>
         </div>
     </div>
-
-    {#<script>#}
-    {#function smartSearch() {#}
-    {#var str = $("#search").val();#}
-    {#if(str.trim().length == 0) {#}
-    {#// $("#txtHint").html('<b>Blogs information will be listed here...</b>');#}
-    {#document.getElementById("defaultSelect").style.display = 'block';#}
-    {#document.getElementById("searchSelect").style.display = 'none';#}
-    {#document.getElementById('checkSelect').setAttribute('value', '0');#}
-    {#var searchSelect = document.getElementById("mySelect");#}
-    {#for(i = searchSelect.options.length; i > 0; i--) {#}
-    {#searchSelect.remove(i);#}
-    {#}#}
-    {#}#}
-    {#else {#}
-
-    {#$.ajaxSetup({#}
-    {#headers: {'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr('content')}#}
-    {#});#}
-    {#$.ajax({#}
-    {#type: 'POST',#}
-    {#url: '{{ route("live-search") }}',#}
-    {#data: {#}
-    {#'str': str#}
-    {#},#}
-    {#success: function(data) {#}
-
-    {#document.getElementById('checkSelect').setAttribute('value', '1');#}
-    {#document.getElementById("defaultSelect").style.display = 'none';#}
-    {#document.getElementById("searchSelect").style.display = 'block';#}
-    {#var ps = data.posts;#}
-    {#//	var searchSelect = document.addService.product1;#}
-    {#var searchSelect = document.getElementById("mySelect");#}
-    {#// не добавляло в селект ещё до добавления этой очистки от старых оптионов#}
-    {#for(i = searchSelect.options.length; i > 0; i--) {#}
-    {#searchSelect.remove(i);#}
-    {#}#}
-    {#for(i = 0; i < ps.length; i++) {#}
-    {#var oOption = document.createElement("option");#}
-    {#oOption.appendChild(document.createTextNode(ps[i].name + ''));#}
-    {#oOption.setAttribute("value", ps[i].id + '');#}
-    {#searchSelect.appendChild(oOption);#}
-
-    {#/*							var text = ps[i].name + '';#}
-    {#var value = ps[i].id + '';#}
-    {#//	searchSelect.options[searchSelect.options.length] = new Option(text, value);#}
-    {#searchSelect.options[i+1] = new Option(text, value);#}
-    {#alert(searchSelect.options[i+1].text);*/#}
-    {#}#}
-
-    {#/*											var optionsStr = '';#}
-    {#var startStr = '<select name="product" required>' +#}
-    {#'<option value="" disabled selected>' + 'Услуга' + '</option>';#}
-    {#var endStr = '</select>' + '<div>' + 'aaaa mne 4t0-t0 ne xopolllo' + '</div>';#}
-    {#for(i = 0; i < ps.length; i++) {#}
-
-    {#optionsStr = optionsStr + '<option value="' + ps[i].id + '">' + ps[i].name + '</option>';#}
-    {#}#}
-    {#optionsStr = startStr + optionsStr + endStr;#}
-    {#$("#txtHint").html(optionsStr);*/#}
-
-    {#}, error: function(data) {#}
-    {#document.getElementById("defaultSelect").style.display = 'block';#}
-    {#document.getElementById("searchSelect").style.display = 'none';#}
-    {#document.getElementById('checkSelect').setAttribute('value', '0');#}
-    {#document.getElementById('search').setAttribute('value', ' ');#}
-    {#var searchSelect = document.getElementById("mySelect");#}
-    {#for(i = searchSelect.options.length; i > 0; i--) {#}
-    {#searchSelect.remove(i);#}
-    {#}#}
-    {#}#}
-    {#});#}
-    {#}#}
-    {#}#}
-    {#</script>#}
-
-
     <div class="container-fluid">
         <div class="row">
             <div class="col s3 center-align">
@@ -727,15 +603,6 @@
         alert(document.getElementById('exception1').value);
     }
 
-    // $(document).ready(function() {
-    // 	//Select2
-    // 	$(".niceSelect").select.formSelect({
-    // 		// $('select').formSelect();
-    // 		// maximumSelectionLength: 2,
-    // 		// visibility: hidden,
-    // 		// placeholder: "Which are two of most productive days of your week"
-    // 	})
-    // });
 
     $(document).ready(function () {
         $('.niceSelect').formSelect();
