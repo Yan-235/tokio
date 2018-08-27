@@ -17,7 +17,7 @@ class CreateFeedbacksTable extends Migration
             $table->increments('id');
             $table->integer('master_id');
             $table->integer('product_id');
-	        $table->float('feedback');
+	   //     $table->float('feedback');
         });
     }
 

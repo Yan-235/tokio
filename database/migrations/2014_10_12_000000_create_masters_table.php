@@ -19,7 +19,7 @@ class CreateMastersTable extends Migration
             $table->string('salon');
             $table->integer('range');
             $table->integer('plan');
-            $table->float('zp');
+           // $table->float('zp');
         });
     }
 

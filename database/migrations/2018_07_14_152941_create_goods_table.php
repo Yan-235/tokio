@@ -17,7 +17,7 @@ class CreateGoodsTable extends Migration
             $table->increments('id');
             $table->string('good_name');
             $table->string('salon');
-            $table->integer('good_cost');
+           // $table->integer('good_cost');
         });
     }
 
