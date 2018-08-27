@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Добавление смены</title>
+
+	<link rel="stylesheet" href="/css/materialize.min.css">
+	<link rel="stylesheet" href="/css/style.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<script type="text/javascript" src="/js/materialize.min.js"></script>
+	<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+	<meta name="csrf-token" content="{{ csrf_token() }}" />
+</head>
+<body>
+{% if salon == 1 %}
+	<div align="center">
+		<img src="img/logo.png" alt="logo">
+	</div>
+{% endif %}
+{% if salon == 2 %}
+	<div align="center">
+		<img src="img/city-logo-1.jpg" alt="city-logo-1">
+	</div>
+{% endif %}
+{% if salon == 3 %}
+	<div align="center">
+		<img src="img/city-logo-2.jpg" alt="city-logo-2">
+	</div>
+{% endif %}
+{% if salon == 4 %}
+	<div align="center">
+		<img src="" alt="city-logo-3">
+	</div>
+{% endif %}
+<div class="container-fluid is-margin-top-50">
+	<div class="row">
+		<div class="col s1 left-align">
+			<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
+						class="material-icons">arrow_back</i></a>
+		</div>
+		{% if admin == 1 %}
+			<div class="col s6 left-align">
+				<form action="{{ route('change-salon') }}" method="get">
+					<div class="col s4 ">
+						<select name="new_salon" required>
+							<option value="" disabled selected>Салон</option>
+							<option value="1">Токио</option>
+							<option value="2">Сити 1</option>
+							<option value="3">Сити 2</option>
+							<option value="4">Бьюти зона</option>
+						</select>
+					</div>
+					<button type="submit" class="btn waves-effect waves-light green"><i
+								class="material-icons">swap_horiz</i></button>
+				</form>
+			</div>
+			<div class="col s2 right-align">
+				<form action="{{ route('show-client-list') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+				</form>
+			</div>
+			<div class="col s2 left-align">
+				<form action="{{ route('info-tables') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue">Информация</button>
+				</form>
+			</div>
+			<div class="col s1 right-align">
+				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+							class="material-icons">exit_to_app</i></a>
+			</div>
+		{% else %}
+			<div class="col offset-col s10 col s1 right-align">
+				<form action="{{ route('show-client-list') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+				</form>
+			</div>
+			<div class="col 1 right-align">
+				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+							class="material-icons">exit_to_app</i></a>
+			</div>
+		{% endif %}
+	</div>
+</div>
+
+<div class="container-fluid is-margin-top-50">
+	<div class="row">
+		<div class="col s12 text-center">
+			<form action="{{ route('admin-shift-date-filter') }}" method="get">
+				{% if new_filter_date == null %}
+					<div class="input-field col offset-s4 col s2">
+						<input value="{{ theme.getDateEnd|date("Y-m-d") }}" type="date" name="filter_date">
+					</div>
+				{% else %}
+					<div class="input-field col offset-s4 col s2">
+						<input value="{{ new_filter_date }}" type="date" name="filter_date">
+					</div>
+				{% endif %}
+
+				<div class="col s3">
+					<button type="submit" class="waves-effect waves-light btn" href="#">Перейти</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class=" col s12">
+			<table class="highlight centered">
+				<thead>
+				<tr>
+					<th class="padding_left_right_50px">Администратор</th>
+					<th class="padding_left_right_50px"> Смена</th>
+					<th> 1</th>
+					<th> 2</th>
+					<th> 3</th>
+					<th> 4</th>
+					<th> 5</th>
+					<th> 6</th>
+					<th> 7</th>
+					<th> 8</th>
+					<th> 9</th>
+					<th>10</th>
+					<th>11</th>
+					<th>12</th>
+					<th>13</th>
+					<th>14</th>
+					<th>15</th>
+					<th>16</th>
+					<th>17</th>
+					<th>18</th>
+					<th>19</th>
+					<th>20</th>
+					<th>21</th>
+					<th>22</th>
+					<th>23</th>
+					<th>24</th>
+					<th>25</th>
+					<th>26</th>
+					<th>27</th>
+					<th>28</th>
+					{% if  days_in_month > 28 %}
+						<th>29</th>
+						{% if days_in_month > 29 %}
+							<th>30</th>
+							{% if days_in_month > 30 %}
+								<th>31</th>
+							{% endif %}
+						{% endif %}
+					{% endif %}
+				</tr>
+				</thead>
+
+				<tbody>
+				{% for admin in admins %}
+					<tr class="border-0">
+						<td class="border-0">{{ admin.name }}</td>
+						<td class="border-0">
+							<form method="get" action="{{ route('admin-add-shift') }}">
+								{{ csrf_field() }}
+								<input name="admin_id" value="{{ admin.id }}" hidden>
+								<input name="new_filter_date" value="{{ new_filter_date }}" hidden>
+								{% if new_filter_date == null %}
+									<select name="shift_type" disabled>
+										<option value="" disabled selected>{{ admin.shifts_today }}</option>
+										<option value=0>нету смен</option>
+										<option value=1>1 смена</option>
+										<option value=2>2 смена</option>
+										<option value=3>целый день</option>
+									</select>
+								{% else %}
+									<select name="shift_type">
+										<option value="" disabled selected>{{ admin.shifts_today }}</option>
+										<option value=0>нету смен</option>
+										<option value=1>1 смена</option>
+										<option value=2>2 смена</option>
+										<option value=3>целый день</option>
+									</select>
+									{#<select name="start_shift">#}
+										{#<option value="" disabled selected>Начало смены</option>#}
+										{#{% for start_time in start_times %}#}
+											{#<option value="{{ start_time }}">{{ start_time }}</option>#}
+										{#{% endfor %}#}
+									{#</select>#}
+									{#<select name="end_shift">#}
+										{#<option value="" disabled selected>Конец смены</option>#}
+										{#{% for end_time in end_times %}#}
+											{#<option value="{{ end_time }}">{{ end_time }}</option>#}
+										{#{% endfor %}#}
+									{#</select>#}
+								{% endif %}
+								<button type="submit" class="waves-effect waves-light btn" href="#">Сохранить</button>
+							</form>
+						</td>
+						{% set count = 0 %}
+						{% for type in admin.array %}
+							{% if  type == 1 %}
+								{#
+												<td class="black_border"><i
+															class="material-icons green_">looks_one</i></td>
+											#}
+								<td class="black_border font_size_10px"><span>09:00<br>16:00</span></td>
+
+							{% elseif type ==2 %}
+												{#<td class="black_border"><i#}
+															{#class="material-icons green_">looks_two</i></td>#}
+								<td class="black_border font_size_10px"><span>16:00<br>20:00</span></td>
+
+
+							{% elseif type ==3 %}
+								<td class="black_border"><i
+											class="material-icons green_" style="font-size: 20px;">add_circle</i></td>
+							{% elseif type ==0 %}
+								<td class="black_border"><i
+											class="material-icons red_" style="font-size: 20px;">remove_circle_outline</i></td>
+							{% elseif  type == 11 %}
+								{#
+												<td class="black_border chosen"><i
+															class="material-icons green_">looks_one</i></td>
+											#}
+								<td class="black_border chosen font_size_10px"><span>09:00<br>16:00</span></td>
+
+							{% elseif type == 12 %}
+											{#<td class="black_border chosen"><i#}
+														{#class="material-icons green_">looks_two</i></td>#}
+								<td class="black_border chosen font_size_10px"><span>16:00<br>20:00</span></td>
+
+							{% elseif type == 13 %}
+								<td class="black_border chosen"><i
+											class="material-icons green_" style="font-size: 20px;">add_circle</i></td>
+							{% elseif type == 10 %}
+								<td class="black_border  chosen"><i
+											class="material-icons red_" style="font-size: 20px;">remove_circle_outline</i></td>
+							{% endif %}
+							{% set count = count + 1 %}
+						{% endfor %}
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<input id="exception1" value="{{ exception1 }}" hidden>
+<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/js/materialize.min.js"></script>
+
+<script>
+	if(document.getElementById("exception1").value != '') {
+		alert(document.getElementById("exception1").value);
+	}
+	$(document).ready(function() {
+		$('select').formSelect();
+	});
+	$(document).ready(function() {
+		$('.datepicker').datepicker();
+	});
+	$(document).ready(function() {
+		$('.collapsible').collapsible();
+	});
+
+</script>
+
+</body>
+</html>

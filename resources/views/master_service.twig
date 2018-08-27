@@ -1,809 +1,811 @@
 <!doctype html>
 <html lang="ru">
 <head>
-	<title>Заказы</title>
+    <title>Заказы</title>
 
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-	<link rel="stylesheet" href="/css/materialize.min.css">
-	<link rel="stylesheet" href="/css/style.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/materialize.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 
+    {#<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />#}
+    {#<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>#}
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <link href="/css/select2.css" rel="stylesheet"/>
+    <script src="/js/select2.js"></script>
 
-	{#<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>#}
-	<script type="text/javascript" src="/js/materialize.min.js"></script>
-	<meta name="csrf-token" content="{{ csrf_token() }}">
+    {#<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>#}
+    <script type="text/javascript" src="/js/materialize.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
 {% if salon == 1 %}
-	<div align="center">
-		<img src="/img/logo.png" alt="logo">
-	</div>
+    <div align="center">
+        <img src="/img/logo.png" alt="logo">
+    </div>
 {% endif %}
 {% if salon == 2 %}
-	<div align="center">
-		<img src="/img/city-logo-1.jpg" alt="logo-city-1">
-	</div>
+    <div align="center">
+        <img src="/img/city-logo-1.jpg" alt="logo-city-1">
+    </div>
 {% endif %}
 {% if salon == 3 %}
-	<div align="center">
-		<img src="/img/city-logo-2.jpg" alt="logo-city-2">
-	</div>
+    <div align="center">
+        <img src="/img/city-logo-2.jpg" alt="logo-city-2">
+    </div>
 {% endif %}
 {% if salon == 4 %}
-	<div align="center">
-		<img src="" alt="city-logo-3">
-	</div>
+    <div align="center">
+        <img src="" alt="city-logo-3">
+    </div>
 {% endif %}
 
 {#<div class="container-fluid">#}
-	{#<div class="row">#}
-		{#<select class="limitedNumbSelect2">#}
-			{#<option value="" selected disabled>Услуги</option>#}
-			{#<option value="1">Monday</option>#}
-			{#<option value="2">Tuesday</option>#}
-			{#<option value="3">Wednesday</option>#}
-			{#<option value="4">Thursday</option>#}
-			{#<option value="5">Friday</option>#}
-			{#<option value="6">Saturday</option>#}
-			{#<option value="6">Sunday</option>#}
-		{#</select>#}
-	{#</div>#}
+{#<div class="row">#}
+{#<select class="limitedNumbSelect2">#}
+{#<option value="" selected disabled>Услуги</option>#}
+{#<option value="1">Monday</option>#}
+{#<option value="2">Tuesday</option>#}
+{#<option value="3">Wednesday</option>#}
+{#<option value="4">Thursday</option>#}
+{#<option value="5">Friday</option>#}
+{#<option value="6">Saturday</option>#}
+{#<option value="6">Sunday</option>#}
+{#</select>#}
+{#</div>#}
 {#</div>#}
 <script>
 
 
-	$(document).ready(function() {
-		//Select2
-		$(".limitedNumbSelect2").select2({
-			// maximumSelectionLength: 2,
-			// visibility: hidden,
-			placeholder: "Поиск услуги",
-		})
-	});
+    $(document).ready(function () {
+        //Select2
+        $(document).ready(function () {
+            $('.service-select').select2();
+        });
+        $(document).ready(function () {
+            $('.product-select').select2();
+        });
+
+        $('.select2 .select2-container .select2-container--default').removeAttribute('style')
+    });
 </script>
 <div class="container-fluid">
-	{#<div class="row">#}
-	{#<div class="search">#}
-	{#<div class="row">#}
-	{#<div class="col-lg-10 col-lg-offset-1">#}
-	{#<div class="input-group">#}
-	{#<span class="input-group-addon" style="color: white; background-color: rgb(124,77,255);">BLOG SEARCH</span>#}
-	{#<input type="text" autocomplete="off" id="search" class="form-control input-lg" placeholder="Enter Blog Title Here" oninput="smartSearch(event)">#}
-	{#</div>#}
-	{#</div>#}
-	{#</div>#}
-	{#</div>#}
-	{#<!-- search box container ends  -->#}
-	{#<div id="txtHint" class="title-color" style="padding-top:50px; text-align:center;"><b>Blogs information will be listed here...</b></div>#}
+    {#<div class="row">#}
+    {#<div class="search">#}
+    {#<div class="row">#}
+    {#<div class="col-lg-10 col-lg-offset-1">#}
+    {#<div class="input-group">#}
+    {#<span class="input-group-addon" style="color: white; background-color: rgb(124,77,255);">BLOG SEARCH</span>#}
+    {#<input type="text" autocomplete="off" id="search" class="form-control input-lg" placeholder="Enter Blog Title Here" oninput="smartSearch(event)">#}
+    {#</div>#}
+    {#</div>#}
+    {#</div>#}
+    {#</div>#}
+    {#<!-- search box container ends  -->#}
+    {#<div id="txtHint" class="title-color" style="padding-top:50px; text-align:center;"><b>Blogs information will be listed here...</b></div>#}
 
 
-	{#</div>#}
+    {#</div>#}
 
 
-	<div class="row">
-		<div class="col s1 left-align">
-			<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
-						class="material-icons">arrow_back</i></a>
-		</div>
-		{% if admin == 1 %}
-			<div class="col s6 left-align">
-				<form action="{{ route('change-salon') }}" method="get">
-					<div class="col s4 ">
-						<select class="niceSelect" name="new_salon" required>
-							<option value="" disabled selected>Салон</option>
-							<option value="1">Токио</option>
-							<option value="2">Сити 1</option>
-							<option value="3">Сити 2</option>
-							<option value="4">Бьюти зона</option>
-						</select>
-					</div>
-					<button type="submit" class="btn waves-effect waves-light green"><i
-								class="material-icons">swap_horiz</i></button>
-				</form>
-			</div>
-			<div class="col s2 right-align">
-				<form action="{{ route('show-client-list') }}" method="get">
-					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
-				</form>
-			</div>
-			<div class="col s2 left-align">
-				<form action="{{ route('info-tables') }}" method="get">
-					<button type="submit" class="btn waves-effect waves-light blue">Информация</button>
-				</form>
-			</div>
-			<div class="col s1 right-align">
-				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
-							class="material-icons">exit_to_app</i></a>
-			</div>
-		{% else %}
-			<div class="col offset-col s9 col s2 right-align">
-				<form action="{{ route('show-client-list') }}" method="get">
-					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
-				</form>
-			</div>
-			<div class="col 1 right-align">
-				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
-							class="material-icons">exit_to_app</i></a>
-			</div>
-		{% endif %}
-	</div>
+    <div class="row">
+        <div class="col s1 left-align">
+            <a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
+                        class="material-icons">arrow_back</i></a>
+        </div>
+        {% if admin == 1 %}
+            <div class="col s6 left-align">
+                <form action="{{ route('change-salon') }}" method="get">
+                    <div class="col s4 ">
+                        <select class="niceSelect" name="new_salon" required>
+                            <option value="" disabled selected>Салон</option>
+                            <option value="1">Токио</option>
+                            <option value="2">Сити 1</option>
+                            <option value="3">Сити 2</option>
+                            <option value="4">Бьюти зона</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn waves-effect waves-light green"><i
+                                class="material-icons">swap_horiz</i></button>
+                </form>
+            </div>
+            <div class="col s2 right-align">
+                <form action="{{ route('show-client-list') }}" method="get">
+                    <button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+                </form>
+            </div>
+            <div class="col s2 left-align">
+                <form action="{{ route('info-tables') }}" method="get">
+                    <button type="submit" class="btn waves-effect waves-light blue">Информация</button>
+                </form>
+            </div>
+            <div class="col s1 right-align">
+                <a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+                            class="material-icons">exit_to_app</i></a>
+            </div>
+        {% else %}
+            <div class="col offset-col s9 col s2 right-align">
+                <form action="{{ route('show-client-list') }}" method="get">
+                    <button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+                </form>
+            </div>
+            <div class="col 1 right-align">
+                <a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+                            class="material-icons">exit_to_app</i></a>
+            </div>
+        {% endif %}
+    </div>
 </div>
 
 <div class="container is-margin-top-50">
-	<ul class="collapsible">
-		<li>
-			<div class="collapsible-header"><i class="material-icons">add_circle</i>Данные мастера</div>
-			<div class="collapsible-body">
-				<div class="container-fluid">
-					<div class="row">
-						<div class="col s12">
-							<form action="{{ route('update-master') }}" method="get">
-								<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
-								<div class="input-field">
-									<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-								</div>
-								<div class="col s5">
-									<label for="plan">Мастер</label>
-								</div>
-								<div class="col s2">
-									<label for="plan">План</label>
-								</div>
-								<div class="col s3">
-									<label for="plan">Процент с услуг</label>
-								</div>
-								<div class="col s2">
-									<label for="range">Разряд</label>
-								</div>
-								<div class="input-field col s5">
-									<input placeholder="Введите имя и фамилию мастера" id="last_name" name="name" type="text"
-									       class="validate" value="{{ name }}"
-									       required>
-								</div>
-								<div class="input-field col s2">
-									<input placeholder="План" id="plan" name="plan" type="number" min="1"
-									       class="validate" value="{{ plan }}"
-									       required>
-								</div>
-								<div class="input-field col s3">
-									<input placeholder="Процент с услуг" id="zp" name="zp" type="number" min="0.01" max="100"
-									       step='0.01'
-									       class="validate" value="{{ zp }}"
-									       required>
-								</div>
-								<div class="input-field col s2">
-									<select class="niceSelect" name="range" required>
-										<option value="{{ range }}">Разряд {{ range }}</option>
-										<option value="1">1</option>
-										<option value="2">2</option>
-										<option value="3">3</option>
-									</select>
-								</div>
-								<div class="input-field col s12 text-center">
-									<button type="submit" class="waves-effect waves-light btn" href="#">Изменить</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</li>
-		<li>
-			<div class="collapsible-header"><i class="material-icons">add_circle</i>Feedback за услуги</div>
-			<div class="collapsible-body">
-				<div class="container-fluid">
-					<div class="row">
-						<div class="col offset-s2 col s8">
+    <ul class="collapsible">
+        <li>
+            <div class="collapsible-header"><i class="material-icons">add_circle</i>Данные мастера</div>
+            <div class="collapsible-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col s12">
+                            <form action="{{ route('update-master') }}" method="get">
+                                <input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+                                <div class="input-field">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                </div>
+                                <div class="col s5">
+                                    <label for="plan">Мастер</label>
+                                </div>
+                                <div class="col s2">
+                                    <label for="plan">План</label>
+                                </div>
+                                <div class="col s3">
+                                    <label for="plan">Процент с услуг</label>
+                                </div>
+                                <div class="col s2">
+                                    <label for="range">Разряд</label>
+                                </div>
+                                <div class="input-field col s5">
+                                    <input placeholder="Введите имя и фамилию мастера" id="last_name" name="name" type="text"
+                                           class="validate" value="{{ name }}"
+                                           required>
+                                </div>
+                                <div class="input-field col s2">
+                                    <input placeholder="План" id="plan" name="plan" type="number" min="1"
+                                           class="validate" value="{{ plan }}"
+                                           required>
+                                </div>
+                                <div class="input-field col s3">
+                                    <input placeholder="Процент с услуг" id="zp" name="zp" type="number" min="0.01" max="100"
+                                           step='0.01'
+                                           class="validate" value="{{ zp }}"
+                                           required>
+                                </div>
+                                <div class="input-field col s2">
+                                    <select class="niceSelect" name="range" required>
+                                        <option value="{{ range }}">Разряд {{ range }}</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </select>
+                                </div>
+                                <div class="input-field col s12 text-center">
+                                    <button type="submit" class="waves-effect waves-light btn" href="#">Изменить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li>
+            <div class="collapsible-header"><i class="material-icons">add_circle</i>Feedback за услуги</div>
+            <div class="collapsible-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col offset-s2 col s8">
 
-							<table>
-								<thead>
-								<tr>
-									<th class="text-center">Услуга</th>
-									<th class="text-center">Feedback</th>
-								</tr>
-								</thead>
-								{% for product_feedback in product_feedbacks %}
-									<form action="{{ route('update-feedbacks') }}" method="get">
-										<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
-										<div class="input-field">
-											<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-										</div>
-										<tbody>
-										<tr>
-											<input type="number" name="product_id" value="{{ product_feedback.product_id }}" hidden>
-											<td class="text-center">{{ product_feedback.name }}</td>
-											<td>
-												<input type="number" max="100" min="0.01" step="0.01" value="{{ product_feedback.feedback }}" name="feedback">
-											</td>
-											<td>
-												<div class="input-field text-center">
-													<button type="submit" class="waves-effect waves-light btn" href="#">Изменить</button>
-												</div>
-											</td>
-										</tr>
-										</tbody>
-									</form>
-								{% endfor %}
-							</table>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th class="text-center">Услуга</th>
+                                    <th class="text-center">Feedback</th>
+                                </tr>
+                                </thead>
+                                {% for product_feedback in product_feedbacks %}
+                                    <form action="{{ route('update-feedbacks') }}" method="get">
+                                        <input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+                                        <div class="input-field">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                        </div>
+                                        <tbody>
+                                        <tr>
+                                            <input type="number" name="product_id" value="{{ product_feedback.product_id }}" hidden>
+                                            <td class="text-center">{{ product_feedback.name }}</td>
+                                            <td>
+                                                <input type="number" max="100" min="0.01" step="0.01"
+                                                       value="{{ product_feedback.feedback }}" name="feedback">
+                                            </td>
+                                            <td>
+                                                <div class="input-field text-center">
+                                                    <button type="submit" class="waves-effect waves-light btn" href="#">Изменить</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </form>
+                                {% endfor %}
+                            </table>
 
-						</div>
-					</div>
-				</div>
-			</div>
-		</li>
-	</ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
 </div>
 <div class="container is-margin-top-50">
-	<div class="row">
-		<div class="col s12 text-center">
+    <div class="row">
+        <div class="col s12 text-center">
 
 
-			{% if check_goods == '0' %}
-				<section id="show_services">
-					<div class="col s6">
-						<button class="waves-effect waves-light btn" onclick="show_services()">Услуги</button>
-					</div>
-					<div class="col s6">
-						<button class="waves-effect waves-light btn grey" onclick="show_goods()">Товары</button>
-					</div>
-				</section>
-				<section id="show_goods" hidden>
-					<div class="col s6">
-						<button class="waves-effect waves-light btn grey" onclick="show_services()">Услуги</button>
-					</div>
-					<div class="col s6">
-						<button class="waves-effect waves-light btn" onclick="show_goods()">Товары</button>
-					</div>
-				</section>
-			{% else %}
-				<section id="show_services" hidden>
-					<div class="col s6">
-						<button class="waves-effect waves-light btn" onclick="show_services()">Услуги</button>
-					</div>
-					<div class="col s6">
-						<button class="waves-effect waves-light btn grey" onclick="show_goods()">Товары</button>
-					</div>
-				</section>
-				<section id="show_goods">
-					<div class="col s6">
-						<button class="waves-effect waves-light btn grey" onclick="show_services()">Услуги</button>
-					</div>
-					<div class="col s6">
-						<button class="waves-effect waves-light btn" onclick="show_goods()">Товары</button>
-					</div>
-				</section>
-			{% endif %}
+            {% if check_goods == '0' %}
+                <section id="show_services">
+                    <div class="col s6">
+                        <button class="waves-effect waves-light btn" onclick="show_services()">Услуги</button>
+                    </div>
+                    <div class="col s6">
+                        <button class="waves-effect waves-light btn grey" onclick="show_goods()">Товары</button>
+                    </div>
+                </section>
+                <section id="show_goods" hidden>
+                    <div class="col s6">
+                        <button class="waves-effect waves-light btn grey" onclick="show_services()">Услуги</button>
+                    </div>
+                    <div class="col s6">
+                        <button class="waves-effect waves-light btn" onclick="show_goods()">Товары</button>
+                    </div>
+                </section>
+            {% else %}
+                <section id="show_services" hidden>
+                    <div class="col s6">
+                        <button class="waves-effect waves-light btn" onclick="show_services()">Услуги</button>
+                    </div>
+                    <div class="col s6">
+                        <button class="waves-effect waves-light btn grey" onclick="show_goods()">Товары</button>
+                    </div>
+                </section>
+                <section id="show_goods">
+                    <div class="col s6">
+                        <button class="waves-effect waves-light btn grey" onclick="show_services()">Услуги</button>
+                    </div>
+                    <div class="col s6">
+                        <button class="waves-effect waves-light btn" onclick="show_goods()">Товары</button>
+                    </div>
+                </section>
+            {% endif %}
 
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 <section id="goods" hidden>
-	<div class="container is-margin-top-50">
-		<div class="row">
-			<div class="col s12">
-				<form action="{{ route('add-sale') }}" method="get">
-					<div class="input-field">
-						<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-					</div>
-					<input value="{{ id }}" placeholder="ID" id="master_id" name="master_id" hidden>
-					<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-					<div class="input-field col offset-s2 col s2">
-						<input type="date" name="date" required>
-					</div>
+    <div class="container is-margin-top-50">
+        <div class="row">
+            <div class="col s12">
+                <form action="{{ route('add-sale') }}" method="get">
+                    <div class="input-field">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    </div>
+                    <input value="{{ id }}" placeholder="ID" id="master_id" name="master_id" hidden>
+                    <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+                    <div class="input-field col s3">
+                        <div class="input-field">
+                            <input type="date" name="date" required>
+                        </div>
+                    </div>
+                    <div class="input-field col s5">
+                        <select class="product-select" name="good" style="width: 100%;">
+                            <option disabled selected>Товар</option>
+                            {% for good in goods %}
+                                <option value="{{ good.id }}">{{ good.good_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-field col s2">
+                        <input type="number" name="count" min="1" placeholder="Количество" required>
+                    </div>
 
-					<div class="input-field col s4">
-						<select class="niceSelect" name="good" required>
-							<option value="" disabled selected>Товар</option>
-							{% for good in goods %}
-								<option value="{{ good.id }}">{{ good.good_name }}</option>
-							{% endfor %}
-						</select>
-					</div>
+                    <div class="input-field col s12 text-center">
+                        <button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s3 center-align">
+            <h5>{{ name }}</h5>
+        </div>
+        {% if admin == 1 %}
+            <div class="col s7 center-align">
+                <h5>Запланированный доход за месяц: <b class="materialize-red-text">{{ goodstotalmoney }}p</b></h5>
+            </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <table class="highlight centered">
+                <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Товар</th>
+                    <th>Количество</th>
+                    <th>Цена</th>
+                    <th>Скидка %</th>
+                    <th>Примечание</th>
+                    <th></th>
+                </tr>
+                </thead>
 
-					<div class="input-field col s2">
-						<input type="number" name="count" min="1" placeholder="Количество" required>
-					</div>
-
-					<div class="input-field col s12 text-center">
-						<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col s3 center-align">
-			<h5>{{ name }}</h5>
-		</div>
-		{% if admin == 1 %}
-			<div class="col s7 center-align">
-				<h5>Запланированный доход за месяц: <b class="materialize-red-text">{{ goodstotalmoney }}p</b></h5>
-			</div>
-		{% endif %}
-	</div>
-	<div class="row">
-		<div class="col s12">
-			<table class="highlight centered">
-				<thead>
-				<tr>
-					<th>Дата</th>
-					<th>Товар</th>
-					<th>Количество</th>
-					<th>Цена</th>
-					<th>Скидка %</th>
-					<th>Примечание</th>
-					<th></th>
-				</tr>
-				</thead>
-
-				<tbody>
-				{% for sale in sales %}
-					<tr>
-						<td>{{ sale.date| date("d/m/Y") }}</td>
-						<td>{{ sale.good_name }}</td>
-						<td>{{ sale.count }}</td>
-						{% if sale.cost == null %}
-							<td>
-								<form action="{{ route('add-cost-sale') }}">
-									<input value="{{ id }}" placeholder="ID" name="master_id" type="hidden">
-									<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-									<input name="sale_id" value="{{ sale.id }}" hidden>
-									<input placeholder="Цена" value="{{ sale.cost }}" id="cost" name="cost" type="number" min="0" step="0.01" required>
-									<button class="btn waves-effect waves-light green">Добавить</button>
-								</form>
-							</td>
-							<td>
-								<form action="{{ route('add-discount-sale') }}">
-									<input value="{{ id }}" placeholder="ID" name="master_id" type="hidden">
-									<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-									<input name="sale_id" value="{{ sale.id }}" hidden>
-									<input placeholder="Скидка" value="{{ sale.discount }}" name="discount" type="number" min="0" max="99" step="1" readonly>
-									<button class="btn waves-effect waves-light green disabled">Добавить</button>
-								</form>
-							</td>
-						{% else %}
-							<td>{{ sale.cost|number_format(2) }}</td>
-							<td>
-								<form action="{{ route('add-discount-sale') }}">
-									<input value="{{ id }}" placeholder="ID" name="master_id" type="hidden">
-									<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-									<input name="sale_id" value="{{ sale.id }}" hidden>
-									<input placeholder="Скидка" value="{{ sale.discount }}" name="discount" type="number" min="0" max="99" step="1">
-									<button class="btn waves-effect waves-light green">Добавить</button>
-								</form>
-							</td>
-						{% endif %}
-						<td>
-							<form action="{{ route('add-text-sale') }}">
-								<input value="{{ id }}" placeholder="ID" name="master_id" type="hidden">
-								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-								<input name="sale_id" value="{{ sale.id }}" hidden>
-								<input value="{{ sale.text }}" name="text" type="text" maxlength="255">
-								<button class="btn waves-effect waves-light green">Добавить</button>
-							</form>
-						</td>
-						<td>
-							<form action="{{ route('delete-sale') }}">
-								<input name="sale_id" value="{{ sale.id }}" hidden>
-								<input value="{{ id }}" placeholder="ID" name="master_id" type="hidden">
-								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-								{% if admin != 1 and this_day| date("d/m/Y") > sale.date| date("d/m/Y") %}
-									<button class="btn waves-effect waves-light red" disabled>Удалить</button>
-								{% else %}
-									<button class="btn waves-effect waves-light red">Удалить</button>
-								{% endif %}
-							</form>
-						</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<div class="container-fluid is-margin-top-50">
-		<div class="row">
-			<div class="col s12">
-				<table class="highlight centered">
-					<thead>
-					<tr>
-						<th>Товар</th>
-						<th>Количество</th>
-					</tr>
-					</thead>
-					{% for sale1 in sales1 %}
-						<tbody>
-						{#<td>{{ service1.name }}</td>#}
-						<td>{{ sale1.name }}</td>
-						<td>{{ sale1.total }}</td>
-						</tbody>
-					{% endfor %}
-				</table>
-			</div>
-		</div>
-	</div>
+                <tbody>
+                {% for sale in sales %}
+                    <tr>
+                        <td>{{ sale.date| date("d/m/Y") }}</td>
+                        <td>{{ sale.good_name }}</td>
+                        <td>{{ sale.count }}</td>
+                        {% if sale.cost == null %}
+                            <td>
+                                <form action="{{ route('add-cost-sale') }}">
+                                    <input value="{{ id }}" placeholder="ID" name="master_id" type="hidden">
+                                    <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+                                    <input name="sale_id" value="{{ sale.id }}" hidden>
+                                    <input placeholder="Цена" value="{{ sale.cost }}" id="cost" name="cost" type="number" min="0"
+                                           step="0.01" required>
+                                    <button class="btn waves-effect waves-light green">Добавить</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="{{ route('add-discount-sale') }}">
+                                    <input value="{{ id }}" placeholder="ID" name="master_id" type="hidden">
+                                    <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+                                    <input name="sale_id" value="{{ sale.id }}" hidden>
+                                    <input placeholder="Скидка" value="{{ sale.discount }}" name="discount" type="number" min="0" max="99"
+                                           step="1" readonly>
+                                    <button class="btn waves-effect waves-light green disabled">Добавить</button>
+                                </form>
+                            </td>
+                        {% else %}
+                            <td>{{ sale.cost|number_format(2) }}</td>
+                            <td>
+                                <form action="{{ route('add-discount-sale') }}">
+                                    <input value="{{ id }}" placeholder="ID" name="master_id" type="hidden">
+                                    <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+                                    <input name="sale_id" value="{{ sale.id }}" hidden>
+                                    <input placeholder="Скидка" value="{{ sale.discount }}" name="discount" type="number" min="0" max="99"
+                                           step="1">
+                                    <button class="btn waves-effect waves-light green">Добавить</button>
+                                </form>
+                            </td>
+                        {% endif %}
+                        <td>
+                            <form action="{{ route('add-text-sale') }}">
+                                <input value="{{ id }}" placeholder="ID" name="master_id" type="hidden">
+                                <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+                                <input name="sale_id" value="{{ sale.id }}" hidden>
+                                <input value="{{ sale.text }}" name="text" type="text" maxlength="255">
+                                <button class="btn waves-effect waves-light green">Добавить</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{{ route('delete-sale') }}">
+                                <input name="sale_id" value="{{ sale.id }}" hidden>
+                                <input value="{{ id }}" placeholder="ID" name="master_id" type="hidden">
+                                <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+                                {% if admin != 1 and this_day| date("d/m/Y") > sale.date| date("d/m/Y") %}
+                                    <button class="btn waves-effect waves-light red" disabled>Удалить</button>
+                                {% else %}
+                                    <button class="btn waves-effect waves-light red">Удалить</button>
+                                {% endif %}
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container-fluid is-margin-top-50">
+        <div class="row">
+            <div class="col s12">
+                <table class="highlight centered">
+                    <thead>
+                    <tr>
+                        <th>Товар</th>
+                        <th>Количество</th>
+                    </tr>
+                    </thead>
+                    {% for sale1 in sales1 %}
+                        <tbody>
+                        {#<td>{{ service1.name }}</td>#}
+                        <td>{{ sale1.name }}</td>
+                        <td>{{ sale1.total }}</td>
+                        </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
 </section>
 <section id="services">
-	<div class="container is-margin-top-50">
-		<div class="row">
-			<div class="col s12">
-				<form name="addService" action="{{ route('add-service') }}" method="get">
-					{#<input id="checkSelect" name="checker" value="0">#}
-					<div class="input-field">
-						<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-					</div>
-					<input value="{{ id }}" placeholder="ID" id="master_id" name="master_id" hidden>
-					<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-					<div class="input-field col s3 first_plan">
-						<select class="niceSelect" name="date" id="date" required>
-							<option value="" disabled selected>Дата</option>
-							{% set i = 0 %}
-							{% for shift in shifts %}
-								<option type="radio" id="{{ i }}" value="{{ shift.id }}" onClick="show();">{{ shift.date|date("d-m-Y") }}</option>
-								{% set i=i+1 %}
-							{% endfor %}
-							<input id="refresher" type="button" value="{{ i }}" hidden>
-						</select>
-						{#	<input placeholder="Дата" id="id" name="date" type="date" required>
-						#}
-					</div>
-					{% set j=1000 %}
-					{#
-						{% set k=10000 %}
-					#}
-					<section id="dt">
-						<div class="input-field col s3 first_plan">
-							<select  class="niceSelect" name="time">
-								<option value="" disabled selected>Время</option>
-							</select>
-						</div>
-					</section>
-					{% for time in times %}
-						<section id="{{ j }}" hidden>
-							<div class="input-field col s3  first_plan">
-								{#
-								<select id="{{ k }}" name="time">
-								#}
-								<select class="niceSelect" name="time">
-									<option value="" disabled selected>Время</option>
-									{% set sr = p.value %}
-									{% set ars = times[sr] %}
-									{% for ar in time %}
-										<option value="{{ ar }}">{{ ar }}</option>
-									{% endfor %}
-								</select>
-							</div>
-						</section>
-						{% set j = j + 1 %}
+    <div class="container is-margin-top-50">
+        <div class="row">
+            <div class="col s12">
+                <form name="addService" action="{{ route('add-service') }}" method="get">
+                    {#<input id="checkSelect" name="checker" value="0">#}
+                    <div class="input-field">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    </div>
+                    <input value="{{ id }}" placeholder="ID" id="master_id" name="master_id" hidden>
+                    <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+                    <div class="input-field col s3 first_plan">
+                        <select class="niceSelect" name="date" id="date" required>
+                            <option value="" disabled selected>Дата</option>
+                            {% set i = 0 %}
+                            {% for shift in shifts %}
+                                <option type="radio" id="{{ i }}" value="{{ shift.id }}"
+                                        onClick="show();">{{ shift.date|date("d-m-Y") }}</option>
+                                {% set i=i+1 %}
+                            {% endfor %}
+                            <input id="refresher" type="button" value="{{ i }}" hidden>
+                        </select>
+                        {#	<input placeholder="Дата" id="id" name="date" type="date" required>
+                        #}
+                    </div>
+                    {% set j=1000 %}
+                    {#
+                        {% set k=10000 %}
+                    #}
+                    <section id="dt">
+                        <div class="input-field col s2 first_plan">
+                            <select class="niceSelect" name="time">
+                                <option value="" disabled selected>Время</option>
+                            </select>
+                        </div>
+                    </section>
+                    {% for time in times %}
+                        <section id="{{ j }}" hidden>
+                            <div class="input-field col s2  first_plan">
+                                {#
+                                <select id="{{ k }}" name="time">
+                                #}
+                                <select class="niceSelect" name="time">
+                                    <option value="" disabled selected>Время</option>
+                                    {% set sr = p.value %}
+                                    {% set ars = times[sr] %}
+                                    {% for ar in time %}
+                                        <option value="{{ ar }}">{{ ar }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </section>
+                        {% set j = j + 1 %}
 
-					{% endfor %}
-					<div class="input-field col s4 first_plan">
-						{#<input type="text" autocomplete="off" id="search" class="form-control input-lg" placeholder="Поиск услуги" oninput="smartSearch(event)" maxlength="20">#}
+                    {% endfor %}
+                    <div class="input-field col s5">
+                        <select class="service-select" name="product">
+                            <option disabled selected>Услуга</option>
+                            {% for product in products %}
+                                <option value="{{ product.id }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-field col s2">
+                        <select class="niceSelect" name="duration" required>
+                            <option value="" disabled selected>Длительность</option>
+                            {% for dur in durs %}
+                                <option value="{{ dur }}">{{ dur }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
+                    <div class="input-field col s12 text-center">
+                        <button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-						{#<div id="searchSelect" hidden>#}
-							{#<select class="niceSelect" id="mySelect" name="product1">#}
-								{#<option value="" disabled selected>Услуга</option>#}
-							{#</select>#}
-						{#</div>#}
-						<div id="defaultSelect first_plan">
-							<select class="niceSelect limitedNumbSelect2" name="product" onclick="style.zIndex = 100" required>
-								<option value="" disabled selected>Услуга</option>
-								{% for product in products %}
-									<option value="{{ product.id }}">{{ product.name }}</option>
-								{% endfor %}
-							</select>
-						</div>
-					</div>
-					<div class="input-field col s2  first_plan">
-						<select class="niceSelect" name="duration" required>
-							<option value="" disabled selected>Длительность</option>
-							{% for dur in durs %}
-								<option value="{{ dur }}">{{ dur }}</option>
-							{% endfor %}
-						</select>
-					</div>
+    {#<script>#}
+    {#function smartSearch() {#}
+    {#var str = $("#search").val();#}
+    {#if(str.trim().length == 0) {#}
+    {#// $("#txtHint").html('<b>Blogs information will be listed here...</b>');#}
+    {#document.getElementById("defaultSelect").style.display = 'block';#}
+    {#document.getElementById("searchSelect").style.display = 'none';#}
+    {#document.getElementById('checkSelect').setAttribute('value', '0');#}
+    {#var searchSelect = document.getElementById("mySelect");#}
+    {#for(i = searchSelect.options.length; i > 0; i--) {#}
+    {#searchSelect.remove(i);#}
+    {#}#}
+    {#}#}
+    {#else {#}
 
-					<div class="input-field col s12 text-center">
-						<button type="submit" class="waves-effect waves-light btn" href="#">Добавить</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+    {#$.ajaxSetup({#}
+    {#headers: {'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr('content')}#}
+    {#});#}
+    {#$.ajax({#}
+    {#type: 'POST',#}
+    {#url: '{{ route("live-search") }}',#}
+    {#data: {#}
+    {#'str': str#}
+    {#},#}
+    {#success: function(data) {#}
 
-	{#<script>#}
-		{#function smartSearch() {#}
-			{#var str = $("#search").val();#}
-			{#if(str.trim().length == 0) {#}
-				{#// $("#txtHint").html('<b>Blogs information will be listed here...</b>');#}
-				{#document.getElementById("defaultSelect").style.display = 'block';#}
-				{#document.getElementById("searchSelect").style.display = 'none';#}
-				{#document.getElementById('checkSelect').setAttribute('value', '0');#}
-				{#var searchSelect = document.getElementById("mySelect");#}
-				{#for(i = searchSelect.options.length; i > 0; i--) {#}
-					{#searchSelect.remove(i);#}
-				{#}#}
-			{#}#}
-			{#else {#}
+    {#document.getElementById('checkSelect').setAttribute('value', '1');#}
+    {#document.getElementById("defaultSelect").style.display = 'none';#}
+    {#document.getElementById("searchSelect").style.display = 'block';#}
+    {#var ps = data.posts;#}
+    {#//	var searchSelect = document.addService.product1;#}
+    {#var searchSelect = document.getElementById("mySelect");#}
+    {#// не добавляло в селект ещё до добавления этой очистки от старых оптионов#}
+    {#for(i = searchSelect.options.length; i > 0; i--) {#}
+    {#searchSelect.remove(i);#}
+    {#}#}
+    {#for(i = 0; i < ps.length; i++) {#}
+    {#var oOption = document.createElement("option");#}
+    {#oOption.appendChild(document.createTextNode(ps[i].name + ''));#}
+    {#oOption.setAttribute("value", ps[i].id + '');#}
+    {#searchSelect.appendChild(oOption);#}
 
-				{#$.ajaxSetup({#}
-					{#headers: {'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr('content')}#}
-				{#});#}
-				{#$.ajax({#}
-					{#type: 'POST',#}
-					{#url: '{{ route("live-search") }}',#}
-					{#data: {#}
-						{#'str': str#}
-					{#},#}
-					{#success: function(data) {#}
+    {#/*							var text = ps[i].name + '';#}
+    {#var value = ps[i].id + '';#}
+    {#//	searchSelect.options[searchSelect.options.length] = new Option(text, value);#}
+    {#searchSelect.options[i+1] = new Option(text, value);#}
+    {#alert(searchSelect.options[i+1].text);*/#}
+    {#}#}
 
-						{#document.getElementById('checkSelect').setAttribute('value', '1');#}
-						{#document.getElementById("defaultSelect").style.display = 'none';#}
-						{#document.getElementById("searchSelect").style.display = 'block';#}
-						{#var ps = data.posts;#}
-						{#//	var searchSelect = document.addService.product1;#}
-						{#var searchSelect = document.getElementById("mySelect");#}
-						{#// не добавляло в селект ещё до добавления этой очистки от старых оптионов#}
-						{#for(i = searchSelect.options.length; i > 0; i--) {#}
-							{#searchSelect.remove(i);#}
-						{#}#}
-						{#for(i = 0; i < ps.length; i++) {#}
-							{#var oOption = document.createElement("option");#}
-							{#oOption.appendChild(document.createTextNode(ps[i].name + ''));#}
-							{#oOption.setAttribute("value", ps[i].id + '');#}
-							{#searchSelect.appendChild(oOption);#}
+    {#/*											var optionsStr = '';#}
+    {#var startStr = '<select name="product" required>' +#}
+    {#'<option value="" disabled selected>' + 'Услуга' + '</option>';#}
+    {#var endStr = '</select>' + '<div>' + 'aaaa mne 4t0-t0 ne xopolllo' + '</div>';#}
+    {#for(i = 0; i < ps.length; i++) {#}
 
-							{#/*							var text = ps[i].name + '';#}
-														{#var value = ps[i].id + '';#}
-													{#//	searchSelect.options[searchSelect.options.length] = new Option(text, value);#}
-														{#searchSelect.options[i+1] = new Option(text, value);#}
-														{#alert(searchSelect.options[i+1].text);*/#}
-						{#}#}
+    {#optionsStr = optionsStr + '<option value="' + ps[i].id + '">' + ps[i].name + '</option>';#}
+    {#}#}
+    {#optionsStr = startStr + optionsStr + endStr;#}
+    {#$("#txtHint").html(optionsStr);*/#}
 
-						{#/*											var optionsStr = '';#}
-																	{#var startStr = '<select name="product" required>' +#}
-																		{#'<option value="" disabled selected>' + 'Услуга' + '</option>';#}
-																	{#var endStr = '</select>' + '<div>' + 'aaaa mne 4t0-t0 ne xopolllo' + '</div>';#}
-																	{#for(i = 0; i < ps.length; i++) {#}
-
-																		{#optionsStr = optionsStr + '<option value="' + ps[i].id + '">' + ps[i].name + '</option>';#}
-																	{#}#}
-																	{#optionsStr = startStr + optionsStr + endStr;#}
-																	{#$("#txtHint").html(optionsStr);*/#}
-
-					{#}, error: function(data) {#}
-						{#document.getElementById("defaultSelect").style.display = 'block';#}
-						{#document.getElementById("searchSelect").style.display = 'none';#}
-						{#document.getElementById('checkSelect').setAttribute('value', '0');#}
-						{#document.getElementById('search').setAttribute('value', ' ');#}
-						{#var searchSelect = document.getElementById("mySelect");#}
-						{#for(i = searchSelect.options.length; i > 0; i--) {#}
-							{#searchSelect.remove(i);#}
-						{#}#}
-					{#}#}
-				{#});#}
-			{#}#}
-		{#}#}
-	{#</script>#}
+    {#}, error: function(data) {#}
+    {#document.getElementById("defaultSelect").style.display = 'block';#}
+    {#document.getElementById("searchSelect").style.display = 'none';#}
+    {#document.getElementById('checkSelect').setAttribute('value', '0');#}
+    {#document.getElementById('search').setAttribute('value', ' ');#}
+    {#var searchSelect = document.getElementById("mySelect");#}
+    {#for(i = searchSelect.options.length; i > 0; i--) {#}
+    {#searchSelect.remove(i);#}
+    {#}#}
+    {#}#}
+    {#});#}
+    {#}#}
+    {#}#}
+    {#</script>#}
 
 
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col s3 center-align">
-				<h5>{{ name }}</h5>
-			</div>
-			{% if admin == 1 %}
-				<div class="col s7 center-align">
-					<h5>Запланированный доход за месяц: <b class="materialize-red-text">{{ totalmoney }}p</b></h5>
-				</div>
-			{% endif %}
-		</div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col s3 center-align">
+                <h5>{{ name }}</h5>
+            </div>
+            {% if admin == 1 %}
+                <div class="col s7 center-align">
+                    <h5>Запланированный доход за месяц: <b class="materialize-red-text">{{ totalmoney }}p</b></h5>
+                </div>
+            {% endif %}
+        </div>
 
-		<div class="row">
-			<div class="col s12">
-				<table class="highlight centered">
-					<thead>
-					<tr>
-						<th>Дата</th>
-						<th>Время</th>
-						<th>Услуга</th>
-						<th>Длительность</th>
-						<th>Цена</th>
-						<th>Скидка %</th>
-						<th>Примечание</th>
-						<th></th>
-					</tr>
-					</thead>
+        <div class="row">
+            <div class="col s12">
+                <table class="highlight centered">
+                    <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Время</th>
+                        <th>Услуга</th>
+                        <th>Длительность</th>
+                        <th>Цена</th>
+                        <th>Скидка %</th>
+                        <th>Примечание</th>
+                        <th></th>
+                    </tr>
+                    </thead>
 
-					<tbody>
-					{% for service in services %}
-						<tr>
-							<td>{{ service.date| date("d/m/Y") }}</td>
-							<td>{{ service.time|date('H:i') }}</td>
-							<td>{{ service.name }}</td>
-							<td>{{ service.duration|date('H:i') }}</td>
-							{% if service.cost == null %}
-								<td>
-									<form action="{{ route('add-cost') }}">
-										<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
-										<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-										<input name="service_id" value="{{ service.id }}" hidden>
-										<input placeholder="Цена" value="{{ service.cost }}" id="cost" name="cost" type="number" min="0" step="0.01" required>
-										<button class="btn waves-effect waves-light green">Добавить</button>
-									</form>
-								</td>
-								<td>
-									<form action="{{ route('add-discount') }}">
-										<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
-										<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-										<input name="service_id" value="{{ service.id }}" hidden>
-										<input placeholder="Скидка" value="{{ service.discount }}" name="discount" type="number" min="0" max="99" step="1" readonly>
-										<button class="btn waves-effect waves-light green disabled">Добавить</button>
-									</form>
-								</td>
-							{% else %}
-								<td>{{ service.cost|number_format(2) }}</td>
-								<td>
-									<form action="{{ route('add-discount') }}">
-										<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
-										<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-										<input name="service_id" value="{{ service.id }}" hidden>
-										<input placeholder="Скидка" value="{{ service.discount }}" name="discount" type="number" min="0" max="99" step="1">
-										<button class="btn waves-effect waves-light green">Добавить</button>
-									</form>
-								</td>
-							{% endif %}
-							<td>
-								<form action="{{ route('add-text') }}">
-									<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
-									<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-									<input name="service_id" value="{{ service.id }}" hidden>
-									<input value="{{ service.text }}" name="text" type="text" maxlength="255">
-									<button class="btn waves-effect waves-light green">Добавить</button>
-								</form>
-							</td>
-							<td>
-								<form action="{{ route('delete-service') }}">
-									<input name="service_id" value="{{ service.id }}" hidden>
-									<input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
-									<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+                    <tbody>
+                    {% for service in services %}
+                        <tr>
+                            <td>{{ service.date| date("d/m/Y") }}</td>
+                            <td>{{ service.time|date('H:i') }}</td>
+                            <td>{{ service.name }}</td>
+                            <td>{{ service.duration|date('H:i') }}</td>
+                            {% if service.cost == null %}
+                                <td>
+                                    <form action="{{ route('add-cost') }}">
+                                        <input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+                                        <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+                                        <input name="service_id" value="{{ service.id }}" hidden>
+                                        <input placeholder="Цена" value="{{ service.cost }}" id="cost" name="cost" type="number" min="0"
+                                               step="0.01" required>
+                                        <button class="btn waves-effect waves-light green">Добавить</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action="{{ route('add-discount') }}">
+                                        <input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+                                        <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+                                        <input name="service_id" value="{{ service.id }}" hidden>
+                                        <input placeholder="Скидка" value="{{ service.discount }}" name="discount" type="number" min="0"
+                                               max="99" step="1" readonly>
+                                        <button class="btn waves-effect waves-light green disabled">Добавить</button>
+                                    </form>
+                                </td>
+                            {% else %}
+                                <td>{{ service.cost|number_format(2) }}</td>
+                                <td>
+                                    <form action="{{ route('add-discount') }}">
+                                        <input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+                                        <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+                                        <input name="service_id" value="{{ service.id }}" hidden>
+                                        <input placeholder="Скидка" value="{{ service.discount }}" name="discount" type="number" min="0"
+                                               max="99" step="1">
+                                        <button class="btn waves-effect waves-light green">Добавить</button>
+                                    </form>
+                                </td>
+                            {% endif %}
+                            <td>
+                                <form action="{{ route('add-text') }}">
+                                    <input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+                                    <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+                                    <input name="service_id" value="{{ service.id }}" hidden>
+                                    <input value="{{ service.text }}" name="text" type="text" maxlength="255">
+                                    <button class="btn waves-effect waves-light green">Добавить</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="{{ route('delete-service') }}">
+                                    <input name="service_id" value="{{ service.id }}" hidden>
+                                    <input value="{{ id }}" placeholder="ID" id="id" name="id" type="hidden">
+                                    <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
 
 
-									{% if admin != 1 and this_day| date("d/m/Y") > service.date| date("d/m/Y") %}
-										<button class="btn waves-effect waves-light red" disabled>{{ service.date| date("d/m/Y") }}__{{ this_day| date("d/m/Y") }} Удалить</button>
-									{% else %}
-										<button class="btn waves-effect waves-light red">Удалить</button>
-									{% endif %}
-								</form>
-							</td>
-						</tr>
-					{% endfor %}
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
-	<div class="container-fluid is-margin-top-50">
-		<div class="row">
-			<div class="col s12">
-				<table class="highlight centered">
-					<thead>
-					<tr>
-						<th>Услуга</th>
-						<th>Количество</th>
-					</tr>
-					</thead>
-					{% for service1 in services1 %}
-						<tbody>
-						{#<td>{{ service1.name }}</td>#}
-						<td>{{ service1.name }}</td>
-						<td>{{ service1.total }}</td>
-						</tbody>
-					{% endfor %}
-				</table>
-			</div>
-		</div>
-	</div>
+                                    {% if admin != 1 and this_day| date("d/m/Y") > service.date| date("d/m/Y") %}
+                                        <button class="btn waves-effect waves-light red" disabled>{{ service.date| date("d/m/Y") }}
+                                            __{{ this_day| date("d/m/Y") }} Удалить
+                                        </button>
+                                    {% else %}
+                                        <button class="btn waves-effect waves-light red">Удалить</button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid is-margin-top-50">
+        <div class="row">
+            <div class="col s12">
+                <table class="highlight centered">
+                    <thead>
+                    <tr>
+                        <th>Услуга</th>
+                        <th>Количество</th>
+                    </tr>
+                    </thead>
+                    {% for service1 in services1 %}
+                        <tbody>
+                        {#<td>{{ service1.name }}</td>#}
+                        <td>{{ service1.name }}</td>
+                        <td>{{ service1.total }}</td>
+                        </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
 </section>
 <input id="exception1" value="{{ exception1 }}" hidden>
 <input id="check_goods" value="{{ check_goods }}" hidden>
 
 <script>
 
-	if(document.getElementById("exception1").value != '') {
-		alert(document.getElementById("exception1").value);
-	}
+    if (document.getElementById('exception1').value != '') {
+        alert(document.getElementById('exception1').value);
+    }
 
-	// $(document).ready(function() {
-	// 	//Select2
-	// 	$(".niceSelect").select.formSelect({
-	// 		// $('select').formSelect();
-	// 		// maximumSelectionLength: 2,
-	// 		// visibility: hidden,
-	// 		// placeholder: "Which are two of most productive days of your week"
-	// 	})
-	// });
+    // $(document).ready(function() {
+    // 	//Select2
+    // 	$(".niceSelect").select.formSelect({
+    // 		// $('select').formSelect();
+    // 		// maximumSelectionLength: 2,
+    // 		// visibility: hidden,
+    // 		// placeholder: "Which are two of most productive days of your week"
+    // 	})
+    // });
 
-	$(document).ready(function() {
-		$('.niceSelect').formSelect();
-	});
-	$(document).ready(function() {
-		$('.datepicker').datepicker();
-	});
-	$(document).ready(function() {
-		$('.collapsible').collapsible();
-	});
+    $(document).ready(function () {
+        $('.niceSelect').formSelect();
+    });
+    $(document).ready(function () {
+        $('.datepicker').datepicker();
+    });
+    $(document).ready(function () {
+        $('.collapsible').collapsible();
+    });
 
-	element = document.getElementById('date');
-	elem = document.getElementById('dt');
+    element = document.getElementById('date');
+    elem = document.getElementById('dt');
 
-	element.addEventListener('change', function(e) {
-		var ch = (e.target.options[e.target.selectedIndex].getAttribute('id'));
-		parseInt(ch, 10);
-		var count = document.getElementById('refresher').getAttribute('value');
-		vanish(count);
-		show(ch);
-	});
+    element.addEventListener('change', function (e) {
+        var ch = (e.target.options[e.target.selectedIndex].getAttribute('id'));
+        parseInt(ch, 10);
+        var count = document.getElementById('refresher').getAttribute('value');
+        vanish(count);
+        show(ch);
+    });
 
-	function vanish(count) {
-		last = new Number(parseInt(count, 10));
-		last = last + 999;
-		cur = new Number(1000);
-		//	curreq = new Number(10000);
-		//	document.getElementsByName("time").setAttribute("required","false");
-		while(cur <= last) {
+    function vanish(count) {
+        last = new Number(parseInt(count, 10));
+        last = last + 999;
+        cur = new Number(1000);
+        //	curreq = new Number(10000);
+        //	document.getElementsByName("time").setAttribute("required","false");
+        while (cur <= last) {
 
-			//document.getElementById(curreq.toString() + '').removeAttribute('required');
-			document.getElementById(cur.toString() + '').style.display = 'none';
-			cur = cur + 1;
-			//	curreq = curreq + 1;
-		}
+            //document.getElementById(curreq.toString() + '').removeAttribute('required');
+            document.getElementById(cur.toString() + '').style.display = 'none';
+            cur = cur + 1;
+            //	curreq = curreq + 1;
+        }
 
-	}
+    }
 
-	function show(ch) {
-		num = new Number(parseInt(ch, 10));
-		//	document.getElementById(num.toString() + '').required = true;
-		num = num + 1000;
-		//	numreq = num + 10000;
-		document.getElementById('dt').style.display = 'none';
-		document.getElementById(num.toString() + '').style.display = 'block';
-		//document.getElementById(numreq.toString() + '').setAttribute('required', '');
+    function show(ch) {
+        num = new Number(parseInt(ch, 10));
+        //	document.getElementById(num.toString() + '').required = true;
+        num = num + 1000;
+        //	numreq = num + 10000;
+        document.getElementById('dt').style.display = 'none';
+        document.getElementById(num.toString() + '').style.display = 'block';
+        //document.getElementById(numreq.toString() + '').setAttribute('required', '');
 
-	}
+    }
 
-	check_goods = last = new Number(parseInt(document.getElementById('check_goods').getAttribute('value'), 10));
-	if(check_goods == 1) {
-		document.getElementById('goods').style.display = 'block';
-		document.getElementById('services').style.display = 'none';
-	}
+    check_goods = last = new Number(parseInt(document.getElementById('check_goods').getAttribute('value'), 10));
+    if (check_goods == 1) {
+        document.getElementById('goods').style.display = 'block';
+        document.getElementById('services').style.display = 'none';
+    }
 
-	function show_goods() {
-		document.getElementById('check_goods').setAttribute('value', '1');
-		document.getElementById('show_goods').style.display = 'block';
-		document.getElementById('show_services').style.display = 'none';
-		document.getElementById('goods').style.display = 'block';
-		document.getElementById('services').style.display = 'none';
-	}
+    function show_goods() {
+        document.getElementById('check_goods').setAttribute('value', '1');
+        document.getElementById('show_goods').style.display = 'block';
+        document.getElementById('show_services').style.display = 'none';
+        document.getElementById('goods').style.display = 'block';
+        document.getElementById('services').style.display = 'none';
+    }
 
-	function show_services() {
-		document.getElementById('check_goods').setAttribute('value', '0');
-		document.getElementById('show_services').style.display = 'block';
-		document.getElementById('show_goods').style.display = 'none';
-		document.getElementById('goods').style.display = 'none';
-		document.getElementById('services').style.display = 'block';
-	}
+    function show_services() {
+        document.getElementById('check_goods').setAttribute('value', '0');
+        document.getElementById('show_services').style.display = 'block';
+        document.getElementById('show_goods').style.display = 'none';
+        document.getElementById('goods').style.display = 'none';
+        document.getElementById('services').style.display = 'block';
+    }
 </script>
 
 

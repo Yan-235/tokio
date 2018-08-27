@@ -67,10 +67,17 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/update-feedbacks', 'TokioController@updateFeedbacks')->name('update-feedbacks');
 	Route::get('/products-gods-list', 'TokioController@productsGoodsList')->name('products-gods-list');
 
+	Route::get('/add-administrator', 'AdministratorController@addAdministrator')->name('add-administrator');
+	Route::get('/show-add-shift-administrator', 'TokioController@showAddShiftAdministrator')->name('show-add-shift-administrator');
+	Route::get('/admin-shift-date-filter', 'TokioController@adminShiftDateFilter')->name('admin-shift-date-filter');
+	Route::get('/admin-add-shift', 'TokioController@adminAddShift')->name('admin-add-shift');
+
+
 	Route::get('/search-client', 'SearchController@searchClient')->name('search-client');
 
 	Route::post('/live-search','TokioController@liveSearch')->name('live-search');
 
+	Route::get('/test', 'TokioController@test')->name('test');
 });
 
 Auth::routes();
