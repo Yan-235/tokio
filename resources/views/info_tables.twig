@@ -139,6 +139,29 @@
 		</div>
 	</div>
 	<div class="row">
+		<div class="col offset-s4 col s4 text-center">
+			<table class="highlight centered">
+				<thead>
+				<tr>
+					<th>Администратор</th>
+					<th>Кол-во смен</th>
+					<th>ЗП</th>
+				</tr>
+				</thead>
+
+				<tbody>
+				{% for admin in admins %}
+					<tr class="border-0">
+						<td class="border-0">{{ admin.name }}</td>
+						<td class="border-0">{{ admin.shifts }}</td>
+						<td class="border-0">{{ admin.shifts * admin.day_payment}}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row">
 		<div class="col s12 text-center">
 			<table class="highlight centered">
 				<thead>
@@ -204,6 +227,29 @@
 						<td class="border-0">{{ master.feedback + master.month_zp}}</td>
 						<td class="border-0"><a href="{{ route('delete-user',[master.id]) }}" class="btn waves-effect waves-light red"><i
 										class="material-icons"></i>Удалить</a></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s12">
+			<table class="highlight centered">
+				<thead>
+				<tr>
+					<th>Администратор</th>
+					<th>Кол-во смен</th>
+					<th>ЗП</th>
+				</tr>
+				</thead>
+
+				<tbody>
+				{% for admin in admins %}
+					<tr class="border-0">
+						<td class="border-0">{{ admin.name }}</td>
+						<td class="border-0">{{ admin.shifts_month }}</td>
+						<td class="border-0">{{ admin.shifts_month * admin.day_payment}}</td>
 					</tr>
 				{% endfor %}
 				</tbody>

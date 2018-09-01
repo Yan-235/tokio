@@ -68,6 +68,10 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/products-gods-list', 'TokioController@productsGoodsList')->name('products-gods-list');
 
 	Route::get('/add-administrator', 'AdministratorController@addAdministrator')->name('add-administrator');
+	Route::get('/show-add-shift-administrator', 'TokioController@showAddShiftAdministrator')->name('show-add-shift-administrator');
+	Route::get('/admin-shift-date-filter', 'TokioController@adminShiftDateFilter')->name('admin-shift-date-filter');
+	Route::get('/admin-add-shift', 'TokioController@adminAddShift')->name('admin-add-shift');
+
 
 	Route::get('/search-client', 'SearchController@searchClient')->name('search-client');
 

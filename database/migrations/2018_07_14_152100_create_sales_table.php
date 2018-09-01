@@ -21,7 +21,7 @@ class CreateSalesTable extends Migration {
 			$table->string('product');
 			$table->integer('discount')->nullable();
 			$table->integer('count');
-		//	$table->string('text')->nullable();
+			$table->string('text')->nullable();
 		});
 	}
 

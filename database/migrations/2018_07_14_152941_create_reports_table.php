@@ -18,7 +18,7 @@ class CreateReportsTable extends Migration
             $table->integer('master_id');
             $table->date('date');
             $table->float('money')->nullable();
-          //  $table->string('text')->nullable();
+            $table->string('text')->nullable();
         });
     }
 

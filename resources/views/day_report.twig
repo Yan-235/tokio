@@ -1,150 +1,169 @@
 <!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Отчёт за день</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Отчёт за день</title>
 
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/css/materialize.min.css">
-    <link rel="stylesheet" href="/css/style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="/css/materialize.min.css">
+	<link rel="stylesheet" href="/css/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 </head>
 <body>
 {% if salon == 1 %}
-    <div align="center">
-        <img src="/img/logo.png" alt="logo">
-    </div>
+	<div align="center">
+		<img src="/img/logo.png" alt="logo">
+	</div>
 {% endif %}
 {% if salon == 2 %}
-    <div align="center">
-        <img src="/img/city-logo-1.jpg" alt="logo-city-1">
-    </div>
+	<div align="center">
+		<img src="/img/city-logo-1.jpg" alt="logo-city-1">
+	</div>
 {% endif %}
 {% if salon == 3 %}
-    <div align="center">
-        <img src="/img/city-logo-2.jpg" alt="logo-city-2">
-    </div>
+	<div align="center">
+		<img src="/img/city-logo-2.jpg" alt="logo-city-2">
+	</div>
 {% endif %}
 {% if salon == 4 %}
-    <div align="center">
-        <img src="" alt="city-logo-3">
-    </div>
+	<div align="center">
+		<img src="" alt="city-logo-3">
+	</div>
 {% endif %}
 <div class="container-fluid">
-    <div class="row">
-        <div class="col s1 left-align">
-            <a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
-                        class="material-icons">arrow_back</i></a>
-        </div>
-        {% if admin == 1 %}
-            <div class="col s6 left-align">
-                <form action="{{ route('change-salon') }}" method="get">
-                    <div class="col s4 ">
-                        <select name="new_salon" required>
-                            <option value="" disabled selected>Салон</option>
-                            <option value="1">Токио</option>
-                            <option value="2">Сити 1</option>
-                            <option value="3">Сити 2</option>
-                            <option value="4">Бьюти зона</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn waves-effect waves-light green"><i
-                                class="material-icons">swap_horiz</i></button>
-                </form>
-            </div>
-            <div class="col s2 right-align">
-                <form action="{{ route('show-client-list') }}" method="get">
-                    <button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
-                </form>
-            </div>
-            <div class="col s2 left-align">
-                <form action="{{ route('info-tables') }}" method="get">
-                    <button type="submit" class="btn waves-effect waves-light blue">Информация</button>
-                </form>
-            </div>
-            <div class="col s1 right-align">
-                <a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
-                            class="material-icons">exit_to_app</i></a>
-            </div>
-        {% else %}
-            <div class="col offset-col s9 col s2 right-align">
-                <form action="{{ route('show-client-list') }}" method="get">
-                    <button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
-                </form>
-            </div>
-            <div class="col 1 right-align">
-                <a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
-                            class="material-icons">exit_to_app</i></a>
-            </div>
-        {% endif %}
-    </div>
+	<div class="row">
+		<div class="col s1 left-align">
+			<a href="{{ route('main') }}" class="waves-effect waves-light btn"><i
+						class="material-icons">arrow_back</i></a>
+		</div>
+		{% if admin == 1 %}
+			<div class="col s6 left-align">
+				<form action="{{ route('change-salon') }}" method="get">
+					<div class="col s4 ">
+						<select name="new_salon" required>
+							<option value="" disabled selected>Салон</option>
+							<option value="1">Токио</option>
+							<option value="2">Сити 1</option>
+							<option value="3">Сити 2</option>
+							<option value="4">Бьюти зона</option>
+						</select>
+					</div>
+					<button type="submit" class="btn waves-effect waves-light green"><i
+								class="material-icons">swap_horiz</i></button>
+				</form>
+			</div>
+			<div class="col s2 right-align">
+				<form action="{{ route('show-client-list') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+				</form>
+			</div>
+			<div class="col s2 left-align">
+				<form action="{{ route('info-tables') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue">Информация</button>
+				</form>
+			</div>
+			<div class="col s1 right-align">
+				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+							class="material-icons">exit_to_app</i></a>
+			</div>
+		{% else %}
+			<div class="col offset-col s9 col s2 right-align">
+				<form action="{{ route('show-client-list') }}" method="get">
+					<button type="submit" class="btn waves-effect waves-light blue">Клиенты</button>
+				</form>
+			</div>
+			<div class="col 1 right-align">
+				<a href="{{ route('tokio-logout') }}" class="btn waves-effect waves-light red"><i
+							class="material-icons">exit_to_app</i></a>
+			</div>
+		{% endif %}
+	</div>
 </div>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col s12 text-center">
+			<form action="{{ route('report-date-filter') }}" method="get">
+				{% if new_filter_date == null %}
+					<div class="input-field col offset-s4 col s2">
+						<input value="{{ theme.getDateEnd|date("Y-m-d") }}" type="date" name="filter_date">
+					</div>
+				{% else %}
+					<div class="input-field col offset-s4 col s2">
+						<input value="{{ new_filter_date }}" type="date" name="filter_date">
+					</div>
+				{% endif %}
 
-<div class="row">
-    <div class="col offset-s3 col s6">
-        <table class="highlight centered">
-            <thead>
-            <tr>
-                <th>Мастер</th>
-                <th>Доход</th>
-                <th>Расходы</th>
-                <th>Описание</th>
-                <th></th>
-            </tr>
-            </thead>
+				<div class="col s3">
+					<button type="submit" class="waves-effect waves-light btn" href="#">Перейти</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col offset-s3 col s6">
+			<table class="highlight centered">
+				<thead>
+				<tr>
+					<th>Мастер</th>
+					<th>Доход</th>
+					<th>Расходы</th>
+					<th>Описание</th>
+					<th></th>
+				</tr>
+				</thead>
 
-            <tbody>
-            {% for i in 0..size-1 %}
-                <tr>
-                    <td>{{ today_masters[i].name }}</td>
-                    <td>{{ today_money[i] }}</td>
-                    <form action="{{ route('add-report') }}">
-                        <td>
-                            <input value="{{ today_masters[i].id }}" placeholder="ID" name="master_id" type="hidden">
-                            <input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
-                            <input name="report_id" value="{{ today_reports[i].id }}" hidden>
-                            <input name="date" value="{{ today }}" hidden>
-                            <input placeholder="Расходы" value="{{ today_reports[i].money }}" name="money" type="number" min="0"
-                                   step="0.01">
-                        </td>
-                        <td>
-                            <input placeholder="Опиание" value="{{ today_reports[i].text }}" name="text" type="text" maxlength="255">
-                        </td>
-                        <td>
-                            <button class="btn waves-effect waves-light green">Добавить</button>
-                        </td>
-                    </form>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+				<tbody>
+				{% for i in 0..size-1 %}
+					<tr>
+						<td>{{ today_masters[i].name }}</td>
+						<td>{{ today_money[i] }}</td>
+						<form action="{{ route('add-report') }}">
+							<td>
+								<input value="{{ today_masters[i].id }}" placeholder="ID" name="master_id" type="hidden">
+								<input value="1" placeholder="ID" id="master_page" name="master_page" type="hidden">
+								<input name="report_id" value="{{ today_reports[i].id }}" hidden>
+								<input name="date" value="{{ today }}" hidden>
+								<input placeholder="Расходы" value="{{ today_reports[i].money }}" name="money" type="number" min="0"
+								       step="0.01">
+							</td>
+							<td>
+								<input placeholder="Опиание" value="{{ today_reports[i].text }}" name="text" type="text" maxlength="255">
+							</td>
+							<td>
+								<button class="btn waves-effect waves-light green">Добавить</button>
+							</td>
+						</form>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col s6 right-align">
+			<h5>Итого: <b class="materialize-red-text">{{ result }}p</b></h5>
+		</div>
+	</div>
 </div>
-<div class="row">
-    <div class="col s6 right-align">
-        <h5>Итого: <b class="materialize-red-text">{{ result }}p</b></h5>
-    </div>
-</div>
-
 
 <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="/js/materialize.min.js"></script>
 <script>
-    if (document.getElementById('exception1').value != '') {
-        alert(document.getElementById('exception1').value);
-    }
+	if(document.getElementById('exception1').value != '') {
+		alert(document.getElementById('exception1').value);
+	}
 
-    $(document).ready(function () {
-        $('select').formSelect();
-    });
-    $(document).ready(function () {
-        $('.datepicker').datepicker();
-    });
-    $(document).ready(function () {
-        $('.collapsible').collapsible();
-    });
+	$(document).ready(function() {
+		$('select').formSelect();
+	});
+	$(document).ready(function() {
+		$('.datepicker').datepicker();
+	});
+	$(document).ready(function() {
+		$('.collapsible').collapsible();
+	});
 
 
 </script>
